@@ -76,8 +76,9 @@ terceiros e os navegadores os bloqueiam; a seção explica isso aos alunos.
 
 **A página não cita o material de origem** (slides e PDFs), porque ele não é distribuído aos alunos.
 Na aula, cada ponto abaixo aparece num cartão vermelho como armadilha ou como "o que mudou", escrito
-para se sustentar sozinho. Ao editar a página, mantenha essa regra: nada de "no slide", "o material
-diz" ou créditos dos PDFs no rodapé. A atribuição fica só neste README.
+para se sustentar sozinho. Ao editar a página, mantenha essa regra: nada de "no slide" ou "o material
+diz" no conteúdo. A única exceção é a linha discreta de créditos aos slides no rodapé
+(`.rodape-creditos`), que fica, inclusive porque a licença CC BY-NC-SA pede o crédito.
 
 - **Host** (tabela de cabeçalhos de pedido): o material diz que ele traz "o host e o número de porta
   do cliente"; traz os do **servidor de destino**.

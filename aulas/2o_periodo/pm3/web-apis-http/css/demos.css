@@ -369,3 +369,7 @@ button.status-chip:hover{border-color:var(--tinta);box-shadow:0 0 0 3px rgba(0,0
   content:"infraestrutura";margin-left:8px;font-family:var(--mono);font-size:11px;letter-spacing:.8px;
   text-transform:uppercase;color:#1F5FBF;border:1px solid #BCD3F2;border-radius:999px;padding:1px 7px;
 }
+
+/* crédito discreto aos slides de origem, no rodapé */
+.rodape .rodape-creditos{margin-top:18px;max-width:900px;font-size:13px;line-height:1.5;color:var(--code-com)}
+.rodape-creditos a{color:inherit}
