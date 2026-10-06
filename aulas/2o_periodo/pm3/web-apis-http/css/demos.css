@@ -187,7 +187,7 @@ button.metodo:hover{border-color:var(--tinta);box-shadow:0 0 0 3px rgba(0,0,0,.0
 .amostra--branco{outline:2px dashed #C99A00;outline-offset:-2px;background:rgba(255,216,102,.18)}
 .amostra--corpo{outline:2px dashed #7A68D8;outline-offset:-2px;background:rgba(171,157,242,.12)}
 
-/* ---------- caixas do fluxo de mensagens (slides de Web APIs) ---------- */
+/* ---------- caixas do fluxo de mensagens (pedido e resposta) ---------- */
 .fluxo{display:flex;flex-wrap:wrap;gap:22px;align-items:stretch}
 .fluxo > .fluxo-msg{flex:1 1 420px;min-width:0}
 .fluxo-msg{background:#173A6B;border-radius:var(--raio);padding:14px;display:flex;flex-direction:column;gap:10px}
@@ -369,4 +369,3 @@ button.status-chip:hover{border-color:var(--tinta);box-shadow:0 0 0 3px rgba(0,0
   content:"infraestrutura";margin-left:8px;font-family:var(--mono);font-size:11px;letter-spacing:.8px;
   text-transform:uppercase;color:#1F5FBF;border:1px solid #BCD3F2;border-radius:999px;padding:1px 7px;
 }
-.rodape .rodape-fontes{margin-top:18px;font-size:14.5px;line-height:1.5;max-width:900px;color:var(--code-com)}

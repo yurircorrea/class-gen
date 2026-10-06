@@ -132,7 +132,7 @@ Content-Type: application/json
               <div class="seq-ator"><span class="seq-icone seq-icone--servidor"></span>Site II<small>C</small></div>
             </div>
             <div class="seq-corpo">
-              <div class="seq-passo" data-de="1" data-para="2" data-msg="pedido 1: GET /a.html" data-nota="O navegador pede o <b>documento original A</b> ao Site I."></div>
+              <div class="seq-passo" data-de="1" data-para="2" data-msg="pedido 1: GET /a.html" data-nota="O navegador pede o <b>documento principal A</b> ao Site I."></div>
               <div class="seq-passo" data-de="2" data-para="1" data-msg="resposta 1: o HTML de A" data-nota="O Site I devolve o HTML. Ao ler o código, o navegador encontra um <b>&amp;lt;img&amp;gt;</b>."></div>
               <div class="seq-passo" data-de="1" data-para="2" data-msg="pedido 2: GET /grafico.png" data-nota="Para mostrar a imagem B, o navegador faz <b>outro pedido</b>, sem você clicar em nada."></div>
               <div class="seq-passo" data-de="2" data-para="1" data-msg="resposta 2: a imagem B" data-nota="A imagem chega e a página fica completa."></div>
@@ -150,7 +150,7 @@ Content-Type: application/json
       </div>
 
       <figure class="painel-codigo painel-codigo--duplo">
-        <figcaption>a.html — o documento original, guardado no Site I</figcaption>
+        <figcaption>a.html — o documento principal, guardado no Site I</figcaption>
 <pre class="codigo">&lt;!-- A: a página que o cliente pediu --&gt;
 &lt;h1&gt;Pesquisa sobre partículas&lt;/h1&gt;
 
@@ -220,7 +220,7 @@ em uma página formatada.&lt;/p&gt;
     <div class="cartoes">
       <article class="cartao"><h3>Mesmo arquivo, duas leituras</h3><p>O servidor envia só texto. Quem decide que <code>&lt;b&gt;</code> vira negrito é o interpretador do navegador. Pelo F12 você vê o fonte; na tela, o resultado.</p></article>
       <article class="cartao"><h3>Interpretadores de hoje</h3><p>HTML, CSS, JavaScript e WebAssembly. O motor muda de navegador para navegador: Chromium (Chrome, Edge, Opera), Gecko (Firefox) e WebKit (Safari).</p></article>
-      <article class="cartao cartao--erro"><h3>O material envelheceu aqui</h3><p>Internet Explorer (encerrado em 2022) e Netscape (2008) não existem mais, e applets <b>Java</b> deixaram de rodar nos navegadores. FTP também saiu da lista de protocolos do navegador (ver seção 17).</p></article>
+      <article class="cartao cartao--erro"><h3>Navegadores que saíram de cena</h3><p>Internet Explorer (encerrado em 2022) e Netscape (2008) não existem mais, e applets <b>Java</b> deixaram de rodar nos navegadores. FTP também saiu da lista de protocolos do navegador (ver seção 17).</p></article>
     </div>
   </section>
 
@@ -269,7 +269,7 @@ await Promise.all([1, 2, 3, 4, 5].map(() =&gt; fetch(url)));</pre>
     <div class="cartoes">
       <article class="cartao"><h3>Cache</h3><p>Ler da memória é muito mais rápido que ler do disco. O servidor guarda ali os arquivos pedidos com frequência e responde sem ir ao disco.</p></article>
       <article class="cartao"><h3>Vários ao mesmo tempo</h3><p>Com várias threads ou processos, o servidor não deixa um cliente esperando o outro terminar. Foi o que a barra "ao mesmo tempo" mostrou.</p></article>
-      <article class="cartao cartao--erro"><h3>Servidores de hoje</h3><p>O material cita Apache e IIS. Hoje Nginx, Apache e Cloudflare dividem a maior parte da Web, e o IIS ficou bem atrás. Numa API, o "servidor" costuma ser a própria aplicação: Node.js, Spring Boot, ASP.NET.</p></article>
+      <article class="cartao cartao--erro"><h3>Servidores de hoje</h3><p>Apache e IIS dominaram os anos 2000. Hoje Nginx, Apache e Cloudflare dividem a maior parte da Web, e o IIS ficou bem atrás. Numa API, o "servidor" costuma ser a própria aplicação: Node.js, Spring Boot, ASP.NET.</p></article>
     </div>
   </section>
 
@@ -293,7 +293,7 @@ await Promise.all([1, 2, 3, 4, 5].map(() =&gt; fetch(url)));</pre>
             <input type="text" id="url-entrada" data-url-entrada spellcheck="false" value="https://viacep.com.br:443/ws/01001000/json/?formato=curto#topo">
           </div>
           <div class="botoes">
-            <button type="button" class="btn btn--sec" data-url-exemplo="http://localhost:5000/students/1">API local do slide</button>
+            <button type="button" class="btn btn--sec" data-url-exemplo="http://localhost:5000/students/1">API local (localhost)</button>
             <button type="button" class="btn btn--sec" data-url-exemplo="https://www.google.com/search?q=protocolo+http&amp;hl=pt-BR">busca com consulta</button>
             <button type="button" class="btn btn--sec" data-url-exemplo="ftp://ftp.exemplo.org/pub/arquivo.zip">FTP</button>
             <button type="button" class="btn btn--sec" data-url-exemplo="https://developer.mozilla.org/pt-BR/docs/Web/HTTP#status">fragmento</button>
@@ -316,7 +316,7 @@ await Promise.all([1, 2, 3, 4, 5].map(() =&gt; fetch(url)));</pre>
 
       <figure class="painel-codigo painel-codigo--duplo">
         <figcaption>formatos de URL</figcaption>
-<pre class="codigo" data-lang="bash"># formato do material
+<pre class="codigo" data-lang="bash"># formato básico
 protocolo://host/caminho          # usado na maioria dos casos
 protocolo://host:porta/caminho    # quando a porta precisa ser dita
 
@@ -334,7 +334,7 @@ https://developer.mozilla.org/pt-BR/docs/Web/HTTP#status</pre>
     <div class="cartoes">
       <article class="cartao"><h3>Host</h3><p>Pode ser um IP (<code>64.23.56.17</code>) ou um nome de domínio (<code>viacep.com.br</code>). O nome precisa ser traduzido em IP pelo DNS antes do pedido sair (seção 15).</p></article>
       <article class="cartao"><h3>Porta</h3><p>Número de 16 bits que diz qual programa do servidor atende. Quando é a padrão do protocolo, fica implícita: <code>http</code> usa 80 e <code>https</code> usa 443.</p></article>
-      <article class="cartao cartao--erro"><h3>O que mudou desde o material</h3><p>A porta "conhecida" do material é a 80, do HTTP sem criptografia. Hoje quase todo site usa <b>HTTPS, porta 443</b>. E a URL ganhou duas partes: <code>?consulta</code> (parâmetros que vão ao servidor) e <code>#fragmento</code> (que nunca sai do navegador).</p></article>
+      <article class="cartao cartao--erro"><h3>Porta 80 ou 443?</h3><p>Durante muito tempo a porta padrão da Web foi a 80, do HTTP sem criptografia. Hoje quase todo site usa <b>HTTPS, porta 443</b>. E a URL tem mais duas partes: <code>?consulta</code> (parâmetros que vão ao servidor) e <code>#fragmento</code> (que nunca sai do navegador).</p></article>
     </div>
   </section>
 
@@ -549,17 +549,17 @@ const corpo = await resposta.text();          // ou .json()</pre>
 
     <div class="rolagem-x" style="margin-bottom:28px">
       <table class="tabela">
-        <thead><tr><th>Método</th><th>Ação, segundo o material</th><th>Como é hoje</th></tr></thead>
+        <thead><tr><th>Método</th><th>Ação</th><th>Na prática</th></tr></thead>
         <tbody>
-          <tr><td><code>GET</code></td><td>Solicita um documento ao servidor</td><td>Lê um recurso. Não deve mudar nada no servidor.</td></tr>
+          <tr><td><code>GET</code></td><td>Solicita um documento (recurso) ao servidor</td><td>Só lê. Não deve mudar nada no servidor.</td></tr>
           <tr><td><code>HEAD</code></td><td>Solicita informações sobre um documento, mas não o documento</td><td>Igual ao GET, só que a resposta vem sem corpo. Serve para saber tamanho e data sem baixar.</td></tr>
           <tr><td><code>POST</code></td><td>Envia alguma informação do cliente para o servidor</td><td>Cria um recurso ou dispara uma ação. Leva corpo.</td></tr>
           <tr><td><code>PUT</code></td><td>Envia um documento do cliente para o servidor</td><td>Substitui o recurso inteiro pelo que foi enviado.</td></tr>
-          <tr><td><code>PATCH</code></td><td>(não aparece no material)</td><td>Altera só parte do recurso. Criado em 2010 (RFC 5789).</td></tr>
-          <tr><td><code>DELETE</code></td><td>Remove a página Web</td><td>Remove o recurso indicado na URL, seja página, usuário ou pedido.</td></tr>
+          <tr><td><code>PATCH</code></td><td>Altera só parte de um recurso</td><td>O mais novo da lista: criado em 2010 (RFC 5789). Muito usado em APIs.</td></tr>
+          <tr><td><code>DELETE</code></td><td>Remove um recurso</td><td>Vale para o que estiver na URL: uma página, um usuário, um pedido.</td></tr>
           <tr><td><code>OPTIONS</code></td><td>Consulta opções disponíveis</td><td>Pergunta o que o servidor aceita. É o pedido de <i>preflight</i> do CORS.</td></tr>
           <tr><td><code>TRACE</code></td><td>Ecoa a solicitação recebida</td><td>Desativado na maioria dos servidores e proibido no navegador, por segurança.</td></tr>
-          <tr><td><code>CONNECT</code></td><td>Reservado</td><td>Abre um túnel através de um proxy, usado para passar HTTPS por ele.</td></tr>
+          <tr><td><code>CONNECT</code></td><td>Abre um túnel através de um proxy</td><td>Usado para passar HTTPS por um proxy; não serve para páginas nem APIs.</td></tr>
         </tbody>
       </table>
     </div>
@@ -567,7 +567,7 @@ const corpo = await resposta.text();          // ou .json()</pre>
     <div class="cartoes">
       <article class="cartao"><h3>HEAD: só os cabeçalhos</h3><p>Compare o HEAD com o GET acima: mesmo status, mesmo <code>Content-Length</code>, corpo vazio. É o jeito de perguntar "quanto pesa?" sem baixar.</p></article>
       <article class="cartao"><h3>O preflight do CORS</h3><p>Antes de um PUT, PATCH ou DELETE para outro site, o navegador manda sozinho um <b>OPTIONS</b> perguntando se pode. A nota abaixo da resposta avisa quando isso aconteceu.</p></article>
-      <article class="cartao cartao--erro"><h3>A tabela do material envelheceu</h3><p>Falta o <b>PATCH</b>, hoje um dos mais usados em APIs. <b>TRACE</b> virou risco de segurança e o navegador se recusa a enviá-lo (teste o botão). <b>CONNECT</b> não é "reservado": é o túnel dos proxies.</p></article>
+      <article class="cartao cartao--erro"><h3>Nem todo método é para você</h3><p><b>TRACE</b> virou risco de segurança e o navegador se recusa a enviá-lo (teste o botão). <b>CONNECT</b> só faz sentido para proxies. No dia a dia de uma API você vai usar GET, POST, PUT, PATCH e DELETE.</p></article>
     </div>
   </section>
 
@@ -640,7 +640,7 @@ Host: site-falso.com</textarea>
     <div class="cartoes">
       <article class="cartao"><h3>O navegador completa o pedido</h3><p>Na tabela acima, as linhas marcadas <b>navegador</b> você não escreveu: <code>User-Agent</code>, <code>Origin</code>, <code>Accept-Encoding</code>, <code>Sec-Fetch-*</code>. As marcadas <b>infraestrutura</b> foram postas no caminho, por balanceadores e proxies.</p></article>
       <article class="cartao"><h3>Proibidos para o JavaScript</h3><p><code>Host</code>, <code>Cookie</code>, <code>Origin</code>, <code>Content-Length</code>, <code>Date</code> e outros são controlados pelo navegador. Um script não consegue falsificá-los.</p></article>
-      <article class="cartao cartao--erro"><h3>Host não é o cliente</h3><p>A tabela do material diz que <code>Host</code> "mostra o host e o número de porta do cliente". Errado: ele traz o nome e a porta do <b>servidor</b> de destino. É ele que permite um mesmo IP hospedar vários sites.</p></article>
+      <article class="cartao cartao--erro"><h3>Host não é o cliente</h3><p>Um erro comum é achar que <code>Host</code> identifica quem fez o pedido. Ele traz o nome e a porta do <b>servidor</b> de destino. É ele que permite um mesmo IP hospedar vários sites.</p></article>
     </div>
   </section>
 
@@ -695,7 +695,7 @@ Host: site-falso.com</textarea>
 
     <div class="dupla" style="margin-top:28px">
       <figure class="painel-codigo">
-        <figcaption>resposta real de um servidor Apache ao pedido GET de um arquivo de texto (exemplo do material)</figcaption>
+        <figcaption>resposta real de um servidor Apache ao pedido GET de um arquivo de texto</figcaption>
 <pre class="codigo" data-lang="http">HTTP/1.1 200 OK
 Date: Sat, 01 Aug 2013 10:30:17 GMT
 Server: Apache/1.3.37 (Unix)
@@ -821,7 +821,7 @@ if (r.ok) {                       // true de 200 a 299
     <div class="cartoes">
       <article class="cartao"><h3>fetch não lança erro em 404</h3><p>Para o <code>fetch</code>, uma resposta 404 ou 500 é uma resposta como outra qualquer. Ele só lança erro quando <b>nenhuma</b> resposta chega. Confira <code>r.ok</code> ou <code>r.status</code>.</p></article>
       <article class="cartao"><h3>3xx: o navegador segue sozinho</h3><p>Clique em 301 ou 302: o servidor manda um <code>Location</code> e o navegador faz um segundo pedido para lá. O que chega ao script já é a resposta final, com "redirecionado para".</p></article>
-      <article class="cartao cartao--erro"><h3>O material mostra só três</h3><p>200, 400 e 404 são os mais conhecidos, mas uma API usa pelo menos 201, 204, 401, 403, 409 e 500. Na dúvida, o primeiro dígito decide: <b>4xx é culpa de quem pediu</b>, 5xx é culpa de quem respondeu.</p></article>
+      <article class="cartao cartao--erro"><h3>Bem mais que 200, 400 e 404</h3><p>Esses três são os mais conhecidos, mas uma API usa pelo menos 201, 204, 401, 403, 409 e 500. Na dúvida, o primeiro dígito decide: <b>4xx é culpa de quem pediu</b>, 5xx é culpa de quem respondeu.</p></article>
     </div>
   </section>
 
@@ -831,7 +831,7 @@ if (r.ok) {                       // true de 200 a 299
       <span class="selo">12</span>
       <h2 class="secao-titulo">Exemplos: pedir uma imagem e enviar um documento</h2>
     </div>
-    <p class="secao-lead">No exemplo do material, o cliente pede uma imagem e avisa, com <code>Accept</code>, quais formatos aceita. O servidor escolhe um deles. Mude o <code>Accept</code> e veja o formato da resposta mudar.</p>
+    <p class="secao-lead">Ao pedir uma imagem, o cliente avisa, com <code>Accept</code>, quais formatos aceita. O servidor escolhe um deles. Mude o <code>Accept</code> e veja o formato da resposta mudar.</p>
 
     <div class="lab" data-lab-http data-depois="imagem">
       <div class="lab-controles">
@@ -853,7 +853,7 @@ if (r.ok) {                       // true de 200 a 299
 
     <div class="dupla" style="margin-top:28px">
       <figure class="painel-codigo">
-        <figcaption>GET de uma imagem · exemplo do material, já corrigido</figcaption>
+        <figcaption>GET de uma imagem</figcaption>
 <pre class="codigo" data-lang="http">GET /usr/bin/image1 HTTP/1.1
 Host: www.exemplo.com
 Accept: image/gif, image/jpeg
@@ -867,7 +867,7 @@ Content-Length: 2048
 (os 2048 bytes da imagem)</pre>
       </figure>
       <figure class="painel-codigo">
-        <figcaption>PUT de uma página · exemplo do material, já corrigido</figcaption>
+        <figcaption>PUT de uma página</figcaption>
 <pre class="codigo" data-lang="http">PUT /cgi-bin/doc.pl HTTP/1.1
 Host: www.exemplo.com
 Accept: */*
@@ -889,7 +889,7 @@ Content-Length: 2000
     <div class="cartoes">
       <article class="cartao"><h3>Negociação de conteúdo</h3><p>O cliente diz o que aceita (<code>Accept</code>), o servidor diz o que mandou (<code>Content-Type</code>). Vale para imagem, idioma (<code>Accept-Language</code>) e para escolher entre JSON e XML numa API.</p></article>
       <article class="cartao"><h3>PUT envia o documento inteiro</h3><p>No segundo exemplo o corpo do pedido <b>é</b> a página. Por isso o pedido precisa de <code>Content-Type</code> e <code>Content-Length</code>, como a resposta. CGI (<code>/cgi-bin</code>) é a forma antiga de gerar páginas; hoje seria uma rota da aplicação.</p></article>
-      <article class="cartao cartao--erro"><h3>Três erros no exemplo original</h3><p>"<code>imagem/gif</code>" não existe: tipos MIME são sempre em inglês, <code>image/gif</code>. <code>Content-Encoding</code> não vale "MIME-version 1.0": ele diz a compressão (<code>gzip</code>, <code>br</code>); <code>MIME-Version</code> é um cabeçalho de e-mail. E a data HTTP não leva hífens: <code>10 Jan 2011</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Três armadilhas ao escrever à mão</h3><p>Tipos MIME são sempre em inglês: <code>image/gif</code>, nunca "imagem/gif". <code>Content-Encoding</code> diz a compressão (<code>gzip</code>, <code>br</code>), não a versão do MIME; <code>MIME-Version</code> é um cabeçalho de e-mail. E a data HTTP não leva hífens: <code>10 Jan 2011</code>.</p></article>
     </div>
   </section>
 
@@ -927,7 +927,7 @@ Content-Length: 2000
 
     <div class="dupla" style="margin-top:28px">
       <figure class="painel-codigo">
-        <figcaption>o exemplo do material, com a data no formato certo</figcaption>
+        <figcaption>um pedido condicional e a resposta 304</figcaption>
 <pre class="codigo" data-lang="http">GET /information/arquivo1 HTTP/1.1
 Host: www.commonServer.com
 If-Modified-Since: Thu, 04 Sep 2008 00:00:00 GMT
@@ -940,7 +940,7 @@ Server: commonServer.com
       </figure>
       <div class="par">
         <div>
-          <span class="rotulo-antigo">como está no slide</span>
+          <span class="rotulo-antigo">formato errado</span>
 <pre class="lista-cookies">If-Modified-Since: Thu, Sept 04 00:00:00 GMT
 Date: Sat, Sept 06 08 16:22:46 GMT</pre>
         </div>
@@ -955,7 +955,7 @@ Date: Sat, 06 Sep 2008 16:22:46 GMT</pre>
     <div class="cartoes">
       <article class="cartao"><h3>304 economiza banda</h3><p>Compare o tamanho do corpo nos passos 1 e 2: a segunda resposta chega vazia. Em imagens e scripts grandes, isso deixa a página muito mais rápida.</p></article>
       <article class="cartao cartao--novo"><h3>ETag: a forma mais usada hoje</h3><p>Em vez da data, o servidor dá uma "impressão digital" da versão (<code>ETag</code>). O cliente devolve em <code>If-None-Match</code>; se for igual, 304. O navegador faz isso sozinho com o cache.</p></article>
-      <article class="cartao cartao--erro"><h3>Data no formato errado</h3><p>No slide falta o ano e o mês tem quatro letras ("Sept"). O HTTP exige o formato <code>Thu, 04 Sep 2008 00:00:00 GMT</code>: dia da semana, dia, mês em três letras, ano, hora e GMT.</p></article>
+      <article class="cartao cartao--erro"><h3>Data no formato certo</h3><p>O HTTP exige <code>Thu, 04 Sep 2008 00:00:00 GMT</code>: dia da semana, dia, mês em três letras, ano, hora e GMT. Sem o ano ou com o mês em quatro letras ("Sept"), o servidor não entende a condição.</p></article>
     </div>
   </section>
 
@@ -1056,7 +1056,7 @@ document.cookie = 'tema=; Max-Age=0; Path=/';</pre>
     <div class="cartoes">
       <article class="cartao"><h3>Atributos de segurança</h3><p><code>HttpOnly</code>: o JavaScript não lê. <code>Secure</code>: só viaja em HTTPS. <code>SameSite</code>: não vai junto em pedidos vindos de outros sites. <code>Max-Age</code>: validade em segundos.</p></article>
       <article class="cartao"><h3>Por que este quadro não usa uma API pública</h3><p>Um cookie criado por outro site enquanto você está aqui é um <b>cookie de terceiros</b>, e os navegadores bloqueiam esse tipo para impedir rastreamento. Por isso o teste usa o próprio domínio da aula.</p></article>
-      <article class="cartao cartao--erro"><h3>O material envelheceu aqui</h3><p>"O conteúdo do cookie nunca é lido pelo navegador": hoje o JavaScript lê com <code>document.cookie</code> (se não for <code>HttpOnly</code>) e qualquer pessoa vê no F12. E não se guarda nome ou documento no cookie: guarda-se só um <b>identificador de sessão</b> (LGPD).</p></article>
+      <article class="cartao cartao--erro"><h3>Cookie não é segredo</h3><p>Por muito tempo se disse que só o servidor lê o cookie. Hoje o JavaScript lê com <code>document.cookie</code> (se não for <code>HttpOnly</code>) e qualquer pessoa vê no F12. Por isso não se guarda nome ou documento no cookie: só um <b>identificador de sessão</b> (LGPD).</p></article>
     </div>
   </section>
 
@@ -1190,7 +1190,7 @@ This is a test.
     <div class="cartoes">
       <article class="cartao"><h3>A semântica não mudou</h3><p>Métodos, códigos de status e cabeçalhos são os mesmos da 1.0 até a 3. O que muda é como os bytes viajam: texto linha por linha na 1.1, quadros binários na 2 e na 3.</p></article>
       <article class="cartao"><h3>HTTP/2 e HTTP/3 não têm frase</h3><p>Nas versões novas a linha de estado não leva "OK" nem "Not Found": só o número. As ferramentas mostram a frase por costume.</p></article>
-      <article class="cartao cartao--erro"><h3>O material para no HTTP/1.1</h3><p>"Usualmente HTTP/1.0 ou HTTP/1.1" era verdade há quinze anos. Hoje a maioria dos sites grandes responde em HTTP/2 ou HTTP/3, e o HTTP/1.0 praticamente sumiu.</p></article>
+      <article class="cartao cartao--erro"><h3>HTTP/1.1 não é mais o padrão</h3><p>Durante anos a Web falou HTTP/1.0 e 1.1. Hoje a maioria dos sites grandes responde em HTTP/2 ou HTTP/3, e o HTTP/1.0 praticamente sumiu.</p></article>
     </div>
   </section>
 
@@ -1365,7 +1365,7 @@ S: 221 Até logo</pre>
           <textarea id="json-ed" data-json-editor rows="11" spellcheck="false"></textarea>
         </div>
         <div class="botoes">
-          <button type="button" class="btn btn--sec" data-json-exemplo="aluno">o objeto do slide</button>
+          <button type="button" class="btn btn--sec" data-json-exemplo="aluno">um aluno</button>
           <button type="button" class="btn btn--sec" data-json-exemplo="completo">todos os tipos</button>
           <button type="button" class="btn btn--sec" data-json-exemplo="curvas">aspas curvas</button>
           <button type="button" class="btn btn--sec" data-json-exemplo="virgula">vírgula sobrando</button>
@@ -1400,7 +1400,7 @@ S: 221 Até logo</pre>
     <div class="cartoes">
       <article class="cartao"><h3>Texto, não objeto</h3><p>No fio, JSON é só texto. <code>JSON.stringify(obj)</code> transforma o objeto em texto para enviar; <code>JSON.parse(texto)</code> ou <code>resposta.json()</code> faz o caminho de volta.</p></article>
       <article class="cartao"><h3>Content-Type: application/json</h3><p>É o cabeçalho que avisa o servidor de que o corpo é JSON. Sem ele, muitos servidores ignoram o corpo inteiro (teste na seção 24).</p></article>
-      <article class="cartao cartao--erro"><h3>As aspas do slide quebram o JSON</h3><p>Nos slides de verbos, o JSON aparece com aspas curvas: <code>“id” : 1</code>. O PowerPoint troca as aspas sozinho. Copiado assim, é erro de sintaxe: teste o botão "aspas curvas".</p></article>
+      <article class="cartao cartao--erro"><h3>Aspas curvas quebram o JSON</h3><p>Word, PowerPoint e muitos editores trocam as aspas retas por curvas sozinhos: <code>“id” : 1</code>. JSON copiado de lá vira erro de sintaxe. Teste o botão "aspas curvas".</p></article>
     </div>
   </section>
 
@@ -1410,7 +1410,7 @@ S: 221 Até logo</pre>
       <span class="selo">20</span>
       <h2 class="secao-titulo">O fluxo de mensagens: GET, POST, PUT, PATCH e DELETE</h2>
     </div>
-    <p class="secao-lead">As seis caixas dos slides, agora com dados de verdade: a mensagem de pedido (linha inicial, cabeçalhos, corpo) e a mensagem de resposta. A API de treino usa <code>/users</code> no lugar do <code>/students</code> do slide.</p>
+    <p class="secao-lead">Uma troca HTTP em seis caixas, com dados de verdade: a mensagem de pedido (linha inicial, cabeçalhos, corpo) e a mensagem de resposta. Escolha um verbo e envie para a API de treino.</p>
 
     <div class="pilha" data-fluxo>
       <div class="preview">
@@ -1454,7 +1454,7 @@ S: 221 Até logo</pre>
 
     <div class="par" style="margin-bottom:28px">
       <div>
-        <span class="rotulo-antigo">o POST como está no slide</span>
+        <span class="rotulo-antigo">um POST com quatro problemas</span>
         <figure class="painel-codigo">
 <pre class="codigo" data-lang="http">POST http://localhost:5000/students/
 User-Agent: PostmanRuntime/7.32.2
@@ -1472,7 +1472,7 @@ Content-Type: application/json
         </figure>
       </div>
       <div>
-        <span class="rotulo-atual">como ele vai de verdade</span>
+        <span class="rotulo-atual">o mesmo POST, corrigido</span>
         <figure class="painel-codigo">
 <pre class="codigo" data-lang="http">POST /students HTTP/1.1
 Host: localhost:5000
@@ -1494,7 +1494,7 @@ Content-Type: application/json
     <div class="cartoes">
       <article class="cartao"><h3>PUT x PATCH</h3><p>Clique em PUT e veja a resposta: só sobram <code>firstName</code>, <code>lastName</code> e <code>id</code>, porque o PUT troca o recurso <b>inteiro</b>. O PATCH devolve o usuário completo (nome, e-mail, endereço), só com o campo enviado a mais.</p></article>
       <article class="cartao"><h3>Uma API que finge</h3><p>A JSONPlaceholder responde como se gravasse, mas não grava nada: o POST devolve sempre o id 11, e um GET em <code>/users/11</code> logo depois dá 404. Ótima para treinar, sem estragar dados de ninguém.</p></article>
-      <article class="cartao cartao--erro"><h3>Quatro problemas no slide</h3><p>A linha inicial não traz a versão e usa a URL completa (forma de proxy). O POST com JSON vai sem <code>Content-Type</code>. O <code>Location</code> aponta para o id 2, mas o corpo diz 3. E a frase é <code>Created</code>, não "CREATED". <code>Postman-Token</code> é só do Postman, não do HTTP.</p></article>
+      <article class="cartao cartao--erro"><h3>Os quatro problemas do POST</h3><p>A linha inicial não traz a versão e usa a URL completa (forma de proxy). O POST com JSON vai sem <code>Content-Type</code>. O <code>Location</code> aponta para o id 2, mas o corpo diz 3. E a frase é <code>Created</code>, não "CREATED". <code>Postman-Token</code> é só do Postman, não do HTTP.</p></article>
     </div>
   </section>
 
@@ -1504,7 +1504,7 @@ Content-Type: application/json
       <span class="selo">21</span>
       <h2 class="secao-titulo">Juntando as peças: verbos, CRUD e idempotência</h2>
     </div>
-    <p class="secao-lead">POST cria, GET busca (o trocadilho do slide: <i>POST Malone, GET Malone</i>). Cada verbo corresponde a uma operação do CRUD e tem duas propriedades que importam para quem escreve o cliente: ser <b>seguro</b> e ser <b>idempotente</b>.</p>
+    <p class="secao-lead">POST cria, GET busca (para não esquecer: <i>POST Malone, GET Malone</i>). Cada verbo corresponde a uma operação do CRUD e tem duas propriedades que importam para quem escreve o cliente: ser <b>seguro</b> e ser <b>idempotente</b>.</p>
 
     <div class="pilha" data-tabela-verbos>
       <div class="rolagem-x">
@@ -1652,7 +1652,7 @@ GET    /apagarUsuario?id=1</pre></figure>
     <div class="cartoes">
       <article class="cartao"><h3>401: quem é você?</h3><p>Sem o cabeçalho <code>Authorization</code>, o servidor responde <code>401 Unauthorized</code>. Ele não "lembra" que você já mandou o token antes: cada pedido se identifica sozinho.</p></article>
       <article class="cartao"><h3>Sem estado escala</h3><p>Como nenhum servidor guarda a conversa, qualquer um de dez servidores atrás de um balanceador pode atender o próximo pedido.</p></article>
-      <article class="cartao cartao--erro"><h3>Cinco ou seis restrições?</h3><p>O slide de texto lista cinco; a figura seguinte mostra seis. Fielding define seis, e a sexta, <b>código sob demanda</b>, é a única opcional.</p></article>
+      <article class="cartao cartao--erro"><h3>Cinco ou seis restrições?</h3><p>Muitas listas mostram só cinco. Fielding define seis, e a sexta, <b>código sob demanda</b>, é a única opcional.</p></article>
     </div>
   </section>
 
@@ -1860,7 +1860,7 @@ GET    /apagarUsuario?id=1</pre></figure>
           <li>Tire o <code>Content-Type</code> do POST: o que volta no corpo da resposta e por quê?</li>
           <li>Envie <code>PUT /users/1</code> só com o e-mail. O que aconteceu com o nome? Compare com o PATCH.</li>
           <li>Quais cabeçalhos da resposta o seu script lê com <code>headers.get()</code> e quais só aparecem na aba Rede? Por quê?</li>
-          <li>O DELETE da JSONPlaceholder responde <code>200</code> com <code>{}</code>; o do slide responde <code>204</code>. Os dois estão certos? Qual a diferença para o seu código?</li>
+          <li>O DELETE da JSONPlaceholder responde <code>200</code> com <code>{}</code>; muitas APIs respondem <code>204 No Content</code>. Os dois estão certos? Qual a diferença para o seu código?</li>
         </ul>
       </div>
     </div>
@@ -1909,7 +1909,6 @@ GET    /apagarUsuario?id=1</pre></figure>
       <h2>Bom código!</h2>
       <p>Todo sistema que você usar daqui em diante conversa por HTTP. Agora você sabe ler essa conversa.</p>
       <div class="rodape-meta">2º período · PM 3 — Projeto Mensal</div>
-      <p class="rodape-fontes">Baseada em: Gomes, D. L.; Alessio, G. C. <i>Protocolo HTTP e Camadas de Aplicação</i>, partes 1 e 2 (UniAmérica, 2025), e Cruz, G. J. A. <i>Introdução ao Desenvolvimento de Web APIs</i> (Fundamentos de DevOps, Senac, 2025, licença CC BY-NC-SA 4.0). Conteúdo conferido e atualizado em 2026.</p>
     </div>
     <img src="img/logo.png" alt="Descomplica + UniAmérica">
   </div>

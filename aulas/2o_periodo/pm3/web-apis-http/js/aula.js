@@ -1147,7 +1147,7 @@
     validar();
   });
 
-  /* ---------- fluxo de mensagens: as seis caixas dos slides ---------- */
+  /* ---------- fluxo de mensagens: as seis caixas de uma troca HTTP ---------- */
   var VERBOS_FLUXO = {
     GET: { metodo: "GET", caminho: "/users/1" },
     POST: { metodo: "POST", caminho: "/users", cabecalhos: [["Content-Type", "application/json"]], corpo: { firstName: "Eduardo", lastName: "Supla" } },
