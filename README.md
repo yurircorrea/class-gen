@@ -43,6 +43,7 @@ A página da aula mostra o período e o PM na capa e no rodapé.
 |---|---|---|
 | `aulas/2o_periodo/pm2/flexbox` | `material/2o_periodo/pm2/flexbox/Flexbox-Descomplica.pptx` | CSS puro, bordas revelando o contêiner, laboratório de Flexbox |
 | `aulas/2o_periodo/pm2/bootstrap` | `material/2o_periodo/pm2/bootstrap/bootstrap5_min.pdf` | 8 laboratórios, 8 simuladores, playground, conteúdo atualizado de 5.1 para 5.3 |
+| `aulas/2o_periodo/pm3/web-apis-http` | `material/2o_periodo/pm3/web-apis-http/` (3 PDFs: HTTP partes 1 e 2, Web APIs) | laboratórios com requisições HTTP reais a APIs públicas, aviso quando não há Internet, cliente HTTP e playground de `fetch` |
 
 As duas aulas também existem em `exemplos/`, como referência de qualidade (sem a referência de
 período/PM na página).
