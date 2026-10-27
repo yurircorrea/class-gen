@@ -1,0 +1,136 @@
+/* =========================================================
+   Aula: Tratamento de erros com try...catch em JavaScript
+   demos.css - console ao vivo, passo a passo da execução,
+   blocos try/catch/finally, laboratório livre e atividade
+   ========================================================= */
+
+/* rótulo miúdo sob uma demonstração */
+.nota-demo{font-size:14.5px;color:var(--texto);font-family:var(--mono);margin:0}
+
+/* ---------- botões ---------- */
+.btn{
+  font-family:var(--mono);font-size:14.5px;font-weight:700;cursor:pointer;line-height:1.2;
+  background:var(--verde);color:var(--tinta);border:2px solid var(--verde-escuro);border-radius:8px;padding:8px 16px;
+}
+.btn:hover{filter:brightness(1.05);box-shadow:0 0 0 3px rgba(0,232,143,.25)}
+.btn:disabled{opacity:.45;cursor:default;box-shadow:none;filter:none}
+.btn--sec{background:#fff;border-color:var(--borda);font-weight:400}
+.btn--sec:hover{border-color:var(--verde-escuro)}
+.botoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* chamadas: cada botão roda o código do painel + aquela linha */
+.chamadas{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chamada{
+  font-family:var(--mono);font-size:14px;line-height:1.3;cursor:pointer;color:var(--tinta);
+  background:#fff;border:1px solid var(--borda);border-radius:8px;padding:6px 12px;text-align:left;
+}
+.chamada:hover{border-color:var(--verde-escuro)}
+.chamada.ativa{background:var(--verde);border-color:var(--verde-escuro);font-weight:700}
+
+/* ---------- console ao vivo ---------- */
+.console{
+  background:var(--code-bg);border-radius:10px;padding:6px 0;min-height:58px;
+  font-family:var(--mono);font-size:15px;line-height:1.5;color:var(--code-fg);
+}
+.cl{padding:5px 16px;white-space:pre-wrap;overflow-wrap:anywhere;border-bottom:1px solid #1C2B25}
+.cl:last-child{border-bottom:0}
+.cl--eco{color:var(--code-com)}
+.cl--eco::before{content:"\203A  ";color:var(--verde)}
+.cl--warn{color:#FFD866;background:rgba(255,216,102,.08);box-shadow:inset 4px 0 0 #C99A00}
+.cl--error{color:#FF9B8F;background:rgba(255,120,100,.10);box-shadow:inset 4px 0 0 #D9483B}
+.cl--uncaught{color:#FFB3A8;background:rgba(255,70,50,.22);box-shadow:inset 4px 0 0 #FF5A47;font-weight:700}
+.cl--vazio{color:var(--code-com);font-style:italic}
+.console--alto{min-height:440px;max-height:640px;overflow:auto}
+
+/* demonstração com tela: o HTML do painel rodando num quadro */
+.tela{border:2px dashed #98A2A9;border-radius:10px;overflow:hidden;background:#fff}
+.tela iframe{display:block;width:100%;height:170px;border:0;background:#fff}
+
+/* quadros invisíveis onde o código das demonstrações roda */
+.caixa-de-areia{position:absolute;left:-9999px;top:0;width:10px;height:10px;opacity:0;pointer-events:none;border:0}
+
+/* mini com código + console */
+.mini .painel-codigo{padding:16px 18px;gap:10px}
+.mini .painel-codigo .codigo{font-size:15px}
+
+/* ---------- linhas numeradas e blocos try / catch / finally ---------- */
+.codigo .ln{display:block;min-height:1.6em;border-left:3px solid transparent;padding-left:10px;margin-left:-13px;
+  transition:background .2s,opacity .2s;border-radius:0 5px 5px 0}
+.codigo--numeros{counter-reset:ln}
+.codigo--numeros .ln{counter-increment:ln;position:relative;padding-left:3.1em}
+.codigo--numeros .ln::before{
+  content:counter(ln);position:absolute;left:0;width:2.1em;text-align:right;color:#4E5B55;
+}
+.ln.b-try{border-left:3px dashed var(--verde)}
+.ln.b-catch{border-left:3px dashed #FF8A7A}
+.ln.b-finally{border-left:3px dashed var(--code-rox)}
+.ln.feita{background:rgba(0,232,143,.10)}
+.ln.atual{background:rgba(0,232,143,.34)}
+.ln.erro{background:rgba(255,90,70,.40)}
+.ln.pulada{opacity:.35;text-decoration:line-through;text-decoration-color:#8A9199}
+
+/* ---------- passo a passo da execução ---------- */
+.passos{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start;margin-bottom:28px}
+.passos > *{flex:1 1 460px;min-width:0}
+.passos > .preview{position:sticky;top:84px}
+.passo-barra{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.passo-conta{font-family:var(--mono);font-size:14px;color:var(--texto)}
+.passo-nota{
+  min-height:84px;background:var(--fundo);border:1px solid var(--borda);border-radius:10px;padding:12px 16px;
+  font-size:18px;line-height:1.45;color:var(--tinta);margin-bottom:0;
+}
+.passo-nota code{font-family:var(--mono);font-size:15.5px;background:rgba(0,232,143,.16);padding:1px 6px;border-radius:5px}
+.passo-nota.erro{background:var(--erro-bg);border-color:var(--erro-bd)}
+
+/* amostras da legenda */
+.amostra--try{background:rgba(0,232,143,.08);border-left:4px dashed #0E7A4B}
+.amostra--catch{background:#FFF3F1;border-left:4px dashed #D9483B}
+.amostra--finally{background:rgba(171,157,242,.14);border-left:4px dashed #7A68D8}
+.amostra--atual{background:#0E1A15;box-shadow:inset 0 0 0 40px rgba(0,232,143,.34)}
+.amostra--uncaught{background:#0E1A15;box-shadow:inset 4px 0 0 #FF5A47,inset 0 0 0 40px rgba(255,70,50,.22)}
+.amostra--warn{background:#0E1A15;box-shadow:inset 4px 0 0 #C99A00,inset 0 0 0 40px rgba(255,216,102,.10)}
+
+/* ---------- comparativo ---------- */
+.par{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:28px}
+.par > *{flex:1 1 420px;min-width:0}
+.rotulo-antigo,.rotulo-atual{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:700;
+  letter-spacing:1.1px;text-transform:uppercase;padding:4px 11px;border-radius:999px;margin-bottom:10px;
+}
+.rotulo-antigo{background:var(--erro-bg);color:var(--erro-tx);border:1px solid var(--erro-bd)}
+.rotulo-atual{background:var(--verde);color:var(--tinta)}
+
+/* ---------- tabela de tipos de erro ---------- */
+.tabela-tipos td:first-child code{white-space:nowrap}
+
+/* ---------- laboratório livre ---------- */
+.playground{display:flex;flex-wrap:wrap;gap:24px;align-items:stretch}
+.playground > *{flex:1 1 520px;min-width:0}
+.pg-editor{display:flex;flex-direction:column;gap:12px}
+.pg-barra{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pg-barra select{
+  font-family:var(--mono);font-size:14px;padding:7px 10px;border:1px solid var(--borda);
+  border-radius:8px;background:#fff;color:var(--tinta);max-width:100%;
+}
+.pg-editor textarea{
+  width:100%;min-height:440px;resize:vertical;
+  background:var(--code-bg);color:var(--code-fg);border:0;border-radius:var(--raio);
+  padding:22px 24px;font-family:var(--mono);font-size:15px;line-height:1.65;tab-size:2;
+}
+.pg-editor textarea:focus{outline:3px solid var(--verde);outline-offset:2px}
+.pg-resultado{display:flex;flex-direction:column;gap:12px}
+.pg-dica{font-family:var(--mono);font-size:13.5px;color:var(--texto)}
+
+/* ---------- resultado esperado da atividade ---------- */
+.esperado{display:flex;flex-wrap:wrap;gap:24px}
+.esperado > *{flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.esperado h4{margin:0;font-family:var(--mono);font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:var(--texto)}
+.esperado .console{min-height:150px}
+
+@media (max-width:700px){
+  .codigo--numeros .ln{padding-left:2.6em}
+}
+
+/* crédito discreto aos slides de origem, no rodapé */
+.rodape .rodape-creditos{margin-top:18px;max-width:900px;font-size:13px;line-height:1.5;color:var(--code-com)}
+.rodape-creditos a{color:inherit}

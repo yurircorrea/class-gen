@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>try...catch — tratamento de erros em JavaScript</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="stylesheet" href="css/demos.css">
+</head>
+<body data-periodo="2o_periodo" data-pm="pm3">
+
+<!-- ============================ BARRA ============================ -->
+<div class="barra">
+  <div class="barra-interna">
+    <a class="barra-marca" href="#roteiro"><span class="ponto"></span> try...catch</a>
+    <nav class="barra-menu">
+      <a href="#erros">erros</a>
+      <a href="#tipos">tipos</a>
+      <a href="#sem-try">sem try</a>
+      <a href="#sintaxe">sintaxe</a>
+      <a href="#try">try</a>
+      <a href="#catch">catch</a>
+      <a href="#throw">throw</a>
+      <a href="#finally">finally</a>
+      <a href="#completo">completo</a>
+      <a href="#instanceof">instanceof</a>
+      <a href="#personalizados">personalizados</a>
+      <a href="#async">async</a>
+      <a href="#silenciar">boas práticas</a>
+      <a href="#validacao">validação</a>
+      <a href="#lab">lab</a>
+      <a href="#atividade">atividade</a>
+    </nav>
+  </div>
+  <div class="progresso"></div>
+</div>
+
+<!-- ============================ CAPA ============================ -->
+<header class="capa">
+  <div class="capa-interna">
+    <div class="capa-texto">
+      <img class="capa-logo" src="img/logo.png" alt="Descomplica + UniAmérica">
+      <div class="capa-meta"><span>2º período</span><span>PM 3 · Projeto Mensal</span></div>
+      <h1>try...catch</h1>
+      <p class="subtitulo">Tratamento de erros em JavaScript: garantindo a robustez do seu código</p>
+      <p class="assinatura">Engenharia de Software · erros, try, catch, finally, throw e boas práticas</p>
+    </div>
+    <div class="capa-arte">
+      <div class="troca-capa" aria-hidden="true">
+<pre class="capa-msg"><span class="capa-msg-rotulo">código</span><b>try</b> {
+  JSON.parse("{nome: Ana}");
+} <b>catch</b> (error) {
+  console.log(error.name);
+}
+console.log("o programa continua");</pre>
+        <div class="capa-fio">o erro foi capturado</div>
+<pre class="capa-msg capa-msg--resposta"><span class="capa-msg-rotulo">console</span>SyntaxError
+o programa continua</pre>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ======================= ROTEIRO + LEGENDA ======================= -->
+  <section class="secao" id="roteiro" style="border-top:none">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Aula</span>
+      <h2 class="secao-titulo">O que vamos ver hoje</h2>
+    </div>
+    <p class="secao-lead">Erros vão acontecer: dado faltando, texto no lugar de número, servidor fora do ar. A diferença está no que o programa faz depois. Hoje: capturar, tratar, lançar e registrar erros sem deixar a aplicação travar.</p>
+
+    <div class="roteiro">
+      <a href="#erros"><span class="num">01</span><span class="rotulo">O inesperado acontece: erros e seus tipos</span></a>
+      <a href="#sem-try"><span class="num">02</span><span class="rotulo">Sem tratamento, o programa para</span></a>
+      <a href="#sintaxe"><span class="num">03</span><span class="rotulo">try...catch: sintaxe e fluxo de execução</span></a>
+      <a href="#try"><span class="num">04</span><span class="rotulo">Os blocos try e catch e o objeto error</span></a>
+      <a href="#throw"><span class="num">05</span><span class="rotulo">throw e finally</span></a>
+      <a href="#completo"><span class="num">06</span><span class="rotulo">Exemplo completo e um tratamento para cada tipo</span></a>
+      <a href="#personalizados"><span class="num">07</span><span class="rotulo">Erros personalizados e erros assíncronos</span></a>
+      <a href="#silenciar"><span class="num">08</span><span class="rotulo">Boas práticas: não silenciar, avisar, registrar, validar</span></a>
+      <a href="#lab"><span class="num">09</span><span class="rotulo">Laboratório livre</span></a>
+      <a href="#atividade"><span class="num">10</span><span class="rotulo">Atividade: validando entradas e dados externos</span></a>
+    </div>
+
+    <h3 class="sub-titulo">Como ler as demonstrações desta página</h3>
+    <div class="legenda">
+      <div class="legenda-item"><span class="amostra amostra--try"></span> <span>bloco <b>try</b></span></div>
+      <div class="legenda-item"><span class="amostra amostra--catch"></span> <span>bloco <b>catch</b></span></div>
+      <div class="legenda-item"><span class="amostra amostra--finally"></span> <span>bloco <b>finally</b></span></div>
+      <div class="legenda-item"><span class="amostra amostra--atual"></span> <span>linha executando agora</span></div>
+      <div class="legenda-item"><span class="amostra amostra--warn"></span> <span><code>console.warn</code></span></div>
+      <div class="legenda-item"><span class="amostra amostra--uncaught"></span> <span>erro: <code>console.error</code> ou <b>Uncaught</b> (ninguém tratou)</span></div>
+    </div>
+    <div class="cartoes" style="margin-top:22px">
+      <article class="cartao"><h3>Todo console é de verdade</h3><p>Cada caixa de console roda o código do painel ao lado neste navegador, agora. Nada foi digitado à mão.</p></article>
+      <article class="cartao"><h3>Botões de chamada</h3><p>Os botões como <code>dividir(10, 0)</code> rodam o código do painel mais aquela linha. A linha enviada aparece no console depois do sinal <code>›</code>.</p></article>
+      <article class="cartao"><h3>A mensagem muda, o tipo não</h3><p>O texto do erro é o do seu navegador: no Chrome, no Firefox e no Safari ele é diferente. O tipo (<code>TypeError</code>, <code>SyntaxError</code>) é o mesmo em todos.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 01 · ERROS ======================= -->
+  <section class="secao" id="erros">
+    <div class="secao-topo">
+      <span class="selo">01</span>
+      <h2 class="secao-titulo">Erros em JavaScript: o inesperado acontece</h2>
+    </div>
+    <p class="secao-lead">Um erro é uma situação inesperada que <b>interrompe</b> o programa. Um caractere a mais num texto vindo de fora e o resto do código simplesmente não roda.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>boletim.js · um JSON com um erro de digitação</figcaption>
+<pre class="codigo" data-lang="js" id="c-boletim">
+console.log("Carregando o boletim...");
+
+const boletim = JSON.parse('{"aluno": "Ana", notas: [7, 9]}');
+
+const media = (boletim.notas[0] + boletim.notas[1]) / 2;
+console.log("Média:", media);
+console.log("Boletim pronto!");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-boletim">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a chave notas está sem aspas</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <p class="nota-demo">Nem a média nem “Boletim pronto!” aparecem: o script parou na linha 3.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">Nem todo problema vira erro</h3>
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>sem-erro.js · resultados estranhos, mas nenhum erro lançado</figcaption>
+<pre class="codigo" data-lang="js" id="c-sem-erro">
+console.log(10 / 0);          // dividir por zero
+console.log("abc" * 2);       // texto vezes número
+
+const aluno = { nome: "Ana" };
+console.log(aluno.idade);     // propriedade que não existe
+console.log([7, 9][5]);       // posição que não existe
+
+console.log("fim: nenhum erro foi lançado");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-sem-erro">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o JavaScript devolve um valor e segue em frente</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Consequências</h3><p>O programa para, o usuário fica diante de uma tela que não responde e o que estava sendo feito (um cadastro, um pagamento) pode se perder.</p></article>
+      <article class="cartao"><h3>Por que tratar erros</h3><p>Para manter a aplicação estável, dar um retorno claro a quem usa e deixar uma pista para quem vai depurar.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: Infinity e NaN não são erros</h3><p>Dividir por zero dá <code>Infinity</code>, conta com texto dá <code>NaN</code> e propriedade inexistente dá <code>undefined</code>. Nada é lançado, então nenhum <code>catch</code> é acionado. Quando esses casos importam, é você quem lança o erro (seção 07).</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 02 · TIPOS ======================= -->
+  <section class="secao" id="tipos">
+    <div class="secao-topo">
+      <span class="selo">02</span>
+      <h2 class="secao-titulo">Os tipos de erro</h2>
+    </div>
+    <p class="secao-lead">Todo erro tem um <b>nome</b> que diz a causa. Os três que você mais vai ver são <code>ReferenceError</code>, <code>TypeError</code> e <code>SyntaxError</code>.</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>ReferenceError</code><span>usar um nome que não existe</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const total = 10;
+console.log(totl);   // erro de digitação
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>TypeError</code><span>usar um valor do jeito errado</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const nota = 7;
+nota.toUpperCase();   // número não tem toUpperCase
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>SyntaxError</code><span>texto que não segue a regra</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+JSON.parse("{nome: 'Ana'}");   // JSON pede aspas duplas
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>RangeError</code><span>número fora do intervalo aceito</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+"-".repeat(-1);   // repetir -1 vezes?
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini mini--largo" data-exec>
+        <div class="mini-titulo"><code>SyntaxError</code><span>no seu próprio código: o catch nunca chega a existir</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  const x = ;          // falta o valor
+} catch (error) {
+  console.log("capturado!");
+}
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela tabela-tipos">
+        <thead><tr><th>Tipo</th><th>Quando aparece</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td><code>ReferenceError</code></td><td>Nome de variável ou função que não existe (ou usado antes do <code>let</code>).</td><td><code>console.log(totl)</code></td></tr>
+          <tr><td><code>TypeError</code></td><td>Operação que o tipo do valor não permite: propriedade de <code>null</code>, chamar o que não é função.</td><td><code>null.nome</code>, <code>(7).toUpperCase()</code></td></tr>
+          <tr><td><code>SyntaxError</code></td><td>Código ou texto fora da regra. No seu código, impede o script de começar; em <code>JSON.parse</code>, acontece durante a execução.</td><td><code>JSON.parse("{x}")</code></td></tr>
+          <tr><td><code>RangeError</code></td><td>Número fora do intervalo aceito.</td><td><code>"-".repeat(-1)</code>, <code>new Array(-1)</code></td></tr>
+          <tr><td><code>URIError</code></td><td>Endereço com codificação inválida.</td><td><code>decodeURIComponent("%")</code></td></tr>
+          <tr><td><code>AggregateError</code></td><td>Vários erros de uma vez.</td><td><code>Promise.any([...])</code> quando todas falham</td></tr>
+          <tr><td><code>Error</code></td><td>O tipo base de todos. É o que você usa para lançar os seus.</td><td><code>throw new Error("...")</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>O nome diz a causa</h3><p>Antes de ler a mensagem, leia o tipo: <code>ReferenceError</code> é nome errado, <code>TypeError</code> é valor errado, <code>SyntaxError</code> é texto ou código fora da regra.</p></article>
+      <article class="cartao"><h3>Todos são objetos Error</h3><p><code>TypeError</code>, <code>RangeError</code> e os outros herdam de <code>Error</code>. Por isso todos têm <code>name</code>, <code>message</code> e <code>stack</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: SyntaxError no seu código</h3><p>Se o próprio arquivo tem um erro de sintaxe, o navegador nem começa a rodar o script, então o <code>try</code> e o <code>catch</code> não existem ainda. Veja o último exemplo: “capturado!” nunca aparece. O <code>try...catch</code> só pega <code>SyntaxError</code> criado durante a execução, como o de <code>JSON.parse</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 03 · SEM TRY ======================= -->
+  <section class="secao" id="sem-try">
+    <div class="secao-topo">
+      <span class="selo">03</span>
+      <h2 class="secao-titulo">Sem try...catch: o risco da interrupção</h2>
+    </div>
+    <p class="secao-lead">Quando um erro não é tratado, a execução é interrompida e as linhas seguintes simplesmente não rodam. O programa para de forma abrupta na linha do erro.</p>
+
+    <div class="passos" data-passos="sem-try">
+      <figure class="painel-codigo">
+        <figcaption>processar.js</figcaption>
+<pre class="codigo codigo--numeros" data-lang="js">
+function processarDados(dados) {
+  console.log(dados.nome.toUpperCase());
+  console.log("Dados processados com sucesso!");
+}
+
+processarDados(null);   // isso gera um TypeError
+console.log("Fim do programa.");   // esta linha NUNCA será executada
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">passo a passo</span><code>siga a execução linha a linha</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas" data-cenarios></div>
+          <p class="passo-nota" data-nota></p>
+          <div class="passo-barra">
+            <div class="botoes">
+              <button type="button" class="btn" data-proximo>próximo passo</button>
+              <button type="button" class="btn btn--sec" data-reiniciar>reiniciar</button>
+            </div>
+            <span class="passo-conta" data-conta></span>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Para o script inteiro</h3><p>Um erro não tratado interrompe tudo o que vem depois naquele script: as linhas da função e as linhas de fora dela.</p></article>
+      <article class="cartao"><h3>A página não trava, o recurso quebra</h3><p>No navegador, os outros scripts e os outros botões continuam funcionando. Só aquele recurso deixa de responder, sem aviso nenhum para quem está usando.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: funciona no teste, quebra no uso</h3><p>No teste, <code>dados</code> sempre chega preenchido. Na vida real chega <code>null</code> de um campo vazio, de um servidor fora do ar ou de um JSON incompleto.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 04 · SINTAXE ======================= -->
+  <section class="secao" id="sintaxe">
+    <div class="secao-topo">
+      <span class="selo">04</span>
+      <h2 class="secao-titulo">A solução: try...catch</h2>
+    </div>
+    <p class="secao-lead">No <code>try</code> fica o código que <b>pode</b> gerar um erro; no <code>catch</code>, o código que lida com o erro. Escolha um cenário e siga as três regras do fluxo de execução.</p>
+
+    <div class="passos" data-passos="fluxo">
+      <figure class="painel-codigo">
+        <figcaption>sintaxe: try { código que pode falhar } catch (error) { o que fazer se falhar }</figcaption>
+<pre class="codigo codigo--numeros" data-lang="js">
+function lerPerfil(texto) {
+  try {
+    console.log("1. entrou no try");
+    const perfil = JSON.parse(texto);
+    console.log("2. JSON lido:", perfil.nome);
+  } catch (error) {
+    console.log("3. caiu no catch:", error.name);
+  }
+  console.log("4. o programa continua");
+}
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">passo a passo</span><code>um JSON válido e um inválido</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas" data-cenarios></div>
+          <p class="passo-nota" data-nota></p>
+          <div class="passo-barra">
+            <div class="botoes">
+              <button type="button" class="btn" data-proximo>próximo passo</button>
+              <button type="button" class="btn btn--sec" data-reiniciar>reiniciar</button>
+            </div>
+            <span class="passo-conta" data-conta></span>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>1. O try roda normalmente</h3><p>O código dentro do <code>try</code> é executado linha a linha, como qualquer outro código.</p></article>
+      <article class="cartao"><h3>2. Erro: o try para e vai para o catch</h3><p>Na linha em que um erro acontece, o <code>try</code> é abandonado e o controle salta para o <code>catch</code>, que recebe o erro.</p></article>
+      <article class="cartao"><h3>3. Sem erro: o catch é ignorado</h3><p>Se o <code>try</code> termina sem erro, o bloco <code>catch</code> é totalmente pulado. Nos dois casos o programa continua depois dele.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 05 · TRY ======================= -->
+  <section class="secao" id="try">
+    <div class="secao-topo">
+      <span class="selo">05</span>
+      <h2 class="secao-titulo">Bloco try: onde a ação acontece</h2>
+    </div>
+    <p class="secao-lead">O <code>try</code> contém o código que você quer <b>monitorar</b>. Qualquer erro dentro dele interrompe o bloco e aciona o <code>catch</code>.</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>try</code><span>uma variável que não existe</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  // código monitorado
+  let resultado = 10 / variavelInexistente;
+  console.log(resultado);
+} catch (error) {
+  console.error("Erro capturado!");
+}
+console.log("e o programa segue");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>let</code> dentro do try<span>só existe dentro do bloco</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  let media = (7 + 9) / 2;
+} catch (error) {
+  console.error(error.message);
+}
+console.log(media);   // fora das chaves
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>let</code> antes do try<span>declare fora, atribua dentro</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+let media;
+try {
+  media = (7 + 9) / 2;
+} catch (error) {
+  console.error(error.message);
+}
+console.log(media);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Só o que pode falhar</h3><p>Coloque no <code>try</code> apenas o código que realmente pode falhar: ler um JSON, acessar dados de fora, converter uma entrada. Fica mais fácil saber de onde veio o erro.</p></article>
+      <article class="cartao"><h3>Para no primeiro erro</h3><p>O <code>console.log(resultado)</code> do primeiro exemplo nunca roda: depois do erro, o resto do <code>try</code> é abandonado.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: as chaves criam um escopo</h3><p><code>let</code> e <code>const</code> declarados dentro do <code>try</code> desaparecem quando o bloco termina. Usar a variável depois dá <code>ReferenceError</code>, fora de qualquer <code>try</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 06 · CATCH ======================= -->
+  <section class="secao" id="catch">
+    <div class="secao-topo">
+      <span class="selo">06</span>
+      <h2 class="secao-titulo">Bloco catch: o resgate</h2>
+    </div>
+    <p class="secao-lead">O <code>catch</code> captura o erro lançado no <code>try</code> e evita que a aplicação trave. Ele recebe o <b>objeto error</b>, com três propriedades que você vai usar sempre.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>inspecionar.js · os números das linhas aparecem no stack</figcaption>
+<pre class="codigo codigo--numeros" data-lang="js" id="c-inspecionar">
+function inspecionar(acao) {
+  try {
+    acao();
+  } catch (error) {
+    console.log("name:", error.name);
+    console.log("message:", error.message);
+    console.log("stack:", error.stack);
+  }
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-inspecionar">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a chamada fica na linha 10</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="inspecionar(() => null.nome);"></button>
+            <button data-chamada="inspecionar(() => calcular());"></button>
+            <button data-chamada="inspecionar(() => JSON.parse(&quot;{x}&quot;));"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>catch { }</code><span>sem parâmetro, quando o erro não importa</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function ehJsonValido(texto) {
+  try {
+    JSON.parse(texto);
+    return true;
+  } catch {
+    return false;
+  }
+}
+console.log(ehJsonValido('{"ok": true}'));
+console.log(ehJsonValido("{ok: true}"));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>fallback</code><span>uma alternativa quando falha</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function lerPreferencias(texto) {
+  try {
+    return JSON.parse(texto);
+  } catch (error) {
+    console.warn("Preferências inválidas, usando o padrão.");
+    return { tema: "claro" };
+  }
+}
+console.log(lerPreferencias('{"tema": "escuro"}'));
+console.log(lerPreferencias("tema=escuro"));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>name e message</h3><p><code>name</code> é o tipo do erro (<code>TypeError</code>). <code>message</code> descreve o que deu errado. As duas juntas são o que aparece depois de “Uncaught”.</p></article>
+      <article class="cartao"><h3>stack: o rastro das chamadas</h3><p>Mostra por onde o programa passou até o erro, com a linha de cada função (<code>about:srcdoc:3</code> é a linha 3 do painel). Não faz parte da especificação oficial, mas todos os navegadores atuais oferecem.</p></article>
+      <article class="cartao cartao--novo"><h3>Três ações comuns</h3><p>No <code>catch</code> você registra o erro (<code>console.error</code>), mostra uma mensagem amigável para quem usa ou tenta uma alternativa (fallback), como no último exemplo.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 07 · THROW ======================= -->
+  <section class="secao" id="throw">
+    <div class="secao-topo">
+      <span class="selo">07</span>
+      <h2 class="secao-titulo">throw: lançando o próprio erro</h2>
+    </div>
+    <p class="secao-lead">Dividir por zero em JavaScript dá <code>Infinity</code>, sem erro nenhum. Quando uma situação é inválida para o <b>seu</b> programa, você mesmo lança o erro com <code>throw new Error("mensagem")</code>.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>dividir.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-throw">
+function dividirSemThrow(a, b) {
+  return a / b;
+}
+
+function dividir(a, b) {
+  if (b === 0) {
+    throw new Error("Divisão por zero!");
+  }
+  return a / b;   // não roda depois do throw
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-throw">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>sem throw, com throw e com throw tratado</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="console.log(dividirSemThrow(10, 0));"></button>
+            <button data-chamada="console.log(dividir(10, 0));"></button>
+            <button data-chamada="try { dividir(10, 0); } catch (e) { console.log(&quot;Tratado:&quot;, e.message); }"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>TypeError</code> e <code>RangeError</code><span>lance o tipo que explica o problema</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function conferirNota(nota) {
+  if (typeof nota !== "number") {
+    throw new TypeError("a nota precisa ser um número");
+  }
+  if (nota &lt; 0 || nota > 10) {
+    throw new RangeError("a nota precisa estar entre 0 e 10");
+  }
+  return nota;
+}
+</pre>
+        </figure>
+        <div class="chamadas">
+          <button data-chamada="console.log(conferirNota(8));"></button>
+          <button data-chamada="conferirNota(&quot;8&quot;);"></button>
+          <button data-chamada="conferirNota(12);"></button>
+        </div>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>throw "texto"</code><span>funciona, mas perde as informações</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  throw "deu ruim";
+} catch (error) {
+  console.log(typeof error);   // é só um texto
+  console.log(error.name);     // não existe
+  console.log(error.message);  // não existe
+}
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>throw para tudo, como o return</h3><p>Depois de um <code>throw</code>, nada mais roda na função. O erro sobe para quem chamou, até encontrar um <code>catch</code>. Se ninguém tratar, vira “Uncaught”.</p></article>
+      <article class="cartao"><h3>Escolha o tipo</h3><p><code>TypeError</code> para valor do tipo errado, <code>RangeError</code> para número fora do intervalo, <code>Error</code> para o resto. Quem trata pode decidir pelo tipo (seção 10).</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: lançar um texto</h3><p><code>throw "deu ruim"</code> é permitido, mas o <code>catch</code> recebe só um texto: sem <code>name</code>, sem <code>message</code> e sem <code>stack</code>. Lance sempre um objeto: <code>throw new Error("deu ruim")</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 08 · FINALLY ======================= -->
+  <section class="secao" id="finally">
+    <div class="secao-topo">
+      <span class="selo">08</span>
+      <h2 class="secao-titulo">Opcional: o bloco finally</h2>
+    </div>
+    <p class="secao-lead">O código dentro do <code>finally</code> <b>sempre</b> é executado, tenha ocorrido um erro ou não. Até quando o erro não é tratado.</p>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem erro</code><span>try inteiro, depois finally</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  console.log("1. abrindo o arquivo");
+  console.log("2. lendo");
+} catch (error) {
+  console.log("erro:", error.message);
+} finally {
+  console.log("3. fechando o arquivo");
+}
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>com erro</code><span>try interrompido, catch, depois finally</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  console.log("1. abrindo o arquivo");
+  throw new Error("arquivo corrompido");
+  console.log("2. lendo");
+} catch (error) {
+  console.log("erro:", error.message);
+} finally {
+  console.log("3. fechando o arquivo");
+}
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>try...finally</code><span>sem catch: o finally roda e o erro continua</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  console.log("1. abrindo o arquivo");
+  throw new Error("arquivo corrompido");
+} finally {
+  console.log("3. fechando o arquivo");
+}
+console.log("4. depois do try");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>return</code> no finally<span>ele passa por cima do return do try</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function testar() {
+  try {
+    return "valor do try";
+  } finally {
+    return "valor do finally";
+  }
+}
+console.log(testar());
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Uso comum: devolver o que você pegou</h3><p>Fechar uma conexão ou um arquivo, esconder o “carregando...”, reativar o botão que foi desativado, registrar o fim da tentativa.</p></article>
+      <article class="cartao cartao--erro"><h3>finally não libera memória</h3><p>Em JavaScript a memória é liberada sozinha pelo coletor de lixo (garbage collector) quando nada mais usa o valor. O <code>finally</code> serve para recursos que você abriu de propósito e precisa fechar.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: return dentro do finally</h3><p>Um <code>return</code> no <code>finally</code> substitui o valor do <code>try</code> e até engole um erro lançado. Deixe o <code>finally</code> só com limpeza, sem <code>return</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 09 · COMPLETO ======================= -->
+  <section class="secao" id="completo">
+    <div class="secao-topo">
+      <span class="selo">09</span>
+      <h2 class="secao-titulo">Exemplo completo: try...catch...finally</h2>
+    </div>
+    <p class="secao-lead">Os três blocos juntos numa função. Siga as duas chamadas e repare na <b>ordem</b> em que as linhas aparecem no console.</p>
+
+    <div class="passos" data-passos="completo">
+      <figure class="painel-codigo">
+        <figcaption>dividir.js</figcaption>
+<pre class="codigo codigo--numeros" data-lang="js">
+function dividir(a, b) {
+  try {
+    if (b === 0) {
+      throw new Error("Divisão por zero!");
+    }
+    return a / b;
+  } catch (error) {
+    console.error(error.message);
+    return null;
+  } finally {
+    console.log("Operação finalizada.");
+  }
+}
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">passo a passo</span><code>dividir(10, 2) e dividir(10, 0)</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas" data-cenarios></div>
+          <p class="passo-nota" data-nota></p>
+          <div class="passo-barra">
+            <div class="botoes">
+              <button type="button" class="btn" data-proximo>próximo passo</button>
+              <button type="button" class="btn btn--sec" data-reiniciar>reiniciar</button>
+            </div>
+            <span class="passo-conta" data-conta></span>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>O finally roda nos dois casos</h3><p>Com ou sem erro, “Operação finalizada.” aparece. É isso que garante o encerramento da lógica.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: a ordem da saída</h3><p>O resultado aparece <b>depois</b> de “Operação finalizada.”: o <code>return</code> guarda o valor, o <code>finally</code> roda e só então a função devolve. Quem espera ver <code>5</code> primeiro se confunde.</p></article>
+      <article class="cartao"><h3>null avisa quem chamou</h3><p>A função não trava o programa e devolve <code>null</code>. Quem chamou confere: <code>if (resultado === null)</code> e decide o que mostrar.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 10 · INSTANCEOF ======================= -->
+  <section class="secao" id="instanceof">
+    <div class="secao-topo">
+      <span class="selo">10</span>
+      <h2 class="secao-titulo">Um tratamento para cada tipo</h2>
+    </div>
+    <p class="secao-lead">Um <code>catch</code> pega <b>qualquer</b> erro, inclusive os que você não esperava. Pergunte o tipo com <code>instanceof</code>, trate o que você conhece e <b>relance</b> o resto com <code>throw error</code>.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>tema.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-instanceof">
+function lerTema(texto) {
+  try {
+    const config = JSON.parse(texto);
+    return config.tema.toUpperCase();
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      console.warn("Configuração inválida, usando o tema padrão.");
+      return "CLARO";
+    }
+    throw error;   // não sei tratar este: devolvo para quem chamou
+  }
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-instanceof">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>JSON válido, JSON inválido e JSON sem tema</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="console.log(lerTema('{&quot;tema&quot;: &quot;escuro&quot;}'));"></button>
+            <button data-chamada="console.log(lerTema(&quot;{tema: escuro}&quot;));"></button>
+            <button data-chamada="console.log(lerTema(&quot;{}&quot;));"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>instanceof pergunta o tipo</h3><p><code>error instanceof SyntaxError</code> é <code>true</code> para o erro de <code>JSON.parse</code>. Funciona com todos os tipos, inclusive os que você criar (seção 11).</p></article>
+      <article class="cartao"><h3>throw error dentro do catch</h3><p>Relançar devolve o erro para quem chamou, sem perder o tipo, a mensagem e o stack. Na terceira chamada, o <code>TypeError</code> sai da função e vira “Uncaught”.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: o catch que esconde bugs</h3><p>Se o <code>catch</code> devolvesse “CLARO” para qualquer erro, o <code>TypeError</code> da terceira chamada (um bug: falta tratar o JSON sem <code>tema</code>) ficaria escondido para sempre.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 11 · PERSONALIZADOS ======================= -->
+  <section class="secao" id="personalizados">
+    <div class="secao-topo">
+      <span class="selo">11</span>
+      <h2 class="secao-titulo">Erros personalizados</h2>
+    </div>
+    <p class="secao-lead">Para erros do seu domínio (cadastro inválido, saldo insuficiente), crie um tipo próprio com <code>class ... extends Error</code>. Ele pode carregar informações extras, como o campo que falhou.</p>
+
+    <div class="pilha">
+      <div class="preview" data-exec data-codigo="c-personalizado">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>um cadastro certo, três errados</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="enviarFormulario({ nome: &quot;Ana&quot;, email: &quot;ana@escola.br&quot; });"></button>
+            <button data-chamada="enviarFormulario({ nome: &quot;&quot;, email: &quot;x@x.br&quot; });"></button>
+            <button data-chamada="enviarFormulario({ nome: &quot;Bia&quot;, email: &quot;bia.escola.br&quot; });"></button>
+            <button data-chamada="enviarFormulario({ nome: &quot;Caio&quot; });"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+      <figure class="painel-codigo painel-codigo--duplo">
+        <figcaption>cadastro.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-personalizado">
+class ValidacaoError extends Error {
+  constructor(campo, mensagem) {
+    super(mensagem);
+    this.name = "ValidacaoError";
+    this.campo = campo;
+  }
+}
+
+function cadastrar(aluno) {
+  if (!aluno.nome) {
+    throw new ValidacaoError("nome", "Informe o nome.");
+  }
+  if (!aluno.email.includes("@")) {
+    throw new ValidacaoError("email", "O e-mail precisa ter @.");
+  }
+  console.log("Cadastrado:", aluno.nome);
+}
+
+function enviarFormulario(aluno) {
+  try {
+    cadastrar(aluno);
+  } catch (error) {
+    if (error instanceof ValidacaoError) {
+      console.warn(`Campo ${error.campo}: ${error.message}`);
+    } else {
+      throw error;   // um bug, não um erro de digitação
+    }
+  }
+}
+</pre>
+      </figure>
+    </div>
+
+    <div class="galeria">
+      <div class="mini mini--largo" data-exec>
+        <div class="mini-titulo"><code>{ cause }</code><span>um erro novo que guarda o erro original</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function carregarPerfil(texto) {
+  try {
+    return JSON.parse(texto);
+  } catch (error) {
+    throw new Error("Perfil corrompido", { cause: error });
+  }
+}
+
+try {
+  carregarPerfil("{nome:");
+} catch (error) {
+  console.error(error.message);
+  console.error("causa:", error.cause.name);
+}
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>extends Error</h3><p>A classe herda <code>message</code> e <code>stack</code>. O <code>super(mensagem)</code> passa a mensagem para o <code>Error</code>; o resto (<code>campo</code>) é seu.</p></article>
+      <article class="cartao"><h3>this.name</h3><p>Sem a linha <code>this.name = "ValidacaoError"</code>, o erro aparece como “Error” no console. O nome é o que identifica o tipo para quem lê.</p></article>
+      <article class="cartao cartao--novo"><h3>cause: a causa original</h3><p>Desde 2022, <code>new Error(mensagem, { cause: erro })</code> embrulha um erro técnico numa mensagem que faz sentido para o seu sistema, sem perder a origem.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 12 · ASYNC ======================= -->
+  <section class="secao" id="async">
+    <div class="secao-topo">
+      <span class="selo">12</span>
+      <h2 class="secao-titulo">Erros assíncronos</h2>
+    </div>
+    <p class="secao-lead">O <code>try</code> só enxerga erros que acontecem <b>enquanto ele está rodando</b>. Um erro que acontece depois (num <code>setTimeout</code> ou numa promessa) escapa, a não ser que você use <code>await</code>.</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>setTimeout</code> dentro do try<span>o erro acontece depois: escapa</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  setTimeout(() => {
+    throw new Error("falhou 1 segundo depois");
+  }, 1000);
+} catch (error) {
+  console.log("capturado:", error.message);
+}
+console.log("o try já terminou");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+        <button type="button" class="btn btn--sec" data-rodar>rodar de novo</button>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>try</code> dentro do setTimeout<span>o try roda junto com o erro: captura</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+setTimeout(() => {
+  try {
+    throw new Error("falhou 1 segundo depois");
+  } catch (error) {
+    console.log("capturado:", error.message);
+  }
+}, 1000);
+console.log("agendado");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+        <button type="button" class="btn btn--sec" data-rodar>rodar de novo</button>
+      </div>
+    </div>
+
+    <div class="pilha">
+      <div class="preview" data-exec data-codigo="c-async">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a busca leva 0,8 s; o id 0 não existe</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="semAwait(0);"></button>
+            <button data-chamada="comAwait(1);"></button>
+            <button data-chamada="comAwait(0);"></button>
+            <button data-chamada="buscarAluno(0).then((a) => console.log(a.nome)).catch((e) => console.log(&quot;com .catch:&quot;, e.message));"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+      <figure class="painel-codigo painel-codigo--duplo">
+        <figcaption>alunos.js · buscarAluno simula um servidor</figcaption>
+<pre class="codigo" data-lang="js" id="c-async">
+function buscarAluno(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (id > 0) resolve({ id, nome: "Ana" });
+      else reject(new Error("aluno não encontrado"));
+    }, 800);
+  });
+}
+
+function semAwait(id) {
+  try {
+    buscarAluno(id);   // a promessa falha depois
+    console.log("pedido enviado");
+  } catch (error) {
+    console.log("capturado:", error.message);
+  }
+}
+
+async function comAwait(id) {
+  console.log("carregando...");
+  try {
+    const aluno = await buscarAluno(id);
+    console.log("aluno:", aluno.nome);
+  } catch (error) {
+    console.log("capturado:", error.message);
+  } finally {
+    console.log("esconde o carregando");
+  }
+}
+</pre>
+      </figure>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>await traz o erro para dentro do try</h3><p>Com <code>await</code>, a função espera a promessa. Se ela falhar, o erro é lançado ali, na linha do <code>await</code>, e o <code>catch</code> pega.</p></article>
+      <article class="cartao"><h3>.catch() é o equivalente sem await</h3><p>Com <code>.then()</code>, o tratamento vai no <code>.catch()</code> da promessa. Sem nenhum dos dois, aparece “Uncaught (in promise)”.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: fetch não lança em 404</h3><p>O <code>fetch</code> só falha quando não há resposta (sem rede, servidor fora do ar). Um 404 ou um 500 chegam como resposta normal: confira <code>resposta.ok</code> e lance o erro você mesmo.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 13 · NÃO SILENCIE ======================= -->
+  <section class="secao" id="silenciar">
+    <div class="secao-topo">
+      <span class="selo">13</span>
+      <h2 class="secao-titulo">Boas práticas: não silencie, seja específico</h2>
+    </div>
+    <p class="secao-lead">Nunca deixe o bloco <code>catch</code> vazio: registre o erro ou tome uma ação corretiva. E envolva no <code>try</code> apenas o que realmente pode falhar.</p>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <span class="rotulo-antigo">evite</span>
+        <div class="mini-titulo"><code>catch</code> vazio<span>a segunda nota sumiu sem aviso</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function salvarNota(texto) {
+  try {
+    const nota = JSON.parse(texto);
+    console.log("Nota salva:", nota.valor);
+  } catch (error) {
+    // vazio: ninguém fica sabendo
+  }
+}
+salvarNota('{"valor": 8}');
+salvarNota("{valor: 9}");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <span class="rotulo-atual">prefira</span>
+        <div class="mini-titulo"><code>catch</code> que registra<span>e avisa quem chamou</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function salvarNota(texto) {
+  try {
+    const nota = JSON.parse(texto);
+    console.log("Nota salva:", nota.valor);
+    return true;
+  } catch (error) {
+    console.error("Nota não salva:", error.name, "em", texto);
+    return false;
+  }
+}
+salvarNota('{"valor": 8}');
+salvarNota("{valor: 9}");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <span class="rotulo-antigo">evite</span>
+        <div class="mini-titulo"><code>try</code> gigante<span>qual das linhas falhou?</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  const config = JSON.parse('{"tema": "escuro"}');
+  const usuario = JSON.parse('{nome: "Ana"}');
+  const total = config.itens.length;
+  console.log(usuario.nome, total);
+} catch (error) {
+  console.log("Algo deu errado.");
+}
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <span class="rotulo-atual">prefira</span>
+        <div class="mini-titulo"><code>try</code> específico<span>cada falha com o seu tratamento</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const config = JSON.parse('{"tema": "escuro"}');
+let usuario;
+try {
+  usuario = JSON.parse('{nome: "Ana"}');
+} catch (error) {
+  console.warn("Usuário inválido, entrando como visitante.");
+  usuario = { nome: "visitante" };
+}
+const total = config.itens ? config.itens.length : 0;
+console.log(usuario.nome, total);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Silêncio é o pior erro</h3><p>Um <code>catch</code> vazio transforma um problema visível em um dado perdido que ninguém sabe explicar. No mínimo, <code>console.error</code>.</p></article>
+      <article class="cartao"><h3>Específico é mais fácil de depurar</h3><p>No <code>try</code> gigante há dois problemas diferentes (o JSON do usuário e o <code>config.itens</code> que não existe) e uma mensagem só.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: try...catch como esconderijo</h3><p><code>config.itens.length</code> não é um erro de entrada: é um bug. Ele se resolve com uma condição no código, não com um <code>catch</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 14 · FEEDBACK ======================= -->
+  <section class="secao" id="feedback">
+    <div class="secao-topo">
+      <span class="selo">14</span>
+      <h2 class="secao-titulo">Feedback amigável para quem usa</h2>
+    </div>
+    <p class="secao-lead">Em aplicações visuais, mostre ao usuário uma mensagem clara do que fazer, em vez do erro técnico do console. O erro técnico continua registrado, para quem programa.</p>
+
+    <div class="dupla dupla--codigo">
+      <figure class="painel-codigo">
+        <figcaption>nota.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-feedback">
+const campo = document.querySelector("#nota");
+const mensagem = document.querySelector("#mensagem");
+
+function lerNota(texto) {
+  const nota = Number(texto.replace(",", "."));
+  if (texto.trim() === "" || Number.isNaN(nota)) {
+    throw new TypeError(`"${texto}" não é um número`);
+  }
+  if (nota &lt; 0 || nota > 10) {
+    throw new RangeError(`nota ${nota} fora de 0 a 10`);
+  }
+  return nota;
+}
+
+document.querySelector("#lancar").addEventListener("click", () => {
+  try {
+    const nota = lerNota(campo.value);
+    mensagem.textContent = `Nota ${nota} lançada.`;
+    mensagem.className = "ok";
+  } catch (error) {
+    // para quem programa: o detalhe técnico
+    console.error(error.name + ": " + error.message);
+    // para quem usa: o que fazer
+    mensagem.textContent = "Digite uma nota de 0 a 10, como 7 ou 8,5.";
+    mensagem.className = "erro";
+  }
+});
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-feedback" data-html="c-feedback-html">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>teste 11, abc, 8,5 e o campo vazio</code></div>
+        <div class="preview-corpo">
+          <figure class="painel-codigo">
+            <figcaption>nota.html</figcaption>
+<pre class="codigo" id="c-feedback-html">
+&lt;label for="nota"&gt;Nota da prova (0 a 10)&lt;/label&gt;
+&lt;input id="nota" value="11"&gt;
+&lt;button id="lancar"&gt;Lançar nota&lt;/button&gt;
+&lt;p id="mensagem" role="alert"&gt;&lt;/p&gt;
+</pre>
+          </figure>
+          <div class="tela" data-tela></div>
+          <div class="console" data-console data-vazio="(console vazio: clique em Lançar nota)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Duas mensagens, dois públicos</h3><p>O console recebe o tipo e o detalhe técnico. A tela recebe o que fazer, na língua de quem usa, sem “TypeError” nem “NaN”.</p></article>
+      <article class="cartao"><h3>role="alert"</h3><p>Leitores de tela anunciam a mensagem assim que ela muda. A cor ajuda, mas a mensagem precisa fazer sentido sem ela.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: error.message na tela</h3><p>Mostrar a mensagem técnica (“Cannot read properties of undefined”) assusta quem usa e pode expor detalhes internos do sistema.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 15 · REGISTRO ======================= -->
+  <section class="secao" id="registro">
+    <div class="secao-topo">
+      <span class="selo">15</span>
+      <h2 class="secao-titulo">Registro e monitoramento</h2>
+    </div>
+    <p class="secao-lead">Use <code>console.error</code> ou ferramentas de monitoramento para registrar falhas em produção. Como último recurso, a página pode ouvir todo erro que ninguém tratou.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>monitor.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-registro">
+window.addEventListener("error", (evento) => {
+  console.warn("Enviado à equipe:", evento.message);
+});
+
+window.addEventListener("unhandledrejection", (evento) => {
+  console.warn("Promessa sem catch:", evento.reason.message);
+});
+
+function bugEscondido() {
+  const aluno = undefined;
+  return aluno.nome;
+}
+
+setTimeout(bugEscondido, 500);
+Promise.reject(new Error("servidor fora do ar"));
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-registro">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>os ouvintes registram e o erro continua aparecendo</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <button type="button" class="btn btn--sec" data-rodar>rodar de novo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Ferramentas de monitoramento</h3><p>Serviços como Sentry, New Relic e Datadog fazem isso por você: recebem os erros dos navegadores dos usuários, agrupam e avisam a equipe.</p></article>
+      <article class="cartao"><h3>console.error, não console.log</h3><p>No F12, <code>console.error</code> aparece em vermelho, com o caminho das chamadas, e pode ser filtrado. Um erro registrado como log comum se perde.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: dados pessoais no registro</h3><p>Nunca registre senha, CPF ou cartão junto com o erro. Pela LGPD, o registro também é tratamento de dados pessoais.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 16 · VALIDAÇÃO ======================= -->
+  <section class="secao" id="validacao">
+    <div class="secao-topo">
+      <span class="selo">16</span>
+      <h2 class="secao-titulo">Validando entradas</h2>
+    </div>
+    <p class="secao-lead">Confira os dados <b>na entrada</b> da função e lance um erro claro antes que um valor ruim se espalhe. O cuidado está em escolher a verificação certa.</p>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>typeof</code> e <code>Number.isFinite</code><span>NaN e Infinity são do tipo number</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+console.log(typeof 7);              // number
+console.log(typeof "7");            // string
+console.log(typeof NaN);            // number (!)
+console.log(typeof Infinity);       // number (!)
+
+console.log(Number.isFinite(7));         // true
+console.log(Number.isFinite("7"));       // false
+console.log(Number.isFinite(NaN));       // false
+console.log(Number.isFinite(Infinity));  // false
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>validarIdade</code><span>tipo, depois intervalo</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function validarIdade(idade) {
+  if (!Number.isInteger(idade)) {
+    throw new TypeError("a idade precisa ser um número inteiro");
+  }
+  if (idade &lt; 0 || idade > 130) {
+    throw new RangeError("idade fora do intervalo 0 a 130");
+  }
+  return idade;
+}
+
+function testar(valor) {
+  try {
+    console.log("ok:", validarIdade(valor));
+  } catch (error) {
+    console.log(`${error.name}: ${error.message}`);
+  }
+}
+</pre>
+        </figure>
+        <div class="chamadas">
+          <button data-chamada="testar(17);"></button>
+          <button data-chamada="testar(&quot;17&quot;);"></button>
+          <button data-chamada="testar(NaN);"></button>
+          <button data-chamada="testar(17.5);"></button>
+          <button data-chamada="testar(-3);"></button>
+        </div>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Valide cedo</h3><p>As verificações ficam no começo da função, uma por condição, cada uma com o seu <code>throw</code>. O resto da função pode confiar nos dados.</p></article>
+      <article class="cartao"><h3>Tipo primeiro, intervalo depois</h3><p><code>TypeError</code> quando o valor nem é número; <code>RangeError</code> quando é número mas está fora do aceitável. Quem trata sabe o que dizer em cada caso.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: typeof NaN é "number"</h3><p><code>typeof nota !== "number"</code> deixa passar <code>NaN</code> e <code>Infinity</code>, que chegam de <code>Number("abc")</code> e de divisões por zero. <code>Number.isFinite</code> e <code>Number.isInteger</code> recusam os dois.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= LAB LIVRE ======================= -->
+  <section class="secao" id="lab">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Lab</span>
+      <h2 class="secao-titulo">Laboratório livre</h2>
+    </div>
+    <p class="secao-lead">Escreva JavaScript à esquerda e execute: o console aparece à direita, com os erros não tratados em vermelho. O <code>await</code> funciona direto. Carregue um exemplo e modifique.</p>
+
+    <div class="playground" data-playground>
+      <div class="pg-editor">
+        <div class="pg-barra">
+          <select data-exemplos aria-label="Carregar exemplo">
+            <option value="">carregar um exemplo…</option>
+            <option value="json">JSON.parse seguro</option>
+            <option value="dividir">try, catch e finally</option>
+            <option value="personalizado">erro personalizado</option>
+            <option value="relancar">tratar um tipo, relançar o resto</option>
+            <option value="async">async / await</option>
+            <option value="global">ouvir erros não tratados</option>
+            <option value="vazio">mistério: o catch vazio</option>
+          </select>
+          <button type="button" class="btn" data-rodar-pg>Executar</button>
+          <span class="pg-dica">Ctrl + Enter também executa</span>
+        </div>
+        <textarea spellcheck="false" aria-label="Editor de JavaScript"></textarea>
+      </div>
+      <div class="pg-resultado">
+        <div class="preview-topo" style="border:1px solid var(--borda);border-radius:var(--raio);background:#fff">
+          <span class="preview-selo">console</span><code>a saída do seu código</code>
+        </div>
+        <div class="console console--alto" data-console></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= REFERÊNCIA RÁPIDA ======================= -->
+  <section class="secao" id="referencia">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Resumo</span>
+      <h2 class="secao-titulo">Referência rápida</h2>
+    </div>
+    <p class="secao-lead">Tudo o que apareceu hoje, numa tabela.</p>
+
+    <div class="rolagem-x">
+      <table class="tabela">
+        <thead><tr><th>Família</th><th>Itens</th><th>Para que serve</th></tr></thead>
+        <tbody>
+          <tr><td>Blocos</td><td><code>try { }</code> <code>catch (error) { }</code> <code>finally { }</code></td><td>Código monitorado; o que fazer se falhar; o que roda sempre.</td></tr>
+          <tr><td>catch sem parâmetro</td><td><code>catch { }</code></td><td>Quando só importa saber que falhou, não o erro.</td></tr>
+          <tr><td>Lançar</td><td><code>throw new Error("mensagem")</code></td><td>Interrompe a função e entrega o erro a quem chamou. Sempre um objeto, nunca um texto.</td></tr>
+          <tr><td>Relançar</td><td><code>throw error</code> dentro do <code>catch</code></td><td>Devolve o erro que você não sabe tratar.</td></tr>
+          <tr><td>Objeto error</td><td><code>name</code> <code>message</code> <code>stack</code> <code>cause</code></td><td>Tipo; descrição; caminho das chamadas; erro original.</td></tr>
+          <tr><td>Tipos</td><td><code>ReferenceError</code> <code>TypeError</code> <code>SyntaxError</code> <code>RangeError</code></td><td>Nome inexistente; valor do tipo errado; texto ou código fora da regra; número fora do intervalo.</td></tr>
+          <tr><td>Conferir o tipo</td><td><code>error instanceof TypeError</code></td><td>Um tratamento para cada tipo.</td></tr>
+          <tr><td>Erro próprio</td><td><code>class ValidacaoError extends Error</code></td><td>Erros do seu domínio, com <code>this.name</code> e campos extras.</td></tr>
+          <tr><td>Assíncrono</td><td><code>try { await promessa }</code> <code>promessa.catch(fn)</code></td><td>Sem um dos dois, aparece “Uncaught (in promise)”.</td></tr>
+          <tr><td>Último recurso</td><td><code>addEventListener("error")</code> <code>addEventListener("unhandledrejection")</code></td><td>Registrar o que ninguém tratou.</td></tr>
+          <tr><td>Validar números</td><td><code>Number.isFinite(v)</code> <code>Number.isInteger(v)</code></td><td>Recusam texto, <code>NaN</code> e <code>Infinity</code>; <code>typeof</code> não recusa os dois últimos.</td></tr>
+          <tr><td>Boas práticas</td><td>não silenciar · ser específico · feedback amigável · registrar</td><td>Nada de <code>catch</code> vazio; <code>try</code> pequeno; mensagem clara na tela; <code>console.error</code> ou monitoramento.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ======================= ATIVIDADE ======================= -->
+<section class="secao atividade" id="atividade">
+  <div class="wrap">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Atividade</span>
+      <h2 class="secao-titulo">Validando entradas e dados externos</h2>
+    </div>
+    <p class="secao-lead">Duas funções que não podem derrubar o programa: uma que calcula a média de duas notas (individual) e uma que carrega usuários de um servidor que falha metade das vezes (em equipe).</p>
+
+    <div class="dupla">
+      <div class="bloco-branco">
+        <span class="nivel">Parte 1 · obrigatória</span>
+        <h3>O que as funções precisam fazer</h3>
+        <ul class="requisitos">
+          <li><b>Individual:</b> crie <code>calcularMedia(nota1, nota2)</code> usando <code>try...catch</code>.</li>
+          <li>Valide se as notas são números com <code>typeof nota !== "number"</code> e lance <code>throw new Error("mensagem")</code> se não forem.</li>
+          <li>Garanta que as notas estão entre 0 e 10; fora disso, lance um <code>Error</code>.</li>
+          <li>No <code>catch</code>, mostre o erro com <code>console.error</code> e retorne <code>null</code>.</li>
+          <li><b>Em equipe:</b> criem <code>carregarUsuarios()</code>, que simula um servidor com 50% de chance de falha (<code>Math.random() &lt; 0.5</code> lança um erro).</li>
+          <li>Usem <code>try...catch</code>: com sucesso, retornem a lista de nomes; com erro, retornem um array vazio <code>[]</code>.</li>
+          <li>Usem <code>finally</code> para registrar o fim da tentativa.</li>
+        </ul>
+      </div>
+      <figure class="painel-codigo">
+        <figcaption>atividade.js · as chamadas de teste já estão prontas</figcaption>
+<pre class="codigo" data-lang="js">
+function calcularMedia(nota1, nota2) {
+  // seu código aqui
+}
+
+function carregarUsuarios() {
+  // seu código aqui
+}
+
+console.log(calcularMedia(7, 9));       // 8
+console.log(calcularMedia(10, 6.5));    // 8.25
+console.log(calcularMedia(7, "9"));     // null + erro no console
+console.log(calcularMedia(11, 5));      // null + erro no console
+
+console.log(carregarUsuarios());   // rode várias vezes:
+                                   // às vezes a lista, às vezes []
+</pre>
+      </figure>
+    </div>
+
+    <div class="dupla">
+      <div class="bloco-branco">
+        <span class="nivel">Parte 2 · desafio</span>
+        <h3>Exigências que quebram a solução preguiçosa</h3>
+        <ul class="requisitos">
+          <li><code>calcularMedia(NaN, 8)</code> e <code>calcularMedia(-1, Infinity)</code> retornam <code>null</code>. O <code>typeof</code> sozinho não basta.</li>
+          <li>Lance <code>TypeError</code> quando a nota não é número e <code>RangeError</code> quando está fora de 0 a 10, e a mensagem diz <b>qual</b> nota (<code>nota1</code> ou <code>nota2</code>) e o valor recebido.</li>
+          <li><code>carregarUsuarios</code> passa a devolver uma <code>Promise</code> que demora 0,5 s (com <code>setTimeout</code>) e é chamada com <code>await</code> dentro de <code>try...catch</code>.</li>
+          <li>Antes de desistir, <code>carregarUsuarios</code> tenta <b>até 3 vezes</b>; cada tentativa registra o próprio fim no <code>finally</code>. Só depois da terceira falha retorna <code>[]</code>.</li>
+          <li>Crie a classe <code>ServidorError extends Error</code> para a falha simulada e trate com <code>instanceof</code>; qualquer outro erro é relançado.</li>
+          <li>Proibido: <code>catch</code> vazio, <code>throw</code> de texto e <code>return</code> dentro do <code>finally</code>.</li>
+        </ul>
+      </div>
+      <div class="bloco-branco">
+        <span class="nivel">Parte 3 · investigação</span>
+        <h3>Responda em comentário no próprio código</h3>
+        <ul class="requisitos">
+          <li>Por que <code>typeof NaN</code> é <code>"number"</code>? Que chamada de <code>calcularMedia</code> passaria pela sua validação da Parte 1 e daria um resultado errado?</li>
+          <li>O que muda se o <code>return null</code> for para dentro do <code>finally</code>? Teste com <code>calcularMedia(7, 9)</code>.</li>
+          <li>Chame <code>carregarUsuarios()</code> da Parte 2 <b>sem</b> <code>await</code>, dentro de um <code>try</code>. O <code>catch</code> é acionado? O que aparece no console e por quê?</li>
+          <li>Se o próprio <code>atividade.js</code> tiver um erro de sintaxe, por que nenhum <code>catch</code> do arquivo é acionado?</li>
+          <li>Lançar um erro ou retornar <code>null</code>: o que muda para quem chama <code>calcularMedia</code>? Quando cada um é melhor?</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo" style="color:var(--verde-escuro)">Resultado esperado no console</h3>
+    <div class="bloco-branco">
+      <div class="esperado">
+        <div data-esperado-media>
+          <h4>calcularMedia · as mensagens são um exemplo</h4>
+          <div class="chamadas" data-casos></div>
+          <div class="console" data-console></div>
+        </div>
+        <div data-esperado-usuarios>
+          <h4>carregarUsuarios · cada clique sorteia de novo</h4>
+          <div class="chamadas">
+            <button type="button" class="chamada" data-uma>Parte 1: uma tentativa</button>
+            <button type="button" class="chamada" data-tres>Parte 2: até 3 tentativas</button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="criterios">
+      <article class="cartao"><h3>Entrega</h3><p>O arquivo <code>atividade.js</code> com as duas funções, as chamadas de teste e as respostas da Parte 3 em comentários. A parte em equipe leva o nome de todos no topo do arquivo.</p></article>
+      <article class="cartao"><h3>Critério técnico</h3><p>Nenhuma chamada de teste derruba o programa; todo erro tem tipo, mensagem e <code>console.error</code>; o <code>finally</code> aparece em todas as tentativas, com ou sem falha.</p></article>
+      <article class="cartao"><h3>Critério de clareza</h3><p>As mensagens de erro dizem o que estava errado e o que era esperado (“nota2 precisa estar entre 0 e 10, recebi 11”), não só “erro”.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= RODAPÉ ======================= -->
+<footer class="rodape">
+  <div class="rodape-interna">
+    <div>
+      <h2>Bom código!</h2>
+      <p>Erro vai acontecer. A diferença é quem fica sabendo: o usuário, com uma tela que não responde, ou você, com uma mensagem clara.</p>
+      <div class="rodape-meta">2º período · PM 3 — Projeto Mensal</div>
+      <p class="rodape-creditos">Créditos: adaptada dos slides de Riad Younes (<i>Tratamento de Erros com try...catch em JavaScript</i>).</p>
+    </div>
+    <img src="img/logo.png" alt="Descomplica + UniAmérica">
+  </div>
+</footer>
+
+<button class="voltar-topo" aria-label="Voltar ao topo">&#8593;</button>
+
+<script src="js/aula.js"></script>
+</body>
+</html>
