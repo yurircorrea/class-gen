@@ -61,6 +61,15 @@ existirem no git: apague o `.gitkeep` quando colocar o primeiro arquivo.
 6. **`exemplos/` é só leitura.** Guarda as duas aulas de referência de qualidade, com os nomes
    antigos (`aula-flexbox`, `aula-bootstrap`). Ao criar uma aula nova, nunca altere `exemplos/`; a
    versão "oficial" de cada aula (com período e PM na página) fica em `aulas/`.
+7. **Toda vez que uma aula for pedida, pergunte se algum material deve ficar disponível para
+   download dos alunos.** Liste os arquivos de `material/<periodo>/<pm>/<tema>/` e pergunte quais
+   os alunos podem baixar: apostila, exercícios, arquivos de apoio, modelos. Em geral não entram o
+   roteiro do professor nem o PPTX dos slides. Pergunte junto com a pergunta do item 1 quando o
+   material já estiver na pasta; senão, assim que ele chegar. Os escolhidos vão numa seção
+   **Materiais da Aula** (`id="materiais"`, logo depois da apresentação da aula e no menu), com
+   link de download para o arquivo original em `material/`. **Só entra o que o usuário
+   confirmar**; se ele disser que nenhum, a aula não ganha a seção. Detalhes e armadilhas em
+   `.claude/skills/aula-single-page/SKILL.md` (regra 9).
 
 ## Regras que valem para toda aula
 

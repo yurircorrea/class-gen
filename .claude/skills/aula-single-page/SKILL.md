@@ -63,6 +63,9 @@ precisa saber a que lugar do curso pertence **antes** de qualquer outra coisa:
    (não mova) para a pasta certa.
 4. Registre a referência **dentro da página** (ver `references/design-system.md` §8): chips de
    período e PM na capa, linha no rodapé e `data-periodo`/`data-pm` no `<body>`.
+5. **Pergunte quais materiais os alunos podem baixar** (regra 9 da §4): liste o que há em
+   `material/<periodo>/<pm>/<tema>/`, junto com a pergunta do passo 2 quando o material já estiver
+   na pasta, ou assim que ele chegar. Só entra na página o que o usuário confirmar.
 
 Nomes de pasta: `1o_periodo`, `2o_periodo`, …; `pm1` a `pm4`. Rótulo exibido na página:
 `2º período` e `PM 2 · Projeto Mensal`.
@@ -145,6 +148,25 @@ README com estrutura, versões usadas e a convenção visual das demonstrações
 
 8. **Período e PM na página** quando o projeto os define (§3.0): chips na capa, linha no rodapé,
    atributos no `<body>`. Material e aula ficam nas pastas do período e do PM correspondentes.
+
+9. **Materiais da Aula: o usuário escolhe, a aula oferece.** Toda vez que uma aula for pedida,
+   pergunte se algum material deve ser disponibilizado para download dos alunos (§3.0, passo 5).
+   Os escolhidos, e só eles, vão numa seção `id="materiais"` chamada **Materiais da Aula**, logo
+   depois da apresentação da aula, com item no menu do topo (`materiais`). Se o usuário não quiser
+   nenhum, não crie a seção.
+   - Um cartão por arquivo: nome do arquivo como está em `material/`, tamanho, o que é e onde a
+     aula o usa; botão "baixar".
+   - O link é `<a href="../../../../material/<periodo>/<pm>/<tema>/arquivo" download>`, com o
+     caminho codificado (`%20`, `%C3%A7`…) e **sem** `download="nome"` (com acento no nome, o
+     navegador pode salvar o arquivo sem extensão; sem o valor, ele usa o nome do próprio
+     arquivo). Aponte para o original; não duplique o arquivo em `aulas/`.
+   - **Imagens por `file://`:** o navegador abre a imagem em vez de baixá-la. Para cada imagem
+     oferecida, guarde uma cópia exata em base64 em `js/materiais.js` e baixe de lá quando
+     `location.protocol === "file:"` (`data-material="<caminho em material/>"` no link). PDFs,
+     planilhas e arquivos compactados baixam normalmente.
+   - Teste cada link por `file://` e por http e compare o arquivo baixado com o original byte a
+     byte. Registre a seção e o `js/materiais.js` no README da aula, com o aviso de que os links
+     dependem de `material/` estar no mesmo repositório.
 
 ---
 

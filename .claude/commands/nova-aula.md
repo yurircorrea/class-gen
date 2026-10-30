@@ -26,6 +26,13 @@ Siga este roteiro, sem pular etapas:
    Se o arquivo estiver em outro lugar, **copie** (não mova) para lá.
    Se não vier argumento, liste o que existe em `material/<periodo>/<pm>/` e pergunte qual usar.
 
+   **Materiais para download (obrigatório, junto com a pergunta do passo 1 quando o material já
+   estiver na pasta; senão, assim que ele chegar).** Liste os arquivos de
+   `material/<periodo>/<pm>/<tema>/` e pergunte se algum deve ser disponibilizado para download
+   dos alunos na seção **Materiais da Aula** (apostila, exercícios, arquivos de apoio; em geral
+   não o roteiro do professor nem o PPTX dos slides). Só entra o que o usuário confirmar; se
+   nenhum, a aula não ganha a seção. Como montar: habilidade `aula-single-page`, §4, regra 9.
+
 3. **Identidade visual.** Se um argumento citar outra aula de `exemplos/` ou `aulas/`, reaproveite
    os tokens dela. Caso contrário, extraia a paleta e as fontes do próprio material (PPTX: cores e
    `typeface` dos slides; PDF/DOCX: pergunte se não houver pista) e, na falta de qualquer
@@ -53,7 +60,7 @@ Siga este roteiro, sem pular etapas:
    `aulas/2o_periodo/pm2/bootstrap/`.
 
 9. **Verificar** conforme `references/qa-e-armadilhas.md`: sem transbordo horizontal, sem erro de
-   console, laboratórios renderizando, iframes com altura justa, sem área vazia entre painéis,
+   console, cada link de "Materiais da Aula" baixando o arquivo idêntico ao original, laboratórios renderizando, iframes com altura justa, sem área vazia entre painéis,
    abrindo por `file://`, nenhum texto dirigido ao professor, chips de período/PM visíveis na capa.
 
 10. **Entregar** com um resumo curto: onde ficaram o material e a aula (caminhos completos), o
