@@ -76,6 +76,11 @@ Detalhadas na habilidade `aula-single-page`. As que mais importam:
    `.pilha` (preview em cima, código em duas colunas embaixo) quando o código é bem mais alto.
 7. **Atividade final em três partes**: obrigatória, desafio e investigação.
 8. **Conferir se o material envelheceu** antes de escrever. Apostilas erram e frameworks mudam.
+9. **Atividade enviada por e-mail.** Toda atividade termina com o bloco "Envio da atividade"
+   (`.envio`) instruindo os alunos a enviarem a atividade para
+   **yuri.correa@descomplica.com.br** (link `mailto:`, logo depois dos cartões Entrega/Critérios).
+   Vale para toda aula nova e para qualquer aula existente que seja revisada. O bloco fala com o
+   aluno, então não viola a regra 1. Modelo em `.claude/skills/aula-single-page/references/design-system.md` §7.
 
 ## Convenções de trabalho
 
@@ -100,4 +105,5 @@ python -m http.server 8788 --directory aulas/<periodo>/<pm>/<tema>
 
 Medir no console: transbordo horizontal, erros, laboratórios renderizados, altura dos iframes,
 vazio entre painéis. Capturar uma seção por vez com Chrome headless e **perfil novo a cada
-captura**. Testar por `file://`. Conferir que os chips de período e PM aparecem na capa.
+captura**. Testar por `file://`. Conferir que os chips de período e PM aparecem na capa e que o
+bloco de envio por e-mail aparece no fim da atividade.

@@ -41,7 +41,9 @@ Siga este roteiro, sem pular etapas:
 6. **Criar `aulas/<periodo>/<pm>/<tema>/`**, só o nome do tema, **sem o prefixo `aula-`**, e com
    o mesmo nome da pasta do tema em `material/`. Use a estrutura da habilidade (`index.html`,
    `css/`, `js/`, `demos/`, `img/`, `vendor/` quando houver framework, `README.md`), copiando os
-   arquivos de `assets/` e adaptando.
+   arquivos de `assets/` e adaptando. A atividade final termina **sempre** com o bloco
+   "Envio da atividade" (`.envio`) mandando os alunos enviarem a atividade para
+   `yuri.correa@descomplica.com.br` (modelo em `references/design-system.md` §7).
 
 7. **Inserir a referência de período e PM na página**: chips na capa (`.capa-meta`), linha no
    rodapé (`.rodape-meta`) e `data-periodo`/`data-pm` no `<body>`. Modelo em
@@ -54,7 +56,8 @@ Siga este roteiro, sem pular etapas:
 
 9. **Verificar** conforme `references/qa-e-armadilhas.md`: sem transbordo horizontal, sem erro de
    console, laboratórios renderizando, iframes com altura justa, sem área vazia entre painéis,
-   abrindo por `file://`, nenhum texto dirigido ao professor, chips de período/PM visíveis na capa.
+   abrindo por `file://`, nenhum texto dirigido ao professor, chips de período/PM visíveis na capa, bloco de envio
+   por e-mail presente no fim da atividade.
 
 10. **Entregar** com um resumo curto: onde ficaram o material e a aula (caminhos completos), o
     período, o PM e o tema registrados, e o que foi corrigido em relação ao material de origem.
