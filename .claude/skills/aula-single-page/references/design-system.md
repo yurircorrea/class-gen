@@ -258,6 +258,12 @@ Fundo na cor de destaque, três partes, mais resultado esperado e critérios.
       <article class="cartao"><h3>Critério técnico</h3><p>…</p></article>
       <article class="cartao"><h3>Critério de acessibilidade</h3><p>…</p></article>
     </div>
+
+    <!-- OBRIGATÓRIO: envio da atividade por e-mail (regra 10 do SKILL.md) -->
+    <div class="envio">
+      <span class="envio-rotulo">Envio da atividade</span>
+      <p class="envio-texto">Envie a atividade para <a href="mailto:yuri.correa@descomplica.com.br">yuri.correa@descomplica.com.br</a>, com o que está descrito em <b>Entrega</b>.</p>
+    </div>
   </div>
 </section>
 ```
@@ -277,6 +283,14 @@ Fundo na cor de destaque, três partes, mais resultado esperado e critérios.
 
 Proibições explícitas valem mais que requisitos: "sem `float`, sem `position`, sem `@media`" obriga
 a usar o que foi ensinado.
+
+**Envio da atividade (obrigatório em toda aula).** O bloco `.envio` fecha a seção, depois dos
+cartões `.criterios`: um painel escuro sobre o fundo na cor de destaque, com o rótulo "Envio da
+atividade" e a frase "Envie a atividade para yuri.correa@descomplica.com.br, com o que está
+descrito em **Entrega**". O e-mail é um link `mailto:`. A frase remete ao cartão **Entrega**, então
+esse cartão precisa dizer exatamente o que enviar (arquivos, link publicado, nomes da equipe). O
+CSS (`.envio`, `.envio-rotulo`, `.envio-texto`) já está em `assets/estilo.css`. O bloco fala com o
+aluno, portanto é compatível com a regra de não haver instruções ao professor na página.
 
 ---
 

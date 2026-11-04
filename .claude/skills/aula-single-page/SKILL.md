@@ -168,6 +168,13 @@ README com estrutura, versões usadas e a convenção visual das demonstrações
      byte. Registre a seção e o `js/materiais.js` no README da aula, com o aviso de que os links
      dependem de `material/` estar no mesmo repositório.
 
+10. **Toda atividade é enviada por e-mail para `yuri.correa@descomplica.com.br`.** A seção de
+    atividade termina com o bloco "Envio da atividade" (`.envio`, modelo em
+    `references/design-system.md` §7): a instrução de enviar a atividade a esse endereço, com o
+    e-mail como link `mailto:`, logo depois dos cartões de critérios (Entrega, Critério técnico…).
+    O bloco é dirigido **aos alunos**, então não viola a regra 1. Vale para toda aula nova e para
+    toda aula existente que seja revisada. Só troque o endereço se o professor pedir.
+
 ---
 
 ## 5. Regra estrutural mais importante

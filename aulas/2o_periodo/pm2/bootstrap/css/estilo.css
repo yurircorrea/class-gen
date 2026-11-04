@@ -271,3 +271,19 @@ body{
 }
 .capa-meta span:last-child{background:var(--tinta);color:var(--verde)}
 .rodape-meta{margin-top:14px;font-family:var(--mono);font-size:14px;letter-spacing:.4px;color:var(--verde)}
+
+/* ---------- envio da atividade por e-mail ---------- */
+.envio{
+  display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;margin-top:24px;
+  background:var(--tinta);color:var(--code-fg);border-radius:var(--raio);padding:26px 32px;
+}
+.envio-rotulo{
+  font-family:var(--mono);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;
+  background:var(--verde);color:var(--tinta);padding:5px 12px;border-radius:999px;
+}
+.envio-texto{margin:0;flex:1 1 420px;font-size:22px;line-height:1.4;color:var(--code-fg)}
+.envio-texto a{
+  font-family:var(--mono);font-weight:700;color:var(--verde);text-decoration:none;
+  border-bottom:2px solid var(--verde);overflow-wrap:anywhere;
+}
+.envio-texto b{color:#fff}
