@@ -143,5 +143,6 @@ arquivo existente: script Python com `str.replace` e `assert` de que o alvo foi 
 - [ ] nenhuma área vazia maior que ~250px entre painéis
 - [ ] abre por `file://` com tudo funcionando
 - [ ] nenhum texto dirigido ao professor na página
+- [ ] bloco "Envio da atividade" (`.envio`) no fim da atividade, com o e-mail `yuri.correa@descomplica.com.br` como link `mailto:`
 - [ ] arquivos de QA removidos
 - [ ] README com estrutura, versões e convenção visual

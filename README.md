@@ -55,7 +55,7 @@ período/PM na página).
 - laboratórios interativos que mostram o código gerado
 - simuladores de largura de tela (quando o assunto é responsividade)
 - laboratório livre com editor e resultado ao vivo
-- referência rápida e atividade final em três partes
+- referência rápida e atividade final em três partes, com a instrução de envio por e-mail
 - cópia local de qualquer framework ensinado: abre **sem internet**
 
 ## A habilidade
