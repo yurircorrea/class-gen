@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AJAX com fetch e Internacionalização com Intl</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="stylesheet" href="css/demos.css">
+</head>
+<body data-periodo="2o_periodo" data-pm="pm4">
+
+<!-- ============================ BARRA ============================ -->
+<div class="barra">
+  <div class="barra-interna">
+    <a class="barra-marca" href="#roteiro"><span class="ponto"></span> AJAX + Intl</a>
+    <nav class="barra-menu">
+      <a href="#materiais">materiais</a>
+      <a href="#recarregar">ajax</a>
+      <a href="#http">http</a>
+      <a href="#fetch">fetch</a>
+      <a href="#promises">promises</a>
+      <a href="#async">async</a>
+      <a href="#erros">erros</a>
+      <a href="#post">post</a>
+      <a href="#tela">tela</a>
+      <a href="#problema-intl">intl</a>
+      <a href="#locale">locale</a>
+      <a href="#numberformat">números</a>
+      <a href="#datetime">datas</a>
+      <a href="#collator">ordenar</a>
+      <a href="#juntos">juntos</a>
+      <a href="#atividade">atividade</a>
+    </nav>
+    <button type="button" class="modo-rede" data-modo-rede data-modo="simulado"><span class="luz"></span><span data-modo-texto>servidor simulado</span></button>
+  </div>
+  <div class="progresso"></div>
+</div>
+
+<!-- ============================ CAPA ============================ -->
+<header class="capa">
+  <div class="capa-interna">
+    <div class="capa-texto">
+      <img class="capa-logo" src="img/logo.png" alt="Descomplica + UniAmérica">
+      <div class="capa-meta"><span>2º período</span><span>PM 4 · Projeto Mensal</span></div>
+      <h1>AJAX e Intl</h1>
+      <p class="subtitulo">Buscar dados sem recarregar a página e mostrá-los do jeito de quem lê</p>
+      <p class="assinatura">JavaScript · fetch, Promises, async/await, HTTP, NumberFormat, DateTimeFormat, RelativeTimeFormat e Collator</p>
+    </div>
+    <div class="capa-arte">
+      <div class="troca-capa" aria-hidden="true">
+<pre class="capa-msg"><span class="capa-msg-rotulo">código</span><b>const</b> r = <b>await</b> fetch(".../ws/01001000/json/");
+<b>const</b> endereco = <b>await</b> r.json();
+brl.format(1234.5);
+rtf.format(-3, "day");</pre>
+        <div class="capa-fio">só os dados viajam</div>
+<pre class="capa-msg capa-msg--resposta"><span class="capa-msg-rotulo">tela</span>Praça da Sé · São Paulo/SP
+R$ 1.234,50 · 4 de novembro de 2026
+há 3 dias · Álvaro, Ana e Zoe</pre>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ======================= ROTEIRO + LEGENDA ======================= -->
+  <section class="secao" id="roteiro" style="border-top:none">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Aula</span>
+      <h2 class="secao-titulo">O que vamos ver hoje</h2>
+    </div>
+    <p class="secao-lead">Primeiro a página aprende a conversar com o servidor sem recarregar (AJAX com <code>fetch</code>). Depois, a mostrar o que chegou como cada idioma escreve: número, moeda, data, “há 3 dias” e ordem alfabética com acento (a API <code>Intl</code>).</p>
+
+    <div class="roteiro">
+      <a href="#recarregar"><span class="num">01</span><span class="rotulo">AJAX: atualizar só uma parte da página</span></a>
+      <a href="#caminho"><span class="num">02</span><span class="rotulo">O caminho de uma requisição e o HTTP</span></a>
+      <a href="#fetch"><span class="num">03</span><span class="rotulo">fetch e as três fases de uma Promise</span></a>
+      <a href="#then"><span class="num">04</span><span class="rotulo">.then(), async/await e o que fazer quando dá errado</span></a>
+      <a href="#post"><span class="num">05</span><span class="rotulo">Enviar dados, mostrar na tela e esperar a resposta</span></a>
+      <a href="#problema-intl"><span class="num">06</span><span class="rotulo">Intl: locale e a família de formatadores</span></a>
+      <a href="#numberformat"><span class="num">07</span><span class="rotulo">Números, moedas, percentuais e unidades</span></a>
+      <a href="#datetime"><span class="num">08</span><span class="rotulo">Datas, fusos horários e tempo relativo</span></a>
+      <a href="#collator"><span class="num">09</span><span class="rotulo">Ordenar e listar texto com acento</span></a>
+      <a href="#boas-praticas"><span class="num">10</span><span class="rotulo">Boas práticas, módulo de formatadores e tropeços</span></a>
+      <a href="#juntos"><span class="num">11</span><span class="rotulo">AJAX + Intl juntos: a cotação do dólar</span></a>
+      <a href="#atividade"><span class="num">12</span><span class="rotulo">Laboratório livre e atividade</span></a>
+    </div>
+
+    <h3 class="sub-titulo">Como ler as demonstrações desta página</h3>
+    <div class="legenda">
+      <div class="legenda-item"><span class="amostra" style="background:var(--code-bg)"></span> <span><b>console</b>: o código do painel ao lado rodando agora, neste navegador</span></div>
+      <div class="legenda-item"><span class="amostra" style="background:#fff;border:1px solid var(--borda);box-shadow:inset 0 9px 0 #F2F4F3"></span> <span><b>rede</b>: cada requisição, com método, status e tempo (como a aba Rede do F12)</span></div>
+      <div class="legenda-item"><span class="amostra amostra--linha"></span> <span>campo preenchido com a resposta do servidor</span></div>
+      <div class="legenda-item"><span class="amostra--simulado">servidor simulado</span> <span>sem Internet, as respostas vêm de um servidor simulado nesta página, iguais às das APIs reais. O botão no topo troca para as APIs de verdade.</span></div>
+    </div>
+    <div class="cartoes" style="margin-top:22px">
+      <article class="cartao"><h3>Todo console é de verdade</h3><p>Cada caixa de console executa o código do painel ao lado. Os botões como <code>buscarCep('01001000')</code> rodam o painel mais aquela linha, que aparece depois do sinal <code>›</code>.</p></article>
+      <article class="cartao"><h3>O tempo de cada linha</h3><p>Nos consoles de AJAX, o número à direita diz quantos segundos depois do início a linha apareceu. É ali que se vê o que “assíncrono” quer dizer.</p></article>
+      <article class="cartao"><h3>O Intl é o do seu navegador</h3><p>Números e datas são formatados pelo navegador em uso. Chrome, Firefox e Safari podem diferir num detalhe (um espaço, uma abreviação); o formato do idioma é o mesmo.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= MATERIAIS DA AULA ======================= -->
+  <section class="secao" id="materiais">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Materiais</span>
+      <h2 class="secao-titulo">Materiais da Aula</h2>
+    </div>
+    <p class="secao-lead">Os slides das duas partes da aula, para baixar e estudar depois.</p>
+
+    <div class="materiais">
+      <article class="material">
+        <div class="material-icone">PDF</div>
+        <div class="material-corpo">
+          <h3>Requisições AJAX com fetch.pdf</h3>
+          <p class="material-info">PDF · 20 slides · 3,8 MB</p>
+          <p>Slides da Parte 1: o que é AJAX, métodos e status HTTP, <code>fetch</code>, Promises, <code>async/await</code>, tratamento de erros, POST e o buscador de CEP. Acompanha as seções 01 a 13.</p>
+          <a class="btn" href="../../../../material/2o_periodo/pm4/internacionalizacao-ajax/Requisic%CC%A7o%CC%83es%20AJAX%20com%20fetch.pdf" download>baixar</a>
+        </div>
+      </article>
+      <article class="material">
+        <div class="material-icone">PDF</div>
+        <div class="material-corpo">
+          <h3>Internacionalização com Intl — Aula de JavaScript.pdf</h3>
+          <p class="material-info">PDF · 15 slides · 3,7 MB</p>
+          <p>Slides da Parte 2: locale, <code>NumberFormat</code>, <code>DateTimeFormat</code>, <code>RelativeTimeFormat</code>, <code>Collator</code>, boas práticas e o módulo de formatadores. Acompanha as seções 14 a 27.</p>
+          <a class="btn" href="../../../../material/2o_periodo/pm4/internacionalizacao-ajax/Internacionalizac%CC%A7a%CC%83o%20com%20Intl%20%E2%80%94%20Aula%20de%20JavaScript.pdf" download>baixar</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================= PARTE 1 ======================= -->
+  <div class="parte" id="parte-1">
+    <span class="parte-num">1</span>
+    <div>
+      <h2>Requisições AJAX com fetch</h2>
+      <p>Como as páginas conversam com o servidor sem recarregar, e como escrever isso em JavaScript.</p>
+    </div>
+  </div>
+
+  <!-- ======================= 01 · RECARREGAR ======================= -->
+  <section class="secao" id="recarregar">
+    <div class="secao-topo">
+      <span class="selo">01</span>
+      <h2 class="secao-titulo">Recarregar a página inteira ou só uma parte</h2>
+    </div>
+    <p class="secao-lead">No modelo clássico, cada clique pede uma página HTML nova e a tela é desenhada de novo. Com AJAX, o JavaScript pede só os dados e troca só o pedaço que mudou.</p>
+
+    <div class="par" data-recarregar>
+      <div>
+        <span class="rotulo-antigo">modelo clássico · a página toda volta</span>
+        <div class="janela" data-classico>
+          <div class="janela-barra"><i></i><i></i><i></i><span class="janela-url">loja.exemplo/produto/mochila</span></div>
+          <div class="janela-corpo"></div>
+        </div>
+        <div class="contadores" data-cont="classico" style="margin-top:10px"><span>requisições: <b>0</b></span></div>
+      </div>
+      <div>
+        <span class="rotulo-atual">com AJAX · só os dados viajam</span>
+        <div class="janela" data-ajax>
+          <div class="janela-barra"><i></i><i></i><i></i><span class="janela-url">loja.exemplo/produto/mochila</span></div>
+          <div class="janela-corpo"></div>
+        </div>
+        <div class="contadores" data-cont="ajax" style="margin-top:10px"><span>requisições: <b>0</b></span></div>
+      </div>
+    </div>
+    <p class="nota-demo" style="margin:-12px 0 28px">Calcule o frete nas duas janelas. À esquerda a tela some e volta, o relógio muda e a observação digitada se perde: a página inteira foi trocada. À direita só a linha do frete muda, e chegam bem menos bytes.</p>
+
+    <div class="par">
+      <div>
+        <span class="rotulo-antigo">o formulário pede uma página nova</span>
+        <figure class="painel-codigo">
+          <figcaption>produto.html · o navegador troca a página inteira</figcaption>
+<pre class="codigo">
+&lt;form action="/produto/mochila" method="get"&gt;
+  &lt;input name="cep" placeholder="CEP"&gt;
+  &lt;button&gt;calcular frete&lt;/button&gt;
+&lt;/form&gt;
+&lt;!-- o servidor devolve o HTML todo de novo,
+     já com o frete escrito na página --&gt;
+</pre>
+        </figure>
+      </div>
+      <div>
+        <span class="rotulo-atual">o JavaScript pede só os dados</span>
+        <figure class="painel-codigo">
+          <figcaption>frete.js · só a linha do frete muda</figcaption>
+<pre class="codigo" data-lang="js">
+form.addEventListener("submit", async (evento) => {
+  evento.preventDefault();          // a página não recarrega
+  const resposta = await fetch("/api/frete?cep=" + campo.value);
+  const frete = await resposta.json();   // { prazoDias, valor }
+  saida.textContent = "Frete: " + frete.valor;
+});
+</pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>A página toda volta</h3><p>Clique, o navegador pede um HTML novo, a tela pisca e tudo é desenhado de novo, inclusive o que não mudou: cabeçalho, menu, rodapé.</p></article>
+      <article class="cartao"><h3>Só os dados viajam</h3><p>O JavaScript pede um JSON pequeno e altera só o elemento que mudou. O que a pessoa digitou e a posição da rolagem continuam lá.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: o endereço não muda</h3><p>Com AJAX a barra de endereço fica igual. Recarregar (F5) ou voltar não “lembram” o que foi buscado. Quando isso importa, o estado vai para a URL ou para o <code>localStorage</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 02 · O QUE É AJAX ======================= -->
+  <section class="secao" id="ajax">
+    <div class="secao-topo">
+      <span class="selo">02</span>
+      <h2 class="secao-titulo">O que significa AJAX</h2>
+    </div>
+    <p class="secao-lead"><b>A</b>synchronous <b>J</b>avaScript <b>A</b>nd <b>X</b>ML. Não é uma linguagem, é uma técnica: junta o que você já conhece, JavaScript, requisições HTTP, JSON e o DOM.</p>
+
+    <div class="cartoes" style="margin-bottom:28px">
+      <article class="cartao"><h3>Asynchronous</h3><p>A página continua funcionando enquanto espera a resposta. Ninguém fica travado olhando para uma tela parada.</p></article>
+      <article class="cartao"><h3>JavaScript</h3><p>É quem faz o pedido ao servidor e quem atualiza a tela quando a resposta chega.</p></article>
+      <article class="cartao"><h3>And XML</h3><p>O formato de dados do começo, em 2005. Hoje quase sempre é JSON, mas o nome ficou.</p></article>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>assincrono.js · em que ordem as linhas aparecem?</figcaption>
+<pre class="codigo" data-lang="js" id="c-ordem">
+console.log("1. pedi os dados ao servidor");
+
+fetch("https://viacep.com.br/ws/01001000/json/")
+  .then(() => console.log("3. os dados chegaram"));
+
+console.log("2. a página continua respondendo");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-ordem">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o 2 aparece antes do 3</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="par">
+      <div>
+        <span class="rotulo-antigo">como era · XMLHttpRequest</span>
+        <figure class="painel-codigo">
+          <figcaption>o objeto que deu origem ao AJAX</figcaption>
+<pre class="codigo" data-lang="js">
+const xhr = new XMLHttpRequest();
+xhr.open("GET", "https://viacep.com.br/ws/01001000/json/");
+xhr.onload = () => {
+  const dados = JSON.parse(xhr.responseText);
+  console.log(dados.logradouro);
+};
+xhr.onerror = () => console.error("falha de rede");
+xhr.send();
+</pre>
+        </figure>
+      </div>
+      <div>
+        <span class="rotulo-atual">como é hoje · fetch</span>
+        <figure class="painel-codigo">
+          <figcaption>a mesma requisição, com Promise</figcaption>
+<pre class="codigo" data-lang="js">
+fetch("https://viacep.com.br/ws/01001000/json/")
+  .then(resposta => resposta.json())
+  .then(dados => console.log(dados.logradouro))
+  .catch(() => console.error("falha de rede"));
+</pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Técnica, não linguagem</h3><p>Não há nada para instalar. AJAX é o nome de um jeito de usar o navegador: evento, requisição, resposta e DOM.</p></article>
+      <article class="cartao"><h3>XML virou JSON</h3><p>JSON é texto que o JavaScript transforma em objeto com uma chamada. Por isso tomou o lugar do XML nas APIs.</p></article>
+      <article class="cartao cartao--novo"><h3>fetch é nativo</h3><p>Existe em todos os navegadores atuais e também no Node.js a partir da versão 18. O <code>XMLHttpRequest</code> ainda funciona, mas código novo usa <code>fetch</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 03 · CAMINHO ======================= -->
+  <section class="secao" id="caminho">
+    <div class="secao-topo">
+      <span class="selo">03</span>
+      <h2 class="secao-titulo">O caminho de uma requisição</h2>
+    </div>
+    <p class="secao-lead">Quatro passos, sempre os mesmos: um evento, a requisição, a resposta e a atualização do DOM. Digite um CEP e saia do campo, ou use um dos botões.</p>
+
+    <div data-caminho>
+      <div class="caminho">
+        <div class="etapa"><span class="num">1</span><h4>Evento</h4><p>O usuário digita um CEP e sai do campo.</p></div>
+        <div class="etapa"><span class="num">2</span><h4>Requisição</h4><p>O JavaScript chama <code>fetch</code> e pede os dados ao servidor.</p></div>
+        <div class="etapa"><span class="num">3</span><h4>Resposta</h4><p>O servidor devolve os dados em JSON.</p></div>
+        <div class="etapa"><span class="num">4</span><h4>Atualização</h4><p>O JavaScript altera só os campos no DOM.</p></div>
+      </div>
+
+      <div class="dupla">
+        <figure class="painel-codigo">
+          <figcaption>cep.js · os quatro passos, um por comentário</figcaption>
+<pre class="codigo" data-lang="js">
+const campoCep = document.querySelector("#cep");
+
+// 1. evento: o usuário sai do campo
+campoCep.addEventListener("blur", async () => {
+  const cep = campoCep.value.replace(/\D/g, "");  // só os números
+
+  // 2. requisição: pede só os dados
+  const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+
+  // 3. resposta: o servidor devolve JSON
+  const dados = await resposta.json();
+
+  // 4. atualização: só estes campos mudam
+  document.querySelector("#rua").value = dados.logradouro;
+  document.querySelector("#bairro").value = dados.bairro;
+  document.querySelector("#cidade").value = dados.localidade;
+  document.querySelector("#uf").value = dados.uf;
+});
+</pre>
+        </figure>
+        <div class="preview">
+          <div class="preview-topo"><span class="preview-selo">preview</span><code>o mesmo fluxo, passo a passo</code></div>
+          <div class="preview-corpo">
+            <div class="chamadas">
+              <button type="button" class="chamada" data-cep="01001-000">01001-000</button>
+              <button type="button" class="chamada" data-cep="20040-002">20040-002</button>
+              <button type="button" class="chamada" data-cep="70150-900">70150-900</button>
+              <button type="button" class="chamada" data-cep="85851-010">85851-010</button>
+              <button type="button" class="chamada" data-cep="99999-999">99999-999</button>
+            </div>
+            <div class="form-end">
+              <label class="c2" for="caminho-cep">CEP <input id="caminho-cep" value="01001-000" autocomplete="off"></label>
+              <label class="c4" for="caminho-rua">Rua <input id="caminho-rua" readonly></label>
+              <label class="c2" for="caminho-bairro">Bairro <input id="caminho-bairro" readonly></label>
+              <label class="c3" for="caminho-cidade">Cidade <input id="caminho-cidade" readonly></label>
+              <label class="c1" for="caminho-uf">UF <input id="caminho-uf" readonly></label>
+              <p class="form-msg" data-msg></p>
+            </div>
+            <pre class="json" data-json></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>O evento pode ser qualquer um</h3><p><code>blur</code> (saiu do campo), <code>input</code> (cada tecla), <code>click</code>, <code>submit</code> ou um relógio com <code>setInterval</code>. Escolha o que faz sentido para quem usa.</p></article>
+      <article class="cartao"><h3>A resposta chega como texto</h3><p>O servidor manda caracteres. <code>resposta.json()</code> é que transforma esse texto em um objeto JavaScript.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: o hífen do CEP</h3><p>Quem digita escreve <code>01001-000</code>. Sem o <code>replace(/\D/g, "")</code>, que apaga tudo o que não é dígito, o hífen vai para o endereço, a ViaCEP recusa o pedido e o <code>fetch</code> falha (seção 10).</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 04 · DIA A DIA ======================= -->
+  <section class="secao" id="dia-a-dia">
+    <div class="secao-topo">
+      <span class="selo">04</span>
+      <h2 class="secao-titulo">AJAX em sites que você usa</h2>
+    </div>
+    <p class="secao-lead">Sempre que uma parte da página muda sem a tela piscar, há uma requisição por trás. Quatro exemplos funcionando.</p>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini">
+        <div class="mini-titulo"><code>Busca de CEP</code><span>o formulário de entrega se preenche sozinho</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+campo.addEventListener("blur", () => {
+  fetch(`https://viacep.com.br/ws/${cep}/json/`) /* ... */
+});
+</pre></figure>
+        <div class="widget" data-mini-cep>
+          <label for="mini-cep" style="font-weight:700;font-size:15px">CEP</label>
+          <input id="mini-cep" value="85851-010" autocomplete="off">
+          <p class="nota-demo" style="margin-top:10px;font-size:16px;color:var(--tinta)" data-saida-cep></p>
+        </div>
+      </div>
+
+      <div class="mini">
+        <div class="mini-titulo"><code>Sugestões de busca</code><span>a loja sugere produtos enquanto você digita</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+campo.addEventListener("input", () => {
+  clearTimeout(espera);                // espera parar de digitar
+  espera = setTimeout(() => {
+    fetch("/api/produtos?busca=" + encodeURIComponent(campo.value));
+  }, 250);
+});
+</pre></figure>
+        <div class="widget" data-sugestoes>
+          <input aria-label="Buscar produto" placeholder="digite: ca, mo, li, te…" autocomplete="off">
+          <ul class="sugestoes"></ul>
+          <div class="contador-req" data-contador>nenhuma requisição ainda</div>
+        </div>
+      </div>
+
+      <div class="mini">
+        <div class="mini-titulo"><code>Curtir</code><span>o contador muda e a página fica onde estava</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+botao.addEventListener("click", async () => {
+  botao.disabled = true;               // nada de clique duplo
+  const r = await fetch("/api/curtidas", { method: "POST" });
+  total.textContent = (await r.json()).total;
+  botao.disabled = false;
+});
+</pre></figure>
+        <div class="widget post" data-curtir>
+          <div class="post-foto"></div>
+          <div style="flex:1">
+            <b>Foto da turma no laboratório</b>
+            <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+              <button type="button" class="curtir">curtir</button>
+              <span><b data-total>…</b> curtidas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mini">
+        <div class="mini-titulo"><code>Mensagens no chat</code><span>mensagens novas aparecem sem atualizar a página</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+setInterval(async () => {
+  const r = await fetch("/api/mensagens?depois=" + ultimoId);
+  for (const m of await r.json()) mostrar(m);
+}, 2500);                              // pergunta a cada 2,5 s
+</pre></figure>
+        <div class="widget" data-chat>
+          <div class="chat" aria-live="polite"></div>
+          <div class="contador-req" data-contador>aguardando…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Esperar parar de digitar</h3><p>Uma requisição por tecla sobrecarrega o servidor. Com <code>setTimeout</code> e <code>clearTimeout</code>, só a última tecla depois de 250 ms gera pedido. A técnica se chama <i>debounce</i>.</p></article>
+      <article class="cartao"><h3>Desabilitar enquanto espera</h3><p>Sem <code>botao.disabled = true</code>, dois cliques rápidos viram duas curtidas (ou dois pagamentos). Habilite de novo quando a resposta chegar.</p></article>
+      <article class="cartao"><h3>Perguntar de tempos em tempos</h3><p>O chat acima consulta o servidor a cada 2,5 s (<i>polling</i>). Chats de verdade costumam usar WebSocket, em que o servidor avisa quando chega mensagem.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 05 · HTTP ======================= -->
+  <section class="secao" id="http">
+    <div class="secao-topo">
+      <span class="selo">05</span>
+      <h2 class="secao-titulo">HTTP em uma seção: métodos e status</h2>
+    </div>
+    <p class="secao-lead">Toda requisição tem <b>método</b>, <b>URL</b>, <b>cabeçalhos</b> e, às vezes, um <b>corpo</b>. A resposta volta com um código de status. (Tudo isso em detalhe na aula de HTTP do PM 3.)</p>
+
+    <div class="dupla">
+      <div class="rolagem-x">
+        <table class="tabela">
+          <thead><tr><th>Método</th><th>Para quê</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td><code>GET</code></td><td>Buscar dados</td><td>Carregar a lista de produtos</td></tr>
+            <tr><td><code>POST</code></td><td>Criar algo novo</td><td>Cadastrar um usuário</td></tr>
+            <tr><td><code>PUT</code></td><td>Trocar o recurso inteiro</td><td>Salvar o perfil completo</td></tr>
+            <tr><td><code>PATCH</code></td><td>Mudar só uma parte</td><td>Trocar só o e-mail</td></tr>
+            <tr><td><code>DELETE</code></td><td>Remover</td><td>Excluir um comentário</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rolagem-x">
+        <table class="tabela">
+          <thead><tr><th>Código</th><th>Nome</th><th>O que quer dizer</th></tr></thead>
+          <tbody>
+            <tr><td><code>200</code></td><td>OK</td><td>Deu certo, os dados vieram</td></tr>
+            <tr><td><code>201</code></td><td>Created</td><td>Algo novo foi criado (depois de um POST)</td></tr>
+            <tr><td><code>400</code></td><td>Bad Request</td><td>O pedido foi mal formado</td></tr>
+            <tr><td><code>404</code></td><td>Not Found</td><td>O endereço não existe</td></tr>
+            <tr><td><code>500</code></td><td>Internal Server Error</td><td>O servidor falhou</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>pedir.js · um método por botão, no JSONPlaceholder (uma API de testes)</figcaption>
+<pre class="codigo" data-lang="js" id="c-pedir">
+const api = "https://jsonplaceholder.typicode.com";
+
+async function pedir(metodo, caminho, dados) {
+  const opcoes = { method: metodo };
+  if (dados) {
+    opcoes.headers = { "Content-Type": "application/json" };
+    opcoes.body = JSON.stringify(dados);
+  }
+  const resposta = await fetch(api + caminho, opcoes);
+  console.log(metodo, caminho, "→", resposta.status, resposta.ok ? "(ok)" : "(falhou)");
+  console.log(await resposta.json());
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-pedir">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>escolha um método</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="await pedir('GET', '/posts/1');"></button>
+            <button data-chamada="await pedir('POST', '/posts', { title: 'Olá, API', userId: 1 });"></button>
+            <button data-chamada="await pedir('PUT', '/posts/1', { title: 'trocado', userId: 1 });"></button>
+            <button data-chamada="await pedir('PATCH', '/posts/1', { title: 'só o título' });"></button>
+            <button data-chamada="await pedir('DELETE', '/posts/1');"></button>
+            <button data-chamada="await pedir('GET', '/posts/999');"></button>
+          </div>
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>A família diz quem errou</h3><p><code>2xx</code>: sucesso. <code>4xx</code>: erro de quem pediu (endereço errado, dado inválido). <code>5xx</code>: erro do servidor. Basta olhar o primeiro dígito.</p></article>
+      <article class="cartao"><h3>PUT troca, PATCH remenda</h3><p>Compare os dois botões: o <code>PUT</code> devolve só o que foi enviado; o <code>PATCH</code> devolve o post inteiro com o título novo.</p></article>
+      <article class="cartao cartao--erro"><h3>O JSONPlaceholder finge</h3><p>Ele responde 201 e devolve <code>id: 101</code>, mas não guarda nada: é uma API de treino. Busque o post 101 depois e ele não estará lá.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 06 · FETCH ======================= -->
+  <section class="secao" id="fetch">
+    <div class="secao-topo">
+      <span class="selo">06</span>
+      <h2 class="secao-titulo">A sintaxe do fetch</h2>
+    </div>
+    <p class="secao-lead"><code>fetch(url, opcoes)</code> dispara a requisição e devolve <b>na hora</b> uma Promise: a promessa de que a resposta vai chegar depois.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>fetch.js · o que o fetch devolve na hora e o que chega depois</figcaption>
+<pre class="codigo" data-lang="js" id="c-fetch">
+// forma geral: fetch(url, opcoes)
+const promessa = fetch("https://viacep.com.br/ws/01001000/json/");
+
+console.log(promessa);                    // ainda não é a resposta
+console.log("esta linha não esperou o servidor");
+
+promessa.then(resposta => {
+  console.log("chegou:", resposta);
+});
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-fetch">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a Promise vem antes da resposta</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>url · obrigatória</h3><p>O endereço do recurso. Pode ser completo (<code>https://...</code>) ou relativo ao site (<code>/api/frete</code>).</p></article>
+      <article class="cartao"><h3>opcoes · opcional</h3><p>Um objeto com <code>method</code>, <code>headers</code>, <code>body</code> e <code>signal</code>. Sem ele, o pedido é um GET.</p></article>
+      <article class="cartao"><h3>retorno · uma Promise</h3><p>Que vira um objeto <code>Response</code> quando o servidor responde. Por isso o primeiro <code>console.log</code> mostra a Promise, não os dados.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 07 · PROMISES ======================= -->
+  <section class="secao" id="promises">
+    <div class="secao-topo">
+      <span class="selo">07</span>
+      <h2 class="secao-titulo">Promises e seus três estados</h2>
+    </div>
+    <p class="secao-lead">Pense na senha de uma lanchonete: você recebe a senha na hora (a Promise) e o lanche (os dados) chega depois. Ou não chega, se a cozinha fechar.</p>
+
+    <div class="caminho" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="etapa"><span class="num">⋯</span><h4><code>pending</code> · pendente</h4><p>A requisição foi enviada e ainda não voltou. Você está com a senha na mão.</p></div>
+      <div class="etapa feita"><span class="num">✓</span><h4><code>fulfilled</code> · resolvida</h4><p>A resposta chegou. Quem trata é o <code>.then()</code>.</p></div>
+      <div class="etapa falhou"><span class="num">✕</span><h4><code>rejected</code> · rejeitada</h4><p>Algo falhou, como a falta de Internet. Quem trata é o <code>.catch()</code>.</p></div>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>senha.js · o mesmo código com e sem Internet</figcaption>
+<pre class="codigo" data-lang="js" id="c-estados">
+const pedido = fetch("https://viacep.com.br/ws/01001000/json/");
+console.log("pending: a senha está na mão, o pedido saiu");
+
+pedido
+  .then(resposta => {
+    console.log("fulfilled: a resposta chegou, status", resposta.status);
+  })
+  .catch(erro => {
+    console.error("rejected: não deu para falar com o servidor:", erro.message);
+  });
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-estados" data-sem-eco>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>escolha a situação</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="">com Internet</button>
+            <button data-chamada="" data-rede="offline">sem Internet</button>
+          </div>
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Uma Promise muda de estado uma vez</h3><p>Sai de <code>pending</code> para <code>fulfilled</code> ou para <code>rejected</code> e fica ali. Não volta a ficar pendente.</p></article>
+      <article class="cartao"><h3>.then() e .catch() devolvem Promises</h3><p>Por isso dá para encadear: cada <code>.then()</code> recebe o que o anterior devolveu.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: “Failed to fetch” não diz o porquê</h3><p>Sem Internet, endereço que não existe ou servidor que bloqueia o seu site (CORS): todos chegam como o mesmo <code>TypeError</code>. A aba Rede do F12 mostra o motivo.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 08 · THEN ======================= -->
+  <section class="secao" id="then">
+    <div class="secao-topo">
+      <span class="selo">08</span>
+      <h2 class="secao-titulo">Lendo a resposta com .then()</h2>
+    </div>
+    <p class="secao-lead">A primeira Promise entrega um objeto <code>Response</code>. <code>resposta.json()</code> lê o corpo e devolve <b>outra</b> Promise, com os dados já como objeto.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>then.js · duas Promises em sequência</figcaption>
+<pre class="codigo" data-lang="js" id="c-then">
+fetch("https://viacep.com.br/ws/01001000/json/")
+  .then(resposta => {
+    console.log("status:", resposta.status, "· ok:", resposta.ok);
+    console.log("tipo:", resposta.headers.get("Content-Type"));
+    return resposta.json();        // 1. corpo → objeto (outra Promise)
+  })
+  .then(dados => {
+    console.log(dados);            // 2. um objeto JavaScript comum
+    console.log(dados.logradouro);
+  })
+  .catch(erro => console.error(erro));  // 3. falha de rede
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-then">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>Response primeiro, dados depois</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem return</code><span>o segundo .then() recebe undefined</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+fetch("https://viacep.com.br/ws/01001000/json/")
+  .then(resposta => { resposta.json(); })   // chaves sem return
+  .then(dados => console.log(dados));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>json() duas vezes</code><span>o corpo só pode ser lido uma vez</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const resposta = await fetch("https://viacep.com.br/ws/01001000/json/");
+const dados = await resposta.json();
+console.log(dados.localidade);
+const deNovo = await resposta.json();
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>text()</code><span>o corpo cru, como chegou</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const resposta = await fetch("https://viacep.com.br/ws/01001000/json/");
+const texto = await resposta.text();
+console.log(typeof texto, texto.length, "caracteres");
+console.log(JSON.parse(texto).uf);
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>json() também espera</h3><p>O corpo pode ainda estar chegando quando o <code>Response</code> aparece. Por isso <code>json()</code> devolve uma Promise e precisa de outro <code>.then()</code>.</p></article>
+      <article class="cartao"><h3>Response tem mais</h3><p><code>status</code>, <code>ok</code> (verdadeiro de 200 a 299), <code>headers.get()</code>, e os leitores <code>json()</code>, <code>text()</code> e <code>blob()</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: chaves sem return</h3><p><code>r => r.json()</code> devolve o valor. <code>r => { r.json(); }</code> não devolve nada, e o próximo <code>.then()</code> recebe <code>undefined</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 09 · ASYNC ======================= -->
+  <section class="secao" id="async">
+    <div class="secao-topo">
+      <span class="selo">09</span>
+      <h2 class="secao-titulo">O mesmo código com async/await</h2>
+    </div>
+    <p class="secao-lead"><code>async/await</code> faz exatamente o que o <code>.then()</code> faz, mas se lê de cima para baixo, como código comum.</p>
+
+    <div class="par">
+      <div>
+        <span class="rotulo-atual">com .then()</span>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function buscarCep(cep) {
+  const url = `https://viacep.com.br/ws/${cep}/json/`;
+  return fetch(url)
+    .then(resposta => resposta.json());
+}
+
+buscarCep("01001000").then(dados => {
+  console.log(dados.logradouro);
+});
+</pre>
+        </figure>
+      </div>
+      <div>
+        <span class="rotulo-atual">com async/await</span>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+async function buscarCep(cep) {
+  const url = `https://viacep.com.br/ws/${cep}/json/`;
+  const resposta = await fetch(url);
+  const dados = await resposta.json();
+  return dados;
+}
+
+const dados = await buscarCep("01001000");
+console.log(dados.logradouro);
+</pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>buscar-cep.js · a função que o resto da aula usa</figcaption>
+<pre class="codigo" data-lang="js" id="c-async">
+async function buscarCep(cep) {
+  const url = `https://viacep.com.br/ws/${cep}/json/`;
+  const resposta = await fetch(url);
+  const dados = await resposta.json();
+  return dados;
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-async">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>escolha um CEP</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="const d = await buscarCep('01001000'); console.log(d.logradouro, '·', d.localidade + '/' + d.uf);">buscarCep('01001000')</button>
+            <button data-chamada="const d = await buscarCep('20040002'); console.log(d.logradouro, '·', d.localidade + '/' + d.uf);">buscarCep('20040002')</button>
+            <button data-chamada="const d = await buscarCep('70150900'); console.log(d.logradouro, '·', d.localidade + '/' + d.uf);">buscarCep('70150900')</button>
+            <button data-chamada="const d = await buscarCep('30130010'); console.log(d.logradouro, '·', d.localidade + '/' + d.uf);">buscarCep('30130010')</button>
+          </div>
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem await</code><span>chega a Promise, não os dados</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+async function buscarCep(cep) {
+  const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+  return resposta.json();
+}
+const dados = buscarCep("01001000");    // faltou o await
+console.log(dados);
+console.log(dados.logradouro);
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>async sempre devolve Promise</code><span>mesmo sem fetch nenhum</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+async function dobro(n) {
+  return n * 2;
+}
+console.log(dobro(21));
+console.log(await dobro(21));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>async marca a função</h3><p>Uma função <code>async</code> sempre devolve uma Promise. O <code>return dados</code> vira a Promise resolvida com <code>dados</code>.</p></article>
+      <article class="cartao"><h3>await espera e entrega o valor</h3><p>Pausa só aquela função até a Promise resolver. O resto da página continua funcionando.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: await fora de async</h3><p>Num <code>&lt;script&gt;</code> comum, <code>await</code> solto é <code>SyntaxError</code>. Funciona direto só no console do navegador e em <code>&lt;script type="module"&gt;</code>. Nesta página, os painéis rodam dentro de uma função <code>async</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 10 · ERROS ======================= -->
+  <section class="secao" id="erros">
+    <div class="secao-topo">
+      <span class="selo">10</span>
+      <h2 class="secao-titulo">Quando dá errado</h2>
+    </div>
+    <p class="secao-lead">Sem conexão, pedido recusado, “não achei”: cada falha chega de um jeito. O <code>fetch</code> só rejeita quando não existe uma resposta que o navegador deixe o seu código ler.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>buscar-cep.js · conferindo cada caso</figcaption>
+<pre class="codigo" data-lang="js" id="c-erros">
+async function buscarCep(cep) {
+  try {
+    const url = `https://viacep.com.br/ws/${cep}/json/`;
+    const resposta = await fetch(url);
+    if (!resposta.ok) {
+      throw new Error(`Erro HTTP ${resposta.status}`);
+    }
+    const dados = await resposta.json();
+    if (dados.erro) {
+      throw new Error("CEP não encontrado");
+    }
+    return dados;
+  } catch (erro) {
+    console.error("Falha na requisição:", erro.message);
+    return null;
+  }
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-erros">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>um botão por caso</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="console.log(await buscarCep('01001000'));">buscarCep('01001000')</button>
+            <button data-chamada="console.log(await buscarCep('99999999'));">buscarCep('99999999')</button>
+            <button data-chamada="console.log(await buscarCep('123'));">buscarCep('123')</button>
+            <button data-chamada="console.log(await buscarCep('01001000'));" data-rede="offline">buscarCep('01001000') sem Internet</button>
+          </div>
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela">
+        <thead><tr><th>Situação</th><th>O que o fetch faz</th><th>Como perceber</th></tr></thead>
+        <tbody>
+          <tr><td>Sem Internet, servidor fora do ar</td><td>Rejeita a Promise com <code>TypeError: Failed to fetch</code></td><td>Cai no <code>catch</code> sozinho</td></tr>
+          <tr><td>CEP mal formado na ViaCEP (<code>123</code>)</td><td>A ViaCEP responde <code>400</code>, mas sem o cabeçalho de CORS. O navegador esconde a resposta e o <code>fetch</code> rejeita com o mesmo <code>TypeError</code></td><td>Cai no <code>catch</code>; o 400 só aparece na aba Rede</td></tr>
+          <tr><td>Endereço que não existe em outra API (<code>/posts/999</code>)</td><td>Resolve normalmente, com status <code>404</code></td><td><code>resposta.ok</code> é <code>false</code></td></tr>
+          <tr><td>CEP que não existe (<code>99999999</code>)</td><td>Resolve com status <code>200</code> e o corpo <code>{ "erro": "true" }</code></td><td><code>dados.erro</code> existe</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem conferir resposta.ok</code><span>o 404 chega como resposta normal</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const resposta = await fetch("https://jsonplaceholder.typicode.com/posts/999");
+console.log(resposta.status, resposta.ok);
+const post = await resposta.json();     // {}: nenhum erro foi lançado
+console.log("título:", post.title);     // e o código segue como se nada fosse
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>"erro": "true"</code><span>o campo vem como texto</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const resposta = await fetch("https://viacep.com.br/ws/99999999/json/");
+const dados = await resposta.json();
+console.log(dados);
+console.log(dados.erro === true);     // compara texto com booleano
+console.log(Boolean(dados.erro));     // é o que o if (dados.erro) faz
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Falha de rede: catch</h3><p>Quando não há resposta nenhuma, a Promise é rejeitada e o <code>catch</code> recebe um <code>TypeError</code>. Avise quem usa e ofereça tentar de novo.</p></article>
+      <article class="cartao"><h3>404 e 500 não são exceção</h3><p>Para o <code>fetch</code>, receber qualquer resposta legível é sucesso. Quem transforma 4xx e 5xx em erro é você, com <code>if (!resposta.ok) throw ...</code>. Confira sempre, mesmo que a ViaCEP esconda o 400.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: o erro da ViaCEP é texto</h3><p>Hoje a ViaCEP devolve <code>"erro": "true"</code>, entre aspas, e não o booleano <code>true</code>. <code>if (dados.erro)</code> funciona; <code>dados.erro === true</code> deixa o CEP inexistente passar.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 11 · POST ======================= -->
+  <section class="secao" id="post">
+    <div class="secao-topo">
+      <span class="selo">11</span>
+      <h2 class="secao-titulo">Enviando dados com POST</h2>
+    </div>
+    <p class="secao-lead">Para criar algo no servidor, o segundo argumento do <code>fetch</code> diz o método, avisa o formato e leva os dados no corpo.</p>
+
+    <div class="dupla dupla--codigo">
+      <figure class="painel-codigo">
+        <figcaption>post.js · criar um post no JSONPlaceholder</figcaption>
+<pre class="codigo" data-lang="js" id="c-post">
+const url = "https://jsonplaceholder.typicode.com/posts";
+const novoPost = { title: "Olá, API", userId: 1 };
+
+fetch(url, {
+  method: "POST",                                    // é uma criação
+  headers: { "Content-Type": "application/json" },   // o corpo é JSON
+  body: JSON.stringify(novoPost)                     // objeto → texto
+})
+  .then(resposta => {
+    console.log("status:", resposta.status);
+    return resposta.json();
+  })
+  .then(dados => console.log(dados));
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-post">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>201 Created e o id novo</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem JSON.stringify</code><span>o servidor recebe o texto "[object Object]" e quebra</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const r = await fetch("https://jsonplaceholder.typicode.com/posts", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: { title: "Olá, API", userId: 1 }     // objeto cru
+});
+console.log(r.status, await r.text());
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem Content-Type</code><span>o servidor não entende e ignora o corpo</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const r = await fetch("https://jsonplaceholder.typicode.com/posts", {
+  method: "POST",
+  body: JSON.stringify({ title: "Olá, API", userId: 1 })
+});
+console.log(r.status, await r.json());      // cadê o título?
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>method</h3><p>Diz ao servidor que é uma criação. Sem ele, o pedido é um GET e o corpo nem é aceito.</p></article>
+      <article class="cartao"><h3>headers</h3><p><code>"Content-Type": "application/json"</code> avisa como ler o corpo. Sem o aviso, o <code>fetch</code> manda <code>text/plain</code> e muitos servidores ignoram o conteúdo.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: body só aceita texto</h3><p>Um objeto passado direto vira <code>"[object Object]"</code>. Converta com <code>JSON.stringify()</code> antes de enviar.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 12 · TELA ======================= -->
+  <section class="secao" id="tela">
+    <div class="secao-topo">
+      <span class="selo">12</span>
+      <h2 class="secao-titulo">Mostrando os dados na tela</h2>
+    </div>
+    <p class="secao-lead">Juntando tudo: o evento, a função <code>buscarCep</code> e o DOM. No formulário abaixo, apague o CEP, digite outro e saia do campo com Tab. Os botões fazem o mesmo.</p>
+
+    <div class="pilha" data-exec data-codigo="c-tela" data-html="h-tela">
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>o HTML e o JavaScript abaixo, rodando</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="campoCep.value = '20040-002'; campoCep.dispatchEvent(new Event('blur'));">20040-002</button>
+            <button data-chamada="campoCep.value = '85851-010'; campoCep.dispatchEvent(new Event('blur'));">85851-010</button>
+            <button data-chamada="campoCep.value = '99999-999'; campoCep.dispatchEvent(new Event('blur'));">99999-999</button>
+            <button data-chamada="campoCep.value = '01001-000'; campoCep.dispatchEvent(new Event('blur'));" data-rede="offline">01001-000 sem Internet</button>
+          </div>
+          <div class="tela" data-tela></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+        <figure class="painel-codigo">
+          <figcaption>index.html</figcaption>
+<pre class="codigo" id="h-tela">
+&lt;form&gt;
+  &lt;label&gt;CEP &lt;input id="cep" value="01001-000"&gt;&lt;/label&gt;
+  &lt;label class="c4"&gt;Rua &lt;input id="rua" readonly&gt;&lt;/label&gt;
+  &lt;label&gt;Bairro &lt;input id="bairro" readonly&gt;&lt;/label&gt;
+  &lt;label class="c3"&gt;Cidade &lt;input id="cidade" readonly&gt;&lt;/label&gt;
+  &lt;label class="c1"&gt;UF &lt;input id="uf" readonly&gt;&lt;/label&gt;
+  &lt;p class="msg" id="msg"&gt;&lt;/p&gt;
+&lt;/form&gt;
+</pre>
+        </figure>
+        <figure class="painel-codigo painel-codigo--duplo">
+          <figcaption>cep.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-tela">
+async function buscarCep(cep) {
+  const url = `https://viacep.com.br/ws/${cep}/json/`;
+  const resposta = await fetch(url);
+  if (!resposta.ok) return null;
+  return resposta.json();
+}
+
+const campoCep = document.querySelector("#cep");
+const msg = document.querySelector("#msg");
+
+campoCep.addEventListener("blur", async () => {
+  const cep = campoCep.value.replace(/\D/g, "");
+  msg.className = "msg espera";
+  msg.textContent = "buscando…";
+  try {
+    const dados = await buscarCep(cep);
+    if (!dados || dados.erro) {
+      msg.className = "msg erro";
+      msg.textContent = "CEP não encontrado.";
+      return;
+    }
+    document.querySelector("#rua").value = dados.logradouro;
+    document.querySelector("#bairro").value = dados.bairro;
+    document.querySelector("#cidade").value = dados.localidade;
+    document.querySelector("#uf").value = dados.uf;
+    msg.className = "msg ok";
+    msg.textContent = "Endereço preenchido.";
+  } catch (erro) {
+    msg.className = "msg erro";
+    msg.textContent = "Sem conexão. Tente de novo.";
+  }
+});
+</pre>
+        </figure>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Limpe antes de buscar</h3><p><code>replace(/\D/g, "")</code> tira hífen, ponto e espaço. A ViaCEP só aceita os 8 números.</p></article>
+      <article class="cartao"><h3>Diga o que aconteceu</h3><p>Buscando, preenchido, não encontrado, sem conexão: cada caso tem uma mensagem na tela. O <code>console</code> é para você; a mensagem é para quem usa.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: innerHTML com dados de fora</h3><p>O que vem de uma API vai para <code>value</code> ou <code>textContent</code>. Com <code>innerHTML</code>, um texto com <code>&lt;script&gt;</code> ou <code>&lt;img onerror&gt;</code> vira código rodando na sua página.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 13 · ESPERA ======================= -->
+  <section class="secao" id="espera">
+    <div class="secao-topo">
+      <span class="selo">13</span>
+      <h2 class="secao-titulo">Enquanto a resposta não chega</h2>
+    </div>
+    <p class="secao-lead">Rede lenta é normal, principalmente no celular. A interface precisa avisar que está buscando, impedir o clique duplo e desistir depois de um tempo.</p>
+
+    <div class="pilha" data-exec data-codigo="c-espera" data-html="h-espera">
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>o mesmo código em três redes diferentes</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="buscarComAviso();">rede normal</button>
+            <button data-chamada="buscarComAviso();" data-latencia="6000">servidor lento (6 s)</button>
+            <button data-chamada="buscarComAviso();" data-rede="offline">sem Internet</button>
+          </div>
+          <div class="tela" data-tela></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+        <figure class="painel-codigo">
+          <figcaption>index.html</figcaption>
+<pre class="codigo" id="h-espera">
+&lt;form class="grade"&gt;
+  &lt;label class="c4"&gt;CEP &lt;input id="cep" value="01310-100"&gt;&lt;/label&gt;
+  &lt;button id="buscar" type="button"&gt;buscar&lt;/button&gt;
+  &lt;p class="msg" id="msg"&gt;&lt;/p&gt;
+&lt;/form&gt;
+</pre>
+        </figure>
+        <figure class="painel-codigo painel-codigo--duplo">
+          <figcaption>espera.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-espera">
+const botao = document.querySelector("#buscar");
+const msg = document.querySelector("#msg");
+
+function mostrar(texto, tipo) {
+  msg.textContent = texto;
+  msg.className = "msg " + tipo;
+}
+
+async function buscarComAviso() {
+  const cep = document.querySelector("#cep").value.replace(/\D/g, "");
+  const url = `https://viacep.com.br/ws/${cep}/json/`;
+  mostrar("buscando…", "espera");
+  botao.disabled = true;                  // nada de clique duplo
+  try {
+    const resposta = await fetch(url, {
+      signal: AbortSignal.timeout(3000)   // desiste em 3 segundos
+    });
+    const dados = await resposta.json();
+    mostrar(`${dados.logradouro} · ${dados.uf}`, "ok");
+  } catch (erro) {
+    if (erro.name === "TimeoutError") {
+      mostrar("O servidor demorou demais. Tente de novo.", "erro");
+    } else {
+      mostrar("Sem conexão com a Internet.", "erro");
+    }
+  } finally {
+    botao.disabled = false;               // com ou sem erro
+  }
+}
+
+botao.addEventListener("click", buscarComAviso);
+</pre>
+        </figure>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Avise que está buscando</h3><p>Sem aviso, meio segundo parece que nada aconteceu e a pessoa clica de novo. Um texto “buscando…” ou um indicador resolve.</p></article>
+      <article class="cartao"><h3>finally devolve o botão</h3><p>O bloco <code>finally</code> roda com sucesso ou com erro. É o lugar de reabilitar o botão e esconder o “carregando”.</p></article>
+      <article class="cartao cartao--novo"><h3>AbortSignal.timeout()</h3><p>O <code>fetch</code> não tem tempo limite: sem <code>signal</code>, ele espera o quanto o navegador deixar. <code>AbortSignal.timeout(ms)</code> cancela a requisição e rejeita com <code>TimeoutError</code>. Funciona em todos os navegadores atuais.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= PARTE 2 ======================= -->
+  <div class="parte" id="parte-2">
+    <span class="parte-num">2</span>
+    <div>
+      <h2>Internacionalização com Intl</h2>
+      <p>Números, moedas, datas e ordenação que fazem sentido para quem lê.</p>
+    </div>
+  </div>
+
+  <!-- ======================= 14 · PROBLEMA ======================= -->
+  <section class="secao" id="problema-intl">
+    <div class="secao-topo">
+      <span class="selo">14</span>
+      <h2 class="secao-titulo">Formatar na mão sempre quebra</h2>
+    </div>
+    <p class="secao-lead">Concatenar texto resolve um caso e falha em todos os outros: separador de milhar, posição do símbolo, ordem de dia e mês, fuso horário, plural, acento na ordenação. A API <code>Intl</code> já vem no navegador e cuida disso.</p>
+
+    <div class="par">
+      <div class="mini" data-exec>
+        <span class="rotulo-antigo">na mão</span>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const preco = 1234.5;
+console.log("R$ " + preco.toFixed(2));   // ponto decimal, sem milhar
+
+const d = new Date(2026, 10, 4);         // 4 de novembro
+console.log(d.getDate() + "/" + d.getMonth());   // mês errado
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <span class="rotulo-atual">com Intl</span>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const preco = 1234.5;
+console.log(preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+
+const d = new Date(2026, 10, 4);
+console.log(d.toLocaleDateString("pt-BR"));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Nativa, sem instalar nada</h3><p><code>Intl</code> existe em todos os navegadores e no Node.js. Você informa o <b>locale</b> e o que quer exibir; ela aplica as convenções daquele idioma e região.</p></article>
+      <article class="cartao"><h3>Os dados não mudam</h3><p>O preço continua sendo o número <code>1234.5</code> e a data continua sendo um <code>Date</code>. Só o texto exibido muda de idioma para idioma.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: getMonth começa em zero</h3><p>Novembro é <code>10</code>. Somar 1 na mão corrige este caso, mas não resolve zero à esquerda, ordem dia/mês nem nome do mês. A seção 21 volta a isso.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 15 · LOCALE ======================= -->
+  <section class="secao" id="locale">
+    <div class="secao-topo">
+      <span class="selo">15</span>
+      <h2 class="secao-titulo">Locale: idioma mais região</h2>
+    </div>
+    <p class="secao-lead">Um <b>locale</b> é uma etiqueta de idioma: a primeira parte é o idioma, a segunda é a região. É ela que decide vírgula ou ponto, a ordem da data e o nome do mês.</p>
+
+    <div class="lab" data-lab="locales">
+      <div class="lab-controles">
+        <h4>controles</h4>
+        <div class="lab-campo">
+          <label for="lc-numero">número</label>
+          <input type="text" id="lc-numero" data-campo="numero" value="1234.56">
+        </div>
+        <div class="lab-campo">
+          <label for="lc-moeda">moeda (a mesma em todas as linhas)</label>
+          <select id="lc-moeda" data-campo="moeda">
+            <option value="BRL" selected>BRL · real</option>
+            <option value="USD">USD · dólar americano</option>
+            <option value="EUR">EUR · euro</option>
+            <option value="JPY">JPY · iene</option>
+          </select>
+        </div>
+        <p class="nota-demo">A data é sempre 2026-11-04T14:30:00Z, exibida no fuso de São Paulo. A linha destacada é o locale deste navegador.</p>
+      </div>
+      <div class="lab-saida">
+        <div class="lab-palco" data-palco style="padding:0;border:0"></div>
+        <div class="lab-codigo"><pre data-saida data-lang="js"></pre></div>
+      </div>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>locale.js · de onde vem o locale</figcaption>
+<pre class="codigo" data-lang="js" id="c-locale">
+console.log(navigator.language);     // o idioma deste navegador
+console.log(navigator.languages);    // a lista de preferência
+
+// uma lista: vale o primeiro que o navegador conhece
+const nf = new Intl.NumberFormat(["xx-XX", "pt-BR", "en-US"]);
+console.log(nf.resolvedOptions().locale);
+
+// undefined: usa o locale do navegador
+console.log(new Intl.NumberFormat(undefined).format(1234.56));
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-locale">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o navegador desta sala</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>pt-BR não é pt-PT</h3><p>Mesmo idioma, regiões diferentes: compare as duas linhas da tabela no separador de milhar e no nome da moeda.</p></article>
+      <article class="cartao"><h3>undefined usa o navegador</h3><p>Sem locale, vale <code>navigator.language</code>. Bom para mostrar a data no idioma de quem abriu; ruim quando a tela precisa sair igual para todos.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: idioma não é moeda</h3><p>O locale define <b>como</b> escrever; a moeda vai à parte. Um preço em dólar exibido para um brasileiro continua em USD: <code>US$ 1.234,56</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 16 · FAMÍLIA ======================= -->
+  <section class="secao" id="familia">
+    <div class="secao-topo">
+      <span class="selo">16</span>
+      <h2 class="secao-titulo">A família Intl</h2>
+    </div>
+    <p class="secao-lead">Seis formatadores com o mesmo jeito de usar: <code>new Intl.Algo(locale, opcoes)</code> e depois <code>format</code> (ou <code>compare</code>, ou <code>select</code>).</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>NumberFormat</code><span>números, moedas, percentuais, unidades</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const nf = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+console.log(nf.format(1234.5));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>DateTimeFormat</code><span>datas e horas, com fuso</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const df = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" });
+console.log(df.format(new Date(2026, 10, 4)));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>RelativeTimeFormat</code><span>ontem, há 3 dias, em 2 meses</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const rtf = new Intl.RelativeTimeFormat("pt-BR", { numeric: "auto" });
+console.log(rtf.format(-3, "day"));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>Collator</code><span>comparar e ordenar texto com acento</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const col = new Intl.Collator("pt-BR");
+console.log(["Zoe", "Álvaro", "Ana"].sort(col.compare));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>ListFormat</code><span>Ana, Léo e Zoe, com o conectivo certo</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const lf = new Intl.ListFormat("pt-BR");
+console.log(lf.format(["Ana", "Léo", "Zoe"]));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>PluralRules</code><span>decide entre singular e plural por idioma</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const pr = new Intl.PluralRules("pt-BR");
+console.log(pr.select(1), pr.select(2));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>atalho.js · toLocaleString e localeCompare</figcaption>
+<pre class="codigo" data-lang="js" id="c-atalho">
+console.log((1234.5).toLocaleString("pt-BR"));
+console.log((1234.5).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+console.log(new Date(2026, 10, 4).toLocaleDateString("pt-BR", { dateStyle: "long" }));
+console.log("Álvaro".localeCompare("Ana", "pt-BR"));   // negativo: vem antes
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-atalho">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>as mesmas opções, sem new</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Um padrão para os seis</h3><p>Construtor com locale e opções, depois um método. Aprendeu um, aprendeu a família.</p></article>
+      <article class="cartao"><h3>O atalho: toLocaleString</h3><p>Aceita exatamente as mesmas opções. Prático para uma chamada isolada; para repetir em laço, crie o formatador uma vez (seção 25).</p></article>
+      <article class="cartao cartao--novo"><h3>Novo na família: DurationFormat</h3><p><code>Intl.DurationFormat</code> escreve durações como “1 hora e 30 minutos”. Chegou aos três navegadores principais em 2025; confira o suporte antes de usar em produção.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 17 · NUMBERFORMAT ======================= -->
+  <section class="secao" id="numberformat">
+    <div class="secao-topo">
+      <span class="selo">17</span>
+      <h2 class="secao-titulo">Intl.NumberFormat: o básico</h2>
+    </div>
+    <p class="secao-lead">Dois argumentos: o locale e um objeto de opções. O método <code>format</code> recebe o número e devolve o texto pronto.</p>
+
+    <div class="dupla dupla--codigo">
+      <figure class="painel-codigo">
+        <figcaption>numeros.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-nf">
+const nf = new Intl.NumberFormat("pt-BR");
+console.log(nf.format(1234567.891));
+
+const duasCasas = new Intl.NumberFormat("pt-BR", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+console.log(duasCasas.format(7));
+console.log(duasCasas.format(3.14159));
+
+const semMilhar = new Intl.NumberFormat("pt-BR", { useGrouping: false });
+console.log(semMilhar.format(1234567));
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-nf">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>casas decimais e separador de milhar</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>minimum e maximumFractionDigits</h3><p>Controlam as casas decimais. O arredondamento é feito pela própria API: não precisa de <code>toFixed</code>.</p></article>
+      <article class="cartao"><h3>useGrouping</h3><p>Liga e desliga o separador de milhar. Útil em campos de formulário, onde o ponto atrapalha quem digita.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: o resultado é texto</h3><p><code>format</code> devolve uma string. Formate só na hora de exibir; guarde e calcule sempre com o número puro.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 18 · MOEDA ======================= -->
+  <section class="secao" id="moeda">
+    <div class="secao-topo">
+      <span class="selo">18</span>
+      <h2 class="secao-titulo">Moeda: o caso mais usado</h2>
+    </div>
+    <p class="secao-lead">Com <code>style: "currency"</code>, o código da moeda é obrigatório. Cada moeda traz o seu número de casas e o seu símbolo.</p>
+
+    <div class="dupla dupla--codigo">
+      <figure class="painel-codigo">
+        <figcaption>moeda.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-moeda">
+const brl = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL"
+});
+console.log(brl.format(1234.5));
+
+const usd = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "USD"
+});
+console.log(usd.format(1234.5));
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-moeda">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>real e dólar escritos em português</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>currencyDisplay</code><span>símbolo, símbolo curto, código ou nome</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+for (const currencyDisplay of ["symbol", "narrowSymbol", "code", "name"]) {
+  const nf = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD", currencyDisplay });
+  console.log(currencyDisplay.padEnd(13), nf.format(1234.5));
+}
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>casas automáticas</code><span>o iene não tem centavos; câmbio usa quatro</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const iene = new Intl.NumberFormat("ja-JP", { style: "currency", currency: "JPY" });
+console.log(iene.format(1234.5));
+
+const cambio = new Intl.NumberFormat("pt-BR", {
+  style: "currency", currency: "BRL", minimumFractionDigits: 4
+});
+console.log(cambio.format(5.9048));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem currency</code><span>a chamada lança erro</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const nf = new Intl.NumberFormat("pt-BR", { style: "currency" });
+console.log(nf.format(10));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>o espaço não é espaço</code><span>depois do R$ vem um espaço não separável</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const texto = brl.format(1234.5);
+console.log(texto === "R$ 1.234,50");      // digitado com espaço comum
+console.log(texto.charCodeAt(2));           // 160, e não 32
+console.log(texto.replace(/\s/g, " ") === "R$ 1.234,50");
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>currency é obrigatório</h3><p>Com <code>style: "currency"</code>, o código ISO de três letras é exigido: <code>BRL</code>, <code>USD</code>, <code>EUR</code>, <code>JPY</code>. Sem ele, <code>TypeError</code>.</p></article>
+      <article class="cartao"><h3>Casas decimais automáticas</h3><p>BRL usa duas casas, o iene usa zero. Sobrescreva só quando o negócio exigir, como em cotação de câmbio com quatro casas.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: comparar com texto digitado</h3><p>O espaço depois de <code>R$</code> é o caractere 160 (espaço não separável), para o símbolo não ficar sozinho no fim da linha. Em teste, compare com a saída do próprio formatador.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 19 · OPÇÕES ======================= -->
+  <section class="secao" id="opcoes">
+    <div class="secao-topo">
+      <span class="selo">19</span>
+      <h2 class="secao-titulo">Percentual, unidade e notação compacta</h2>
+    </div>
+    <p class="secao-lead">Tudo isso é o mesmo construtor: muda só o objeto de opções. Nada precisa ser instalado e nada precisa ser traduzido à mão.</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>style: "percent"</code><span>a API multiplica por 100</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const pct = new Intl.NumberFormat("pt-BR", {
+  style: "percent", maximumFractionDigits: 1
+});
+console.log(pct.format(0.256));
+console.log(pct.format(25.6));   // errado: virou 2.560%
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>style: "unit"</code><span>km/h, litro, quilograma, byte…</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const vel = new Intl.NumberFormat("pt-BR", {
+  style: "unit", unit: "kilometer-per-hour"
+});
+console.log(vel.format(80));
+const litros = new Intl.NumberFormat("pt-BR", {
+  style: "unit", unit: "liter", unitDisplay: "long"
+});
+console.log(litros.format(2.5));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>notation: "compact"</code><span>para cartões de resumo e gráficos</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const curto = new Intl.NumberFormat("pt-BR", { notation: "compact" });
+console.log(curto.format(1200));
+console.log(curto.format(3500000));
+const longo = new Intl.NumberFormat("pt-BR", {
+  notation: "compact", compactDisplay: "long"
+});
+console.log(longo.format(3500000));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">Laboratório: todas as opções de NumberFormat</h3>
+    <div class="lab" data-lab="numero">
+      <div class="lab-controles lab-controles--grade">
+        <h4>controles</h4>
+        <div class="lab-campo"><label for="nf-valor">valor</label><input type="text" id="nf-valor" data-campo="valor" value="1234.5"></div>
+        <div class="lab-campo"><label for="nf-locale">locale</label>
+          <select id="nf-locale" data-campo="locale">
+            <option>pt-BR</option><option>pt-PT</option><option>en-US</option><option>de-DE</option><option>fr-FR</option><option>ja-JP</option><option>hi-IN</option><option>ar-EG</option>
+          </select></div>
+        <div class="lab-campo"><label for="nf-style">style</label>
+          <select id="nf-style" data-campo="style">
+            <option value="decimal">decimal</option><option value="currency" selected>currency</option><option value="percent">percent</option><option value="unit">unit</option>
+          </select></div>
+        <div data-so="currency" style="display:contents">
+          <div class="lab-campo"><label for="nf-currency">currency</label>
+            <select id="nf-currency" data-campo="currency"><option>BRL</option><option>USD</option><option>EUR</option><option>JPY</option><option>GBP</option></select></div>
+          <div class="lab-campo"><label for="nf-cd">currencyDisplay</label>
+            <select id="nf-cd" data-campo="currencyDisplay"><option>symbol</option><option>narrowSymbol</option><option>code</option><option>name</option></select></div>
+        </div>
+        <div data-so="unit" style="display:contents">
+          <div class="lab-campo"><label for="nf-unit">unit</label>
+            <select id="nf-unit" data-campo="unit"><option>kilometer-per-hour</option><option>liter</option><option>kilogram</option><option>megabyte</option><option>celsius</option><option>minute</option></select></div>
+          <div class="lab-campo"><label for="nf-ud">unitDisplay</label>
+            <select id="nf-ud" data-campo="unitDisplay"><option>short</option><option>long</option><option>narrow</option></select></div>
+        </div>
+        <div class="lab-campo"><label for="nf-not">notation</label>
+          <select id="nf-not" data-campo="notation"><option>standard</option><option>compact</option><option>scientific</option><option>engineering</option></select></div>
+        <div data-so="compact" class="lab-campo"><label for="nf-cpd">compactDisplay</label>
+          <select id="nf-cpd" data-campo="compactDisplay"><option>short</option><option>long</option></select></div>
+        <div class="lab-campo"><label for="nf-min">minimumFractionDigits</label>
+          <select id="nf-min" data-campo="minimo"><option value="">(padrão)</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="lab-campo"><label for="nf-max">maximumFractionDigits</label>
+          <select id="nf-max" data-campo="maximo"><option value="">(padrão)</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="lab-campo"><label for="nf-sign">signDisplay</label>
+          <select id="nf-sign" data-campo="signDisplay"><option>auto</option><option>always</option><option>exceptZero</option><option>never</option></select></div>
+        <label class="lab-check"><input type="checkbox" data-campo="useGrouping" checked> useGrouping (separador de milhar)</label>
+      </div>
+      <div class="lab-saida">
+        <div class="lab-palco" data-palco></div>
+        <div class="lab-codigo"><pre data-saida data-lang="js"></pre></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>É sempre o mesmo construtor</h3><p>Moeda, percentual, unidade e notação compacta são opções de <code>Intl.NumberFormat</code>. O laboratório só monta o objeto de opções.</p></article>
+      <article class="cartao"><h3>Os pedaços do resultado</h3><p>As etiquetas debaixo do resultado vêm de <code>formatToParts</code>: cada pedaço tem um tipo (<code>currency</code>, <code>integer</code>, <code>group</code>, <code>decimal</code>, <code>fraction</code>).</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: mínimo maior que o máximo</h3><p>Escolha 4 no mínimo e 2 no máximo: <code>RangeError</code>. As opções são conferidas quando o formatador é criado.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 20 · DATETIMEFORMAT ======================= -->
+  <section class="secao" id="datetime">
+    <div class="secao-topo">
+      <span class="selo">20</span>
+      <h2 class="secao-titulo">Intl.DateTimeFormat</h2>
+    </div>
+    <p class="secao-lead">Datas e horas no formato de cada idioma, no fuso que você escolher. Estilos prontos resolvem a maioria dos casos em uma linha.</p>
+
+    <div class="dupla dupla--codigo">
+      <figure class="painel-codigo">
+        <figcaption>datas.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-df">
+const d = new Date("2026-11-04T14:30:00Z");
+
+console.log(new Intl.DateTimeFormat("pt-BR", {
+  dateStyle: "long",
+  timeZone: "America/Sao_Paulo"
+}).format(d));
+
+console.log(new Intl.DateTimeFormat("pt-BR", {
+  dateStyle: "short",
+  timeStyle: "short",
+  timeZone: "America/Sao_Paulo"
+}).format(d));
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-df">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>14:30 em UTC são 11:30 em São Paulo</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>dateStyle</code><span>quatro níveis prontos</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const d = new Date("2026-11-04T14:30:00Z");
+for (const dateStyle of ["full", "long", "medium", "short"]) {
+  const df = new Intl.DateTimeFormat("pt-BR", { dateStyle, timeZone: "America/Sao_Paulo" });
+  console.log(dateStyle.padEnd(7), df.format(d));
+}
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>campo a campo</code><span>você escolhe cada pedaço</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const d = new Date("2026-11-04T14:30:00Z");
+const df = new Intl.DateTimeFormat("pt-BR", {
+  weekday: "long", day: "2-digit", month: "long", year: "numeric",
+  timeZone: "America/Sao_Paulo"
+});
+console.log(df.format(d));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>timeZone</code><span>o mesmo instante em cinco fusos</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const d = new Date("2026-11-04T14:30:00Z");
+for (const timeZone of ["America/Sao_Paulo", "America/Manaus", "Europe/Lisbon", "Asia/Tokyo", "UTC"]) {
+  const df = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone });
+  console.log(timeZone.padEnd(18), df.format(d));
+}
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>não misture</code><span>dateStyle não convive com day, month e year</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const df = new Intl.DateTimeFormat("pt-BR", {
+  dateStyle: "long",
+  day: "2-digit"
+});
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">Laboratório: estilos, campos e fusos</h3>
+    <div class="lab" data-lab="data">
+      <div class="lab-controles lab-controles--grade">
+        <h4>controles</h4>
+        <div class="lab-campo"><label for="df-inst">instante</label>
+          <select id="df-inst" data-campo="instante">
+            <option value="2026-11-04T14:30:00Z">2026-11-04T14:30:00Z</option>
+            <option value="2026-01-01T02:00:00Z">2026-01-01T02:00:00Z (virada do ano em UTC)</option>
+            <option value="agora">agora</option>
+          </select></div>
+        <div class="lab-campo"><label for="df-locale">locale</label>
+          <select id="df-locale" data-campo="locale"><option>pt-BR</option><option>pt-PT</option><option>en-US</option><option>en-GB</option><option>de-DE</option><option>ja-JP</option></select></div>
+        <div class="lab-campo"><label for="df-ds">dateStyle</label>
+          <select id="df-ds" data-campo="dateStyle"><option value="">(nenhum)</option><option>full</option><option selected>long</option><option>medium</option><option>short</option></select></div>
+        <div class="lab-campo"><label for="df-ts">timeStyle</label>
+          <select id="df-ts" data-campo="timeStyle"><option value="">(nenhum)</option><option>full</option><option>long</option><option>medium</option><option selected>short</option></select></div>
+        <div class="lab-campo"><label for="df-wd">weekday</label>
+          <select id="df-wd" data-campo="weekday"><option value="">(nenhum)</option><option>long</option><option>short</option><option>narrow</option></select></div>
+        <div class="lab-campo"><label for="df-day">day</label>
+          <select id="df-day" data-campo="day"><option value="">(nenhum)</option><option>numeric</option><option>2-digit</option></select></div>
+        <div class="lab-campo"><label for="df-month">month</label>
+          <select id="df-month" data-campo="month"><option value="">(nenhum)</option><option>numeric</option><option>2-digit</option><option>long</option><option>short</option></select></div>
+        <div class="lab-campo"><label for="df-year">year</label>
+          <select id="df-year" data-campo="year"><option value="">(nenhum)</option><option>numeric</option><option>2-digit</option></select></div>
+        <div class="lab-campo"><label for="df-hour">hour / minute</label>
+          <select id="df-hour" data-campo="hour"><option value="">(nenhum)</option><option>numeric</option><option>2-digit</option></select>
+          <select aria-label="minute" data-campo="minute"><option value="">(nenhum)</option><option>numeric</option><option>2-digit</option></select></div>
+        <div class="lab-campo"><label for="df-tz">timeZone</label>
+          <select id="df-tz" data-campo="timeZone">
+            <option value="">(fuso deste computador)</option><option selected>America/Sao_Paulo</option><option>America/Manaus</option><option>America/Rio_Branco</option><option>America/Noronha</option><option>Europe/Lisbon</option><option>Asia/Tokyo</option><option>UTC</option>
+          </select></div>
+      </div>
+      <div class="lab-saida">
+        <div class="lab-palco" data-palco></div>
+        <div class="lab-codigo"><pre data-saida data-lang="js"></pre></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>dateStyle e timeStyle</h3><p>Quatro níveis prontos: <code>full</code>, <code>long</code>, <code>medium</code> e <code>short</code>. Podem ir juntos na mesma chamada.</p></article>
+      <article class="cartao"><h3>timeZone</h3><p>Nome IANA, como <code>America/Sao_Paulo</code>, <code>America/Manaus</code> ou <code>UTC</code>. Sem ele, vale o fuso do computador de quem abriu a página.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: estilo e campo juntos</h3><p>Escolha um caminho: o estilo pronto ou os campos individuais. Misturar <code>dateStyle</code> com <code>day</code> lança <code>TypeError</code>. No laboratório, escolha um <code>day</code> com o <code>dateStyle</code> ligado.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 21 · ARMADILHAS DE DATA ======================= -->
+  <section class="secao" id="armadilhas-data">
+    <div class="secao-topo">
+      <span class="selo">21</span>
+      <h2 class="secao-titulo">Quatro armadilhas de data</h2>
+    </div>
+    <p class="secao-lead">Um <code>Date</code> guarda um instante, não um texto. A data que aparece depende do fuso usado para exibir, e é aí que mora o famoso bug do “um dia a menos”.</p>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>o mês começa em zero</code><span>em new Date(2026, 10, 4), o 10 é novembro</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const d = new Date(2026, 10, 4);
+console.log(d.getMonth());       // 10
+console.log(new Intl.DateTimeFormat("pt-BR", { month: "long" }).format(d));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>Date guarda um instante</code><span>milissegundos desde 1970, em UTC</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const d = new Date("2026-11-04T14:30:00Z");
+console.log(d.getTime());
+console.log(d.toISOString());
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>"2026-11-04" é lido como UTC</code><span>meia-noite em UTC ainda é dia 3 no Brasil</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const vencimento = new Date("2026-11-04");    // sem hora
+const sp  = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" });
+const utc = new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" });
+console.log("em São Paulo:", sp.format(vencimento));
+console.log("em UTC:      ", utc.format(vencimento));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>guarde em ISO, exiba com Intl</code><span>o texto ISO vai e volta sem perder nada</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const pedido = { total: 1234.5, criadoEm: new Date("2026-11-04T14:30:00Z").toISOString() };
+const guardado = JSON.stringify(pedido);       // como vai para o banco ou o localStorage
+console.log(guardado);
+const lido = JSON.parse(guardado);
+const df = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeStyle: "short", timeZone: "America/Sao_Paulo" });
+console.log(df.format(new Date(lido.criadoEm)));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Date não tem fuso</h3><p>É um número de milissegundos em UTC. O fuso só entra quando você exibe: <code>timeZone</code> no Intl, ou o do computador se você não disser nada.</p></article>
+      <article class="cartao"><h3>Vencimento? timeZone: "UTC"</h3><p>Para data de calendário sem hora (vencimento, aniversário), formate com <code>timeZone: "UTC"</code>. O dia exibido é sempre o dia gravado, em qualquer máquina.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: um dia a menos</h3><p><code>new Date("2026-11-04")</code> é meia-noite em UTC. Exibida no Brasil (UTC−3), vira 21h do dia 3. É o bug mais comum de datas em JavaScript.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 22 · RELATIVO ======================= -->
+  <section class="secao" id="relativo">
+    <div class="secao-topo">
+      <span class="selo">22</span>
+      <h2 class="secao-titulo">Tempo relativo: ontem, há 3 dias</h2>
+    </div>
+    <p class="secao-lead"><code>Intl.RelativeTimeFormat</code> escreve “há 3 dias” e “em 2 meses”. Negativo é passado, positivo é futuro. A conta da diferença é sua.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>relativo.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-rtf">
+const rtf = new Intl.RelativeTimeFormat("pt-BR", { numeric: "auto" });
+
+console.log(rtf.format(-1, "day"));
+console.log(rtf.format(-3, "day"));
+console.log(rtf.format(2, "month"));
+console.log(rtf.format(-1, "hour"));
+console.log(rtf.format(0, "day"));
+console.log(rtf.format(1, "day"));
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-rtf">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>numeric: "auto" usa palavras quando existem</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">A conta é sua: escolher a unidade</h3>
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>quando.js · de dias para a unidade que faz sentido</figcaption>
+<pre class="codigo" data-lang="js">
+const UNIDADES = [["year", 365], ["month", 30], ["week", 7], ["day", 1]];
+
+function escolherUnidade(dias) {
+  for (const [unidade, tamanho] of UNIDADES) {
+    if (Math.abs(dias) >= tamanho) {
+      return [Math.round(dias / tamanho), unidade];
+    }
+  }
+  return [dias, "day"];
+}
+
+const rtf = new Intl.RelativeTimeFormat("pt-BR", { numeric: "auto" });
+const DIA = 24 * 60 * 60 * 1000;
+const dias = Math.round((new Date(pedido.criadoEm) - Date.now()) / DIA);
+rtf.format(...escolherUnidade(dias));
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>arraste: diferença em dias</code></div>
+        <div class="preview-corpo regua" data-regua>
+          <input type="range" min="-400" max="400" value="-3" aria-label="diferença em dias">
+          <p class="nota-demo" data-dias></p>
+          <div class="regua-linhas"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Negativo é passado</h3><p><code>-3</code> é “há 3 dias”; <code>2</code> é “em 2 dias”. A unidade vai em inglês, no singular ou no plural: <code>"day"</code> ou <code>"days"</code>, <code>"month"</code>, <code>"year"</code>.</p></article>
+      <article class="cartao"><h3>numeric: "auto"</h3><p>Troca o número por uma palavra quando o idioma tem uma: ontem, hoje, amanhã. Com <code>"always"</code> (o padrão), sai “há 1 dia”.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: a API não subtrai datas</h3><p><code>RelativeTimeFormat</code> só escreve. Você calcula a diferença, escolhe a unidade e arredonda. Na régua, compare “sempre em dias” com as outras linhas.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 23 · COLLATOR ======================= -->
+  <section class="secao" id="collator">
+    <div class="secao-topo">
+      <span class="selo">23</span>
+      <h2 class="secao-titulo">Collator: ordenar com acento</h2>
+    </div>
+    <p class="secao-lead">O <code>sort</code> sem argumento compara texto pelo código de cada caractere: letras acentuadas e minúsculas caem fora de ordem. O <code>Collator</code> compara pelas regras do idioma.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>ordenar.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-col">
+const nomes = ["Zoe", "Álvaro", "Ana"];
+console.log([...nomes].sort());               // errado
+
+const col = new Intl.Collator("pt-BR");
+console.log([...nomes].sort(col.compare));    // correto
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-col">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>Á vem depois de Z na tabela de caracteres</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>numeric: true</code><span>"item 2" antes de "item 10"</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const itens = ["item 10", "item 2", "item 1"];
+console.log([...itens].sort());
+const col = new Intl.Collator("pt-BR", { numeric: true });
+console.log([...itens].sort(col.compare));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sensitivity: "base"</code><span>"jose" encontra "José"</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const igual = new Intl.Collator("pt-BR", { sensitivity: "base" });
+console.log(igual.compare("jose", "José") === 0);
+
+const nomes = ["José", "Joana", "Júlia", "Josué"];
+const busca = "jos";
+console.log(nomes.filter(n => igual.compare(n.slice(0, busca.length), busca) === 0));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>maiúsculas</code><span>o sort comum põe todas antes</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const nomes = ["bruno", "Ana", "carla", "Álvaro"];
+console.log([...nomes].sort());
+console.log([...nomes].sort(new Intl.Collator("pt-BR").compare));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>compare é a função de ordenação</h3><p>Devolve negativo, zero ou positivo, como o <code>sort</code> espera. Passe <code>col.compare</code> sem parênteses.</p></article>
+      <article class="cartao"><h3>localeCompare é o atalho</h3><p><code>a.localeCompare(b, "pt-BR")</code> faz o mesmo. Para listas longas, o <code>Collator</code> criado uma vez é mais rápido.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: compare não busca trechos</h3><p>Ele compara textos inteiros. Para “começa com”, corte o nome do tamanho da busca antes de comparar, como no exemplo do meio.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 24 · LISTAS E PLURAL ======================= -->
+  <section class="secao" id="listas">
+    <div class="secao-topo">
+      <span class="selo">24</span>
+      <h2 class="secao-titulo">ListFormat e PluralRules</h2>
+    </div>
+    <p class="secao-lead">Duas que ficaram de fora dos slides, mas aparecem em toda tela: juntar nomes com o conectivo certo e escolher entre singular e plural.</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>ListFormat</code><span>“e”, “and”, “ou”, conforme o idioma</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const nomes = ["Ana", "Léo", "Zoe"];
+console.log(new Intl.ListFormat("pt-BR").format(nomes));
+console.log(new Intl.ListFormat("en-US").format(nomes));
+console.log(new Intl.ListFormat("pt-BR", { type: "disjunction" }).format(nomes));
+console.log(new Intl.ListFormat("pt-BR").format(["Ana"]));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>PluralRules</code><span>devolve a categoria, você escolhe a palavra</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const regra = new Intl.PluralRules("pt-BR");
+const palavra = { one: "item", other: "itens" };
+
+for (const n of [0, 1, 2, 15]) {
+  console.log(n, palavra[regra.select(n)]);
+}
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>type: "ordinal"</code><span>1st, 2nd, 3rd em inglês</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const ord = new Intl.PluralRules("en-US", { type: "ordinal" });
+const sufixo = { one: "st", two: "nd", few: "rd", other: "th" };
+for (const n of [1, 2, 3, 4, 11, 21]) {
+  console.log(n + sufixo[ord.select(n)]);
+}
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>ListFormat</h3><p><code>type: "conjunction"</code> (padrão, “e”), <code>"disjunction"</code> (“ou”) e <code>"unit"</code> (“3 kg, 20 g”). Com um item só, não sobra vírgula.</p></article>
+      <article class="cartao"><h3>PluralRules não traduz</h3><p>Ela devolve uma categoria (<code>one</code>, <code>two</code>, <code>few</code>, <code>many</code>, <code>other</code>). As palavras ficam num objeto seu, uma por categoria.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: o zero em português</h3><p>Pelas regras de <code>pt-BR</code>, 0 é <code>one</code>: sai “0 item”. Trate o zero à parte, com “nenhum item”, antes de consultar a regra.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 25 · BOAS PRÁTICAS ======================= -->
+  <section class="secao" id="boas-praticas">
+    <div class="secao-topo">
+      <span class="selo">25</span>
+      <h2 class="secao-titulo">Crie o formatador uma vez só</h2>
+    </div>
+    <p class="secao-lead">Cada <code>new Intl...</code> carrega as regras do locale. Dentro de um laço com mil linhas, isso aparece no desempenho. Meça neste navegador:</p>
+
+    <div class="dupla dupla--codigo">
+      <figure class="painel-codigo">
+        <figcaption>desempenho.js · 20 mil valores, dois jeitos</figcaption>
+<pre class="codigo" data-lang="js" id="c-bench">
+const itens = Array.from({ length: 20000 }, (_, i) => i * 1.5);
+const op = { style: "currency", currency: "BRL" };
+
+let t = performance.now();
+for (const v of itens) new Intl.NumberFormat("pt-BR", op).format(v);  // um por item
+console.log("criando dentro do laço:", Math.round(performance.now() - t), "ms");
+
+t = performance.now();
+const brl = new Intl.NumberFormat("pt-BR", op);                        // um só
+for (const v of itens) brl.format(v);
+console.log("criando uma vez só:    ", Math.round(performance.now() - t), "ms");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-bench">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o tempo é medido agora</code></div>
+        <div class="preview-corpo">
+          <button type="button" class="btn btn--sec" data-rodar>medir de novo</button>
+          <div class="console" data-console></div>
+          <p class="nota-demo">Os milissegundos mudam a cada medição e de computador para computador. A diferença entre as duas linhas fica.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>resolved.js · o que o formatador assumiu</figcaption>
+<pre class="codigo" data-lang="js" id="c-resolved">
+const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const o = brl.resolvedOptions();
+console.log(o.locale, o.style, o.currency, o.currencyDisplay);
+console.log("casas:", o.minimumFractionDigits, "a", o.maximumFractionDigits);
+console.log("milhar:", o.useGrouping, "· arredondamento:", o.roundingMode);
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-resolved">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>resolvedOptions() responde “por que saiu assim”</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">formatToParts: estilizar os centavos</h3>
+    <div class="lab" data-lab="partes">
+      <div class="lab-controles">
+        <h4>controles</h4>
+        <div class="lab-campo"><label for="fp-valor">valor</label><input type="text" id="fp-valor" data-campo="valor" value="1234.5"></div>
+        <div class="lab-campo"><label for="fp-locale">locale</label>
+          <select id="fp-locale" data-campo="locale"><option>pt-BR</option><option>en-US</option><option>de-DE</option><option>fr-FR</option><option>ja-JP</option></select></div>
+        <div class="lab-campo"><label for="fp-moeda">moeda</label>
+          <select id="fp-moeda" data-campo="moeda"><option>BRL</option><option>USD</option><option>EUR</option><option>JPY</option></select></div>
+      </div>
+      <div class="lab-saida">
+        <div class="lab-palco" data-palco></div>
+        <div class="lab-codigo"><pre data-saida data-lang="js"></pre></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Construir custa caro</h3><p>Crie os formatadores uma vez, fora do laço e fora da função que roda a cada clique, e reutilize.</p></article>
+      <article class="cartao"><h3>resolvedOptions()</h3><p>Devolve o locale e as opções realmente aplicadas, inclusive as que você não passou. Leia antes de mudar o código no escuro.</p></article>
+      <article class="cartao"><h3>formatToParts()</h3><p>Devolve o resultado em pedaços com nome (símbolo, inteiro, decimal, centavos). Serve para estilizar cada pedaço sem cortar texto na mão.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 26 · MÓDULO ======================= -->
+  <section class="secao" id="modulo">
+    <div class="secao-topo">
+      <span class="selo">26</span>
+      <h2 class="secao-titulo">Um módulo de formatadores</h2>
+    </div>
+    <p class="secao-lead">Os formatadores do projeto ficam num arquivo só, criados uma vez. As telas importam o que precisam e formatam na última linha antes de escrever na página.</p>
+
+    <div class="par">
+      <figure class="painel-codigo">
+        <figcaption>formatadores.js</figcaption>
+<pre class="codigo" data-lang="js">
+export const brl = new Intl.NumberFormat(
+  "pt-BR", { style: "currency", currency: "BRL" }
+);
+export const dataCurta = new Intl.DateTimeFormat(
+  "pt-BR", { dateStyle: "short", timeZone: "America/Sao_Paulo" }
+);
+export const colator = new Intl.Collator(
+  "pt-BR", { numeric: true }
+);
+export const lista = new Intl.ListFormat("pt-BR");
+</pre>
+      </figure>
+      <figure class="painel-codigo">
+        <figcaption>pedido.js · carregado com &lt;script type="module"&gt;</figcaption>
+<pre class="codigo" data-lang="js">
+import { brl, dataCurta, colator, lista } from "./formatadores.js";
+
+const pedido = { total: 1234.5, criadoEm: "2026-11-04T14:30:00Z" };
+const clientes = [{ nome: "Zoe" }, { nome: "Álvaro" }, { nome: "Ana" }];
+
+clientes.sort((a, b) => colator.compare(a.nome, b.nome));
+
+document.querySelector("#total").textContent = brl.format(pedido.total);
+document.querySelector("#quando").textContent = dataCurta.format(new Date(pedido.criadoEm));
+document.querySelector("#clientes").textContent = lista.format(clientes.map(c => c.nome));
+</pre>
+      </figure>
+    </div>
+
+    <div class="dupla" data-exec data-codigo="c-pedido" data-html="h-pedido">
+      <figure class="painel-codigo">
+        <figcaption>pedido.html</figcaption>
+<pre class="codigo" id="h-pedido">
+&lt;div class="pedido"&gt;
+  &lt;div&gt;&lt;small&gt;total&lt;/small&gt;&lt;b id="total"&gt;&lt;/b&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;small&gt;criado em&lt;/small&gt;&lt;b id="quando"&gt;&lt;/b&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;small&gt;clientes&lt;/small&gt;&lt;b id="clientes"&gt;&lt;/b&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;script type="module" src="pedido.js"&gt;&lt;/script&gt;
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>a tela do pedido com os dois arquivos acima</code></div>
+        <div class="preview-corpo"><div class="tela" data-tela></div></div>
+      </div>
+    </div>
+<pre class="codigo" data-lang="js" id="c-pedido" hidden>
+const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const dataCurta = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeZone: "America/Sao_Paulo" });
+const colator = new Intl.Collator("pt-BR", { numeric: true });
+const lista = new Intl.ListFormat("pt-BR");
+const pedido = { total: 1234.5, criadoEm: "2026-11-04T14:30:00Z" };
+const clientes = [{ nome: "Zoe" }, { nome: "Álvaro" }, { nome: "Ana" }];
+clientes.sort((a, b) => colator.compare(a.nome, b.nome));
+document.querySelector("#total").textContent = brl.format(pedido.total);
+document.querySelector("#quando").textContent = dataCurta.format(new Date(pedido.criadoEm));
+document.querySelector("#clientes").textContent = lista.format(clientes.map(c => c.nome));
+</pre>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>O dado continua cru</h3><p><code>pedido.total</code> é número e <code>pedido.criadoEm</code> é uma string ISO. A formatação acontece na última linha antes de escrever na tela, e só ali.</p></article>
+      <article class="cartao"><h3>Um lugar só para mudar</h3><p>Trocar o fuso, as casas decimais ou o idioma do sistema inteiro é editar <code>formatadores.js</code>. Nenhuma tela muda.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: módulo por duplo clique</h3><p><code>&lt;script type="module"&gt;</code> não carrega quando o arquivo é aberto por <code>file://</code>: o navegador bloqueia o <code>import</code>. Abra o projeto com um servidor local, como a extensão Live Server do VS Code.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 27 · TROPEÇOS ======================= -->
+  <section class="secao" id="tropecos">
+    <div class="secao-topo">
+      <span class="selo">27</span>
+      <h2 class="secao-titulo">Seis tropeços comuns</h2>
+    </div>
+    <p class="secao-lead">Todos já apareceram na aula. Aqui estão lado a lado, rodando.</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>1 · guardar o texto formatado</code><span>"R$ 1.234,50" não soma nem compara</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const a = brl.format(1234.5), b = brl.format(10);
+console.log(a + b);
+console.log(Number(a));
+console.log(brl.format(1234.5 + 10));   // some antes, formate depois
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>2 · passar 25.6 no percentual</code><span>o valor entra como fração</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const pct = new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 1 });
+console.log(pct.format(25.6));
+console.log(pct.format(25.6 / 100));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>3 · inventar a moeda</code><span>é o código ISO, não o símbolo</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const nf = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "R$" });
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>4 · misturar dateStyle com month</code><span>estilo pronto ou campos, nunca os dois</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", month: "long" });
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>5 · confiar no fuso da máquina</code><span>cada usuário vê uma data</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const vencimento = new Date("2026-11-04T00:00:00Z");
+for (const timeZone of ["America/Sao_Paulo", "Asia/Tokyo", "UTC"]) {
+  const df = new Intl.DateTimeFormat("pt-BR", { timeZone });
+  console.log(timeZone.padEnd(18), df.format(vencimento));
+}
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>6 · construir dentro do laço</code><span>um formatador por item desperdiça trabalho</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const op = { style: "currency", currency: "BRL" };
+let t = performance.now();
+for (let i = 0; i &lt; 5000; i++) new Intl.NumberFormat("pt-BR", op).format(i);
+console.log("dentro:", Math.round(performance.now() - t), "ms");
+const brl = new Intl.NumberFormat("pt-BR", op);
+t = performance.now();
+for (let i = 0; i &lt; 5000; i++) brl.format(i);
+console.log("fora:  ", Math.round(performance.now() - t), "ms");
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Formate na tela, e só ali</h3><p>Tropeços 1 e 2: o dado fica cru (número, fração, ISO) e o Intl só entra na hora de escrever no DOM.</p></article>
+      <article class="cartao"><h3>Os erros aparecem cedo</h3><p>Tropeços 3 e 4 lançam erro no construtor, antes do primeiro <code>format</code>. Mais um motivo para criar os formatadores num módulo carregado no início.</p></article>
+      <article class="cartao cartao--erro"><h3>Em dúvida, resolvedOptions()</h3><p>Quando o resultado sair diferente do esperado, leia o que a API assumiu (locale, fuso, casas) antes de trocar opções no chute.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 28 · JUNTOS ======================= -->
+  <section class="secao" id="juntos">
+    <div class="secao-topo">
+      <span class="selo">28</span>
+      <h2 class="secao-titulo">AJAX + Intl: a cotação do dólar</h2>
+    </div>
+    <p class="secao-lead">As duas partes da aula numa tela: a AwesomeAPI devolve a cotação como <b>texto</b>; o JavaScript converte em número e o Intl formata o valor, a variação e a hora.</p>
+
+    <div class="pilha" data-exec data-codigo="c-cotacao" data-html="h-cotacao">
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>o HTML e o JavaScript abaixo, rodando</code></div>
+        <div class="preview-corpo">
+          <div class="tela" data-tela></div>
+          <div class="console" data-console data-tempo data-vazio="(nada foi escrito no console: tudo foi para a tela)"></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+        <figure class="painel-codigo">
+          <figcaption>cotacao.html</figcaption>
+<pre class="codigo" id="h-cotacao">
+&lt;div class="cartoes" id="cartoes"&gt;&lt;/div&gt;
+&lt;button id="atualizar" type="button"&gt;atualizar cotação&lt;/button&gt;
+&lt;p class="msg" id="msg"&gt;&lt;/p&gt;
+</pre>
+        </figure>
+        <figure class="painel-codigo painel-codigo--duplo">
+          <figcaption>cotacao.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-cotacao">
+const brl4 = new Intl.NumberFormat("pt-BR", {
+  style: "currency", currency: "BRL", minimumFractionDigits: 4
+});
+const variacao = new Intl.NumberFormat("pt-BR", {
+  style: "percent", maximumFractionDigits: 2,
+  signDisplay: "exceptZero"
+});
+const hora = new Intl.DateTimeFormat("pt-BR", {
+  timeStyle: "short", timeZone: "America/Sao_Paulo"
+});
+const rtf = new Intl.RelativeTimeFormat("pt-BR", { numeric: "auto" });
+const api = "https://economia.awesomeapi.com.br/json/last/";
+const msg = document.querySelector("#msg");
+
+async function carregar() {
+  msg.textContent = "buscando cotação…";
+  try {
+    const resposta = await fetch(api + "USD-BRL,EUR-BRL");
+    if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+    const dados = await resposta.json();
+    const area = document.querySelector("#cartoes");
+    area.innerHTML = "";
+
+    for (const moeda of [dados.USDBRL, dados.EURBRL]) {
+      // a API manda tudo como texto: vire número antes
+      const valor = Number(moeda.bid);              // "5.9048"
+      const pct = Number(moeda.pctChange) / 100;    // "-0.41" (%)
+      const ms = Number(moeda.timestamp) * 1000;    // segundos → ms
+      const minutos = Math.round((ms - Date.now()) / 60000);
+      const relativo = Math.abs(minutos) &gt;= 60
+        ? rtf.format(Math.round(minutos / 60), "hour")
+        : rtf.format(minutos, "minute");
+
+      const cartao = document.createElement("div");
+      cartao.className = "cartao";
+      cartao.innerHTML = "&lt;small&gt;&lt;/small&gt;&lt;b&gt;&lt;/b&gt;&lt;span&gt;&lt;/span&gt;";
+      const [rotulo, numero, linha] = cartao.children;
+      rotulo.textContent = `1 ${moeda.code} em reais`;
+      numero.textContent = brl4.format(valor);
+      linha.className = pct &lt; 0 ? "desce" : "sobe";
+      linha.textContent = [variacao.format(pct),
+        hora.format(new Date(ms)), relativo].join(" · ");
+      area.append(cartao);
+    }
+    msg.textContent = "";
+  } catch (erro) {
+    msg.textContent = "Sem cotação agora: " + erro.message;
+  }
+}
+
+const botao = document.querySelector("#atualizar");
+botao.addEventListener("click", carregar);
+carregar();
+</pre>
+        </figure>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Texto que parece número</h3><p>Muitas APIs mandam valores como string (<code>"bid": "5.9048"</code>). Converta com <code>Number()</code> antes de calcular ou formatar; <code>"5.9048" * 10</code> até funciona, <code>"5.9048" + 1</code> não.</p></article>
+      <article class="cartao"><h3>Formatadores fora da função</h3><p>Os quatro formatadores são criados uma vez, no topo. <code>carregar()</code> pode rodar quantas vezes for, só o <code>format</code> se repete.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: timestamp em segundos</h3><p>A API manda segundos; <code>new Date()</code> espera milissegundos. Sem o <code>* 1000</code>, a cotação aparece em janeiro de 1970.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= LAB LIVRE ======================= -->
+  <section class="secao" id="lab">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Lab</span>
+      <h2 class="secao-titulo">Laboratório livre</h2>
+    </div>
+    <p class="secao-lead">Escreva JavaScript à esquerda e execute: o console e as requisições aparecem à direita. O <code>await</code> funciona direto e o <code>fetch</code> alcança ViaCEP, JSONPlaceholder e AwesomeAPI. Carregue um exemplo e modifique.</p>
+
+    <div class="playground" data-playground>
+      <div class="pg-editor">
+        <div class="pg-barra">
+          <select data-exemplos aria-label="Carregar exemplo">
+            <option value="">carregar um exemplo…</option>
+            <option value="cep">AJAX · buscar CEP e tratar erros</option>
+            <option value="paralelo">AJAX · vários CEPs com Promise.all</option>
+            <option value="post">AJAX · POST, PATCH e DELETE</option>
+            <option value="cotacao">AJAX + Intl · cotação do dólar</option>
+            <option value="moedas">Intl · um valor, cinco moedas</option>
+            <option value="datas">Intl · um instante, cinco fusos</option>
+            <option value="relativo">Intl · tempo relativo</option>
+            <option value="ordenar">Intl · ordenar com Collator</option>
+          </select>
+          <button type="button" class="btn" data-rodar-pg>Executar</button>
+          <span class="pg-dica">Ctrl + Enter também executa</span>
+        </div>
+        <textarea spellcheck="false" aria-label="Editor de JavaScript"></textarea>
+      </div>
+      <div class="pg-resultado">
+        <div class="preview-topo" style="border:1px solid var(--borda);border-radius:var(--raio);background:#fff">
+          <span class="preview-selo">console</span><code>a saída do seu código</code>
+        </div>
+        <div class="console console--alto" data-console data-tempo></div>
+        <div data-painel-rede></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= REFERÊNCIA RÁPIDA ======================= -->
+  <section class="secao" id="referencia">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Resumo</span>
+      <h2 class="secao-titulo">Referência rápida</h2>
+    </div>
+    <p class="secao-lead">Tudo o que apareceu hoje, numa tabela.</p>
+
+    <div class="rolagem-x">
+      <table class="tabela">
+        <thead><tr><th>Família</th><th>Como escrever</th><th>Para que serve</th></tr></thead>
+        <tbody>
+          <tr><td>Requisição</td><td><code>fetch(url)</code> <code>fetch(url, { method, headers, body, signal })</code></td><td>Pede dados ao servidor. Devolve uma Promise de <code>Response</code>.</td></tr>
+          <tr><td>Resposta</td><td><code>resposta.ok</code> <code>resposta.status</code> <code>resposta.headers.get()</code></td><td>Saber se deu certo (200 a 299) e ler cabeçalhos.</td></tr>
+          <tr><td>Corpo</td><td><code>await resposta.json()</code> <code>await resposta.text()</code></td><td>Ler o corpo, uma vez só. <code>json()</code> devolve objeto.</td></tr>
+          <tr><td>Promise</td><td><code>.then()</code> <code>.catch()</code> <code>.finally()</code></td><td>Tratar o resultado, a falha e o que roda sempre.</td></tr>
+          <tr><td>async/await</td><td><code>async function f() { const r = await fetch(url); }</code></td><td>O mesmo que <code>.then()</code>, lido de cima para baixo. Com <code>try/catch</code>.</td></tr>
+          <tr><td>Erros</td><td><code>if (!resposta.ok) throw new Error()</code> <code>if (dados.erro)</code></td><td>404 e 500 não rejeitam: quem confere é você.</td></tr>
+          <tr><td>Enviar JSON</td><td><code>headers: { "Content-Type": "application/json" }</code> <code>body: JSON.stringify(obj)</code></td><td>POST, PUT e PATCH com dados.</td></tr>
+          <tr><td>Tempo limite</td><td><code>signal: AbortSignal.timeout(3000)</code></td><td>Desistir de uma requisição lenta (<code>TimeoutError</code>).</td></tr>
+          <tr><td>Locale</td><td><code>"pt-BR"</code> <code>["pt-BR", "en-US"]</code> <code>undefined</code> <code>navigator.language</code></td><td>Idioma e região que decidem o formato.</td></tr>
+          <tr><td>Números</td><td><code>new Intl.NumberFormat(loc, { minimumFractionDigits, maximumFractionDigits, useGrouping })</code></td><td>Casas decimais e separador de milhar.</td></tr>
+          <tr><td>Moeda</td><td><code>{ style: "currency", currency: "BRL", currencyDisplay }</code></td><td>R$ 1.234,50. O código ISO é obrigatório.</td></tr>
+          <tr><td>Percentual, unidade, compacto</td><td><code>{ style: "percent" }</code> <code>{ style: "unit", unit }</code> <code>{ notation: "compact" }</code></td><td>25,6% (passe 0.256), 80 km/h, 1,2 mil.</td></tr>
+          <tr><td>Datas</td><td><code>new Intl.DateTimeFormat(loc, { dateStyle, timeStyle, timeZone })</code></td><td>Data e hora no idioma e no fuso escolhidos. Estilo ou campos, não os dois.</td></tr>
+          <tr><td>Tempo relativo</td><td><code>new Intl.RelativeTimeFormat(loc, { numeric: "auto" }).format(-3, "day")</code></td><td>há 3 dias, ontem, em 2 meses. A conta é sua.</td></tr>
+          <tr><td>Ordenar texto</td><td><code>lista.sort(new Intl.Collator(loc, { numeric, sensitivity }).compare)</code></td><td>Acento e maiúsculas no lugar certo; "item 2" antes de "item 10".</td></tr>
+          <tr><td>Listas e plural</td><td><code>new Intl.ListFormat(loc)</code> <code>new Intl.PluralRules(loc).select(n)</code></td><td>Ana, Léo e Zoe; categoria de plural (o zero é à parte).</td></tr>
+          <tr><td>Diagnóstico</td><td><code>resolvedOptions()</code> <code>formatToParts()</code></td><td>Ver o que foi assumido; estilizar cada pedaço.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- ======================= ATIVIDADE ======================= -->
+<section class="secao atividade" id="atividade">
+  <div class="wrap">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Atividade</span>
+      <h2 class="secao-titulo">Painel de pedidos: CEP e extrato</h2>
+    </div>
+    <p class="secao-lead">Uma página com o formulário de entrega que se preenche pelo CEP e o extrato do cliente formatado com Intl. Nenhuma biblioteca externa.</p>
+
+    <div class="dupla">
+      <div class="bloco-branco">
+        <span class="nivel">Parte 1 · obrigatória</span>
+        <h3>O que a página precisa ter</h3>
+        <ul class="requisitos">
+          <li>Formulário com CEP, rua, bairro, cidade e UF. Ao sair do campo CEP (<code>blur</code>), busque na ViaCEP com <code>fetch</code> e <code>async/await</code> e preencha os campos.</li>
+          <li>Mensagem <b>na tela</b> para cada caso: buscando, endereço preenchido, CEP não encontrado (<code>dados.erro</code>) e falha na requisição (<code>catch</code>). Confira <code>resposta.ok</code> antes de ler o corpo.</li>
+          <li>Um módulo <code>formatadores.js</code> com todos os formatadores, criados uma vez. Os outros arquivos só importam.</li>
+          <li>Tabela de extrato com as 10 transações de <code>transacoes.js</code>: valores em BRL e uma das linhas em USD (<code>style: "currency"</code>).</li>
+          <li>Data de cada transação com <code>dateStyle: "long"</code> e <code>timeZone</code> explícito.</li>
+          <li>Coluna “quando” em tempo relativo (<code>RelativeTimeFormat</code>, <code>numeric: "auto"</code>): hoje, ontem, há 3 dias.</li>
+          <li>Linhas ordenadas pelo nome do cliente com <code>Intl.Collator("pt-BR")</code>, com os acentos no lugar certo.</li>
+          <li>Resumo no topo com o total em <code>notation: "compact"</code>.</li>
+          <li>Abra com um servidor local (Live Server): módulos não carregam por <code>file://</code>.</li>
+        </ul>
+      </div>
+      <figure class="painel-codigo">
+        <figcaption>estrutura e dados de partida</figcaption>
+<pre class="codigo" data-lang="js">
+// painel-pedidos/
+//   index.html       &lt;script type="module" src="js/app.js"&gt;
+//   js/app.js        eventos, fetch e DOM
+//   js/formatadores.js
+//   js/transacoes.js
+
+// js/transacoes.js: os dados ficam crus (número e data ISO)
+export const transacoes = [
+  { cliente: "Zoe Martins",   descricao: "Mochila escolar",
+    valor: 189.9, moeda: "BRL", criadoEm: "2026-11-24T13:15:00Z" },
+  { cliente: "Álvaro Mendes", descricao: "Curso online de JavaScript",
+    valor: 49.9,  moeda: "USD", criadoEm: "2026-11-23T18:15:00Z" },
+  { cliente: "ana Lima",      descricao: "Caderno universitário",
+    valor: 32.5,  moeda: "BRL", criadoEm: "2026-11-21T15:15:00Z" },
+  { cliente: "Caio Ramos",    descricao: "Estorno de frete",
+    valor: -18.9, moeda: "BRL", criadoEm: "2026-11-12T16:15:00Z" },
+  // ... mais seis, com nomes acentuados (Érica, Íris, Úrsula...)
+];
+</pre>
+      </figure>
+    </div>
+
+    <div class="dupla">
+      <div class="bloco-branco">
+        <span class="nivel">Parte 2 · desafio</span>
+        <h3>Exigências que quebram a solução preguiçosa</h3>
+        <ul class="requisitos">
+          <li>Cotação do dólar ao vivo pela AwesomeAPI (<code>USD-BRL</code>): a linha em USD ganha o valor em reais e o resumo mostra a cotação com 4 casas. O <code>bid</code> chega como texto.</li>
+          <li>Histórico dos últimos 5 CEPs buscados no <code>localStorage</code>: sem repetidos, o mais recente primeiro. Clicar num CEP do histórico busca de novo.</li>
+          <li>Seletor de idioma (<code>pt-BR</code> / <code>en-US</code>) que reformata a tela inteira <b>sem nova requisição</b>: os dados não mudam, só os formatadores.</li>
+          <li>CEP com menos de 8 números não gera requisição nenhuma (confira na aba Rede do F12), e duas buscas nunca rodam ao mesmo tempo.</li>
+          <li>O total soma números, nunca textos formatados. O estorno negativo aparece com sinal de menos, não só em vermelho.</li>
+          <li>Proibido: biblioteca externa, <code>toFixed</code> para exibir dinheiro, <code>"R$ " +</code> concatenado e <code>new Intl...</code> dentro de laço ou de evento.</li>
+        </ul>
+      </div>
+      <div class="bloco-branco">
+        <span class="nivel">Parte 3 · investigação</span>
+        <h3>Responda em comentário no próprio código</h3>
+        <ul class="requisitos">
+          <li>Por que um CEP inexistente não cai no <code>catch</code>? Que status volta e o que vem no corpo?</li>
+          <li>Troque <code>if (dados.erro)</code> por <code>if (dados.erro === true)</code> e busque 99999-999. O que acontece, e por quê?</li>
+          <li>O que muda na tela se o <code>timeZone</code> for <code>"Asia/Tokyo"</code>? E se você tirar o <code>timeZone</code>?</li>
+          <li>Por que <code>["Zoe", "Álvaro", "Ana"].sort()</code> deixa Álvaro por último?</li>
+          <li>Cole o que <code>resolvedOptions()</code> devolve para o seu formatador de moeda e explique duas das opções que você não escreveu.</li>
+          <li>Busque o CEP <code>123</code> com a aba Rede do F12 aberta. Que status aparece lá, o que chega ao seu código e por quê? Quantos bytes trouxe uma busca que deu certo?</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">Resultado esperado na tela</h3>
+    <div class="bloco-branco esperado" data-esperado>
+      <div>
+        <h4>entrega</h4>
+        <form class="form-end" data-form-entrega onsubmit="return false">
+          <label class="c2">CEP <input name="cep" value="" placeholder="00000-000" autocomplete="off"></label>
+          <label class="c4">Rua <input name="logradouro" readonly></label>
+          <label class="c2">Bairro <input name="bairro" readonly></label>
+          <label class="c3">Cidade <input name="localidade" readonly></label>
+          <label class="c1">UF <input name="uf" readonly></label>
+          <p class="form-msg">Digite um CEP e saia do campo.</p>
+        </form>
+        <div class="historico" data-historico style="margin-top:10px"></div>
+      </div>
+      <div>
+        <div class="esperado-barra">
+          <h4 style="margin:0">extrato</h4>
+          <div class="botoes">
+            <label class="lab-check">idioma
+              <select data-locale style="font:14px var(--mono);padding:5px 8px;border:1px solid var(--borda);border-radius:8px">
+                <option value="pt-BR">pt-BR</option><option value="en-US">en-US</option>
+              </select></label>
+            <button type="button" class="btn btn--sec" data-recotar>atualizar cotação</button>
+          </div>
+        </div>
+        <div class="resumo" data-resumo style="margin:12px 0 16px"></div>
+        <div class="rolagem-x">
+          <table class="tabela extrato">
+            <thead><tr><th>Cliente</th><th>Descrição</th><th>Data</th><th>Quando</th><th class="num">Valor</th><th class="num">Em reais</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="criterios">
+      <article class="cartao"><h3>Entrega</h3><p>O link do repositório no GitHub com <code>index.html</code>, <code>js/app.js</code>, <code>js/formatadores.js</code> e <code>js/transacoes.js</code>, mais um print da tela com o extrato e um endereço preenchido. As respostas da Parte 3 ficam em comentário no código.</p></article>
+      <article class="cartao"><h3>Critério técnico</h3><p><code>fetch</code> com <code>async/await</code> e <code>try/catch</code>; <code>resposta.ok</code> e <code>dados.erro</code> conferidos; dados guardados crus; nenhum formatador criado dentro de laço; nada de <code>innerHTML</code> com dados vindos da API.</p></article>
+      <article class="cartao"><h3>Critério de usabilidade</h3><p>Toda mensagem de erro aparece em texto na tela, todo campo tem <code>&lt;label&gt;</code>, o botão ou campo não aceita busca dupla, e valor negativo não depende só da cor.</p></article>
+    </div>
+
+    <div class="envio">
+      <span class="envio-rotulo">Envio da atividade</span>
+      <p class="envio-texto">Envie a atividade para <a href="mailto:yuri.correa@descomplica.com.br">yuri.correa@descomplica.com.br</a>, com o que está descrito em <b>Entrega</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= RODAPÉ ======================= -->
+<footer class="rodape">
+  <div class="rodape-interna">
+    <div>
+      <h2>Bom código!</h2>
+      <p>Busque só o que mudou, confira o que voltou e mostre do jeito de quem lê.</p>
+      <div class="rodape-meta">2º período · PM 4 — Projeto Mensal</div>
+      <p class="rodape-creditos">Créditos: adaptada dos slides <i>Requisições AJAX com fetch</i> e <i>Internacionalização com Intl — Aula de JavaScript</i>. Dados de exemplo das APIs públicas ViaCEP, JSONPlaceholder e AwesomeAPI.</p>
+    </div>
+    <img src="img/logo.png" alt="Descomplica + UniAmérica">
+  </div>
+</footer>
+
+<button class="voltar-topo" aria-label="Voltar ao topo">&#8593;</button>
+
+<script src="js/aula.js"></script>
+</body>
+</html>

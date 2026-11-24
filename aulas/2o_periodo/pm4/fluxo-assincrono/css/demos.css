@@ -1,0 +1,250 @@
+/* =========================================================
+   Aula: Fluxo de desenvolvimento assíncrono em JavaScript
+   demos.css - console ao vivo com tempo, visualizador do
+   Event Loop, previsão de ordem, quadros com tela,
+   e laboratório livre
+   ========================================================= */
+
+/* rótulo miúdo sob uma demonstração */
+.nota-demo{font-size:14.5px;color:var(--texto);font-family:var(--mono);margin:0}
+
+/* ---------- botões ---------- */
+.btn{
+  font-family:var(--mono);font-size:14.5px;font-weight:700;cursor:pointer;line-height:1.2;
+  background:var(--verde);color:var(--tinta);border:2px solid var(--verde-escuro);border-radius:8px;padding:8px 16px;
+}
+.btn:hover{filter:brightness(1.05);box-shadow:0 0 0 3px rgba(0,232,143,.25)}
+.btn:disabled{opacity:.45;cursor:default;box-shadow:none;filter:none}
+.btn--sec{background:#fff;border-color:var(--borda);font-weight:400}
+.btn--sec:hover{border-color:var(--verde-escuro)}
+.botoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* chamadas: cada botão roda o código do painel + aquela linha */
+.chamadas{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chamada{
+  font-family:var(--mono);font-size:14px;line-height:1.3;cursor:pointer;color:var(--tinta);
+  background:#fff;border:1px solid var(--borda);border-radius:8px;padding:6px 12px;text-align:left;
+}
+.chamada:hover{border-color:var(--verde-escuro)}
+.chamada.ativa{background:var(--verde);border-color:var(--verde-escuro);font-weight:700}
+
+/* ---------- console ao vivo ---------- */
+.console{
+  background:var(--code-bg);border-radius:10px;padding:6px 0;min-height:58px;
+  font-family:var(--mono);font-size:15px;line-height:1.5;color:var(--code-fg);
+}
+.cl{padding:5px 16px;white-space:pre-wrap;overflow-wrap:anywhere;border-bottom:1px solid #1C2B25;animation:cl-entra .35s ease-out}
+.cl:last-child{border-bottom:0}
+@keyframes cl-entra{from{background:rgba(0,232,143,.28)}to{background:transparent}}
+.cl--eco{color:var(--code-com);animation:none}
+.cl--eco::before{content:"\203A  ";color:var(--verde)}
+.cl--ret{color:var(--code-cia)}
+.cl--ret::before{content:"\2190  ";color:var(--code-com)}
+.cl--warn{color:#FFD866;background:rgba(255,216,102,.08);box-shadow:inset 4px 0 0 #C99A00;animation:none}
+.cl--error{color:#FF9B8F;background:rgba(255,120,100,.10);box-shadow:inset 4px 0 0 #D9483B;animation:none}
+.cl--uncaught{color:#FFB3A8;background:rgba(255,70,50,.22);box-shadow:inset 4px 0 0 #FF5A47;font-weight:700;animation:none}
+.cl--vazio{color:var(--code-com);font-style:italic;animation:none}
+.console--alto{min-height:440px;max-height:640px;overflow:auto}
+
+/* tempo desde o início da execução, à esquerda de cada linha */
+.cl-t{display:inline-block;min-width:5.2em;color:#6F7C76;font-size:13px;margin-right:6px}
+.cl-t::after{content:"";display:inline-block;width:1px;height:1em;background:#33443D;margin-left:10px;vertical-align:-2px}
+
+/* demonstração com tela: o HTML do painel rodando num quadro */
+.tela{border:2px dashed #98A2A9;border-radius:10px;overflow:hidden;background:#fff}
+.tela iframe{display:block;width:100%;height:170px;border:0;background:#fff}
+
+/* quadros invisíveis onde o código das demonstrações roda */
+.caixa-de-areia{position:absolute;left:-9999px;top:0;width:10px;height:10px;opacity:0;pointer-events:none;border:0}
+
+/* mini com código + console */
+.mini .painel-codigo{padding:16px 18px;gap:10px}
+.mini .painel-codigo .codigo{font-size:15px}
+.preview-corpo .painel-codigo{padding:18px 20px;gap:10px}
+.preview-corpo .painel-codigo .codigo{font-size:15px}
+
+/* ---------- linhas numeradas ---------- */
+.codigo .ln{display:block;min-height:1.6em;border-left:3px solid transparent;padding-left:10px;margin-left:-13px;
+  transition:background .2s,opacity .2s;border-radius:0 5px 5px 0}
+.codigo--numeros{counter-reset:ln}
+.codigo--numeros .ln{counter-increment:ln;position:relative;padding-left:3.1em}
+.codigo--numeros .ln::before{
+  content:counter(ln);position:absolute;left:0;width:2.1em;text-align:right;color:#4E5B55;
+}
+.ln.feita{background:rgba(0,232,143,.10)}
+.ln.atual{background:rgba(0,232,143,.34)}
+
+/* ---------- passo a passo ---------- */
+.passo-barra{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.passo-conta{font-family:var(--mono);font-size:14px;color:var(--texto)}
+.passo-nota{
+  min-height:84px;background:var(--fundo);border:1px solid var(--borda);border-radius:10px;padding:12px 16px;
+  font-size:18px;line-height:1.45;color:var(--tinta);margin:0;
+}
+.passo-nota code{font-family:var(--mono);font-size:15.5px;background:rgba(0,232,143,.16);padding:1px 6px;border-radius:5px}
+
+/* ---------- visualizador do Event Loop ---------- */
+.loop{display:flex;flex-wrap:wrap;gap:28px;align-items:stretch;margin-bottom:28px}
+.loop-lado{flex:1 1 480px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.loop > .preview{flex:1.25 1 560px;min-width:0}
+.loop .preview-corpo{display:flex;flex-direction:column;gap:16px}
+.loop .preview-corpo > * + *{margin-top:0}
+
+.motor{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:14px;flex:1 1 auto}
+.motor-caixa{
+  border-radius:12px;padding:12px 14px 14px;min-height:150px;display:flex;flex-direction:column;gap:8px;
+  background:var(--fundo);border:2px solid var(--borda);
+}
+.motor-caixa h4{
+  margin:0;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12.5px;letter-spacing:1.1px;
+  text-transform:uppercase;color:var(--texto);
+}
+.motor-caixa h4 .n{
+  width:22px;height:22px;border-radius:50%;background:var(--tinta);color:var(--verde);font-size:12px;
+  display:inline-flex;align-items:center;justify-content:center;letter-spacing:0;
+}
+.motor-itens{display:flex;flex-direction:column;gap:6px;flex:1 1 auto}
+/* a pilha cresce de baixo para cima */
+.motor-pilha .motor-itens{flex-direction:column-reverse;justify-content:flex-start}
+.motor-item{
+  font-family:var(--mono);font-size:14.5px;line-height:1.35;padding:7px 11px;border-radius:8px;
+  background:#fff;border:1px solid var(--borda);overflow-wrap:anywhere;animation:item-entra .3s ease-out;
+}
+@keyframes item-entra{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
+.motor-pilha .motor-item{background:var(--code-bg);color:var(--code-fg);border-color:var(--code-bg)}
+.motor-pilha .motor-item:first-child{opacity:.75}
+.motor-web .motor-item{border-style:dashed;border-color:#98A2A9}
+.motor-micro .motor-item{background:rgba(171,157,242,.16);border-color:#AB9DF2}
+.motor-macro .motor-item{background:rgba(255,216,102,.22);border-color:#C99A00}
+.motor-vazio{font-family:var(--mono);font-size:13.5px;color:#98A2A9;font-style:italic}
+.motor-caixa.mexeu{border-color:var(--verde-escuro);box-shadow:0 0 0 3px rgba(0,232,143,.25)}
+
+.motor-laco{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;
+  border:2px dashed var(--borda);font-family:var(--mono);font-size:14.5px;color:var(--texto);
+}
+.motor-laco .roda{
+  width:26px;height:26px;border-radius:50%;border:3px solid #C9D1CD;border-top-color:var(--texto);flex:0 0 auto;
+}
+.motor-laco.ativo{border-color:var(--verde-escuro);background:rgba(0,232,143,.10);color:var(--tinta)}
+.motor-laco.ativo .roda{border-color:rgba(0,232,143,.35);border-top-color:var(--verde-escuro);animation:roda 1s linear infinite}
+@keyframes roda{to{transform:rotate(360deg)}}
+.motor-laco b{color:var(--tinta)}
+
+/* ---------- os quatro bastidores (diagrama) ---------- */
+.bastidores{display:flex;flex-wrap:wrap;gap:0;align-items:stretch;margin-bottom:28px}
+.bastidor{
+  flex:1 1 230px;min-width:0;background:var(--superficie);border:1px solid var(--borda);border-radius:var(--raio);
+  padding:22px 24px;display:flex;flex-direction:column;gap:8px;
+}
+.bastidor .n{
+  width:40px;height:40px;border-radius:50%;background:var(--verde);display:flex;align-items:center;justify-content:center;
+  font-family:var(--titulo);font-size:22px;font-weight:700;
+}
+.bastidor h3{margin:4px 0 0;font-family:var(--titulo);font-size:30px;line-height:1.05}
+.bastidor p{margin:0;font-size:17.5px;color:var(--texto)}
+.bastidor code{font-family:var(--mono);font-size:15px;background:rgba(0,232,143,.16);padding:1px 6px;border-radius:5px;color:var(--tinta)}
+/* seta entre os cartões: triângulo em CSS (caractere de seta vira emoji em alguns contextos) */
+.seta{flex:0 0 34px;display:flex;align-items:center;justify-content:center}
+.seta::after{content:"";border-left:14px solid var(--verde-escuro);border-top:10px solid transparent;border-bottom:10px solid transparent}
+.ciclo{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:-8px 0 28px;
+  font-family:var(--mono);font-size:15px;color:var(--texto);
+}
+.ciclo span{background:var(--superficie);border:1px solid var(--borda);border-radius:999px;padding:6px 14px;color:var(--tinta)}
+.ciclo i{display:inline-block;border-left:10px solid var(--verde-escuro);border-top:7px solid transparent;border-bottom:7px solid transparent}
+@media (max-width:1100px){ .seta{flex-basis:100%;height:26px} .seta::after{transform:rotate(90deg)} }
+
+/* ---------- previsão de ordem ---------- */
+.prever{display:flex;flex-direction:column;gap:14px}
+.preview-corpo.prever > * + *{margin-top:0}
+.fichas{display:flex;flex-wrap:wrap;gap:10px}
+.ficha{
+  min-width:54px;height:54px;padding:0 14px;border-radius:12px;border:2px solid var(--verde-escuro);background:#fff;
+  font-family:var(--mono);font-size:22px;font-weight:700;cursor:pointer;color:var(--tinta);
+}
+.ficha:hover{background:rgba(0,232,143,.16)}
+.ficha:disabled{opacity:.25;cursor:default;background:#fff}
+.palpite{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-height:66px;padding:10px 14px;border-radius:12px;
+  border:2px dashed var(--borda);background:var(--fundo);
+}
+.palpite-vazio{font-family:var(--mono);font-size:14.5px;color:#98A2A9}
+.palpite .pos{
+  display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;padding:0 10px;border-radius:10px;
+  background:var(--tinta);color:var(--verde);font-family:var(--mono);font-size:19px;font-weight:700;
+}
+.palpite .pos.certo{background:var(--verde);color:var(--tinta)}
+.palpite .pos.errado{background:#D9483B;color:#fff}
+.veredito{margin:0;font-size:19px;font-weight:700;min-height:1.4em}
+.veredito.ok{color:#0E7A4B}
+.veredito.nao{color:var(--erro-tx)}
+
+/* amostras da legenda */
+.amostra--pilha{background:var(--code-bg)}
+.amostra--web{background:#fff;border:2px dashed #98A2A9}
+.amostra--micro{background:rgba(171,157,242,.20);border:2px solid #AB9DF2}
+.amostra--macro{background:rgba(255,216,102,.28);border:2px solid #C99A00}
+.amostra--atual{background:#0E1A15;box-shadow:inset 0 0 0 40px rgba(0,232,143,.34)}
+.amostra--tempo{background:#0E1A15;color:#8A9199;font-family:var(--mono);font-size:12px;display:flex;align-items:center;justify-content:center}
+
+/* ---------- comparativo ---------- */
+.par{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:28px}
+.par > *{flex:1 1 420px;min-width:0}
+.rotulo-antigo,.rotulo-atual{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:700;
+  letter-spacing:1.1px;text-transform:uppercase;padding:4px 11px;border-radius:999px;margin-bottom:10px;
+}
+.rotulo-antigo{background:var(--erro-bg);color:var(--erro-tx);border:1px solid var(--erro-bd)}
+.rotulo-atual{background:var(--verde);color:var(--tinta)}
+
+/* analogia da lanchonete: fila de clientes */
+.fila-cena{display:flex;flex-direction:column;gap:14px}
+.fila-cena h3{margin:0;font-family:var(--titulo);font-size:30px}
+.fila-cena p{margin:0;color:var(--texto)}
+.fila-linha{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cliente{
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:700;font-size:15px;border:2px solid var(--verde-escuro);background:#fff;
+}
+.cliente--espera{border-style:dashed;color:#98A2A9;border-color:#98A2A9}
+.cliente--senha{background:var(--verde)}
+.balcao{
+  font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  background:var(--tinta);color:var(--verde);padding:8px 12px;border-radius:8px;
+}
+.estado-fila{font-family:var(--mono);font-size:14px;font-weight:700;padding:4px 11px;border-radius:999px;align-self:flex-start}
+.estado-fila--parada{background:var(--erro-bg);color:var(--erro-tx);border:1px solid var(--erro-bd)}
+.estado-fila--andando{background:var(--verde);color:var(--tinta)}
+
+/* ---------- tabelas da aula ---------- */
+.tabela-passos td{font-family:var(--mono);font-size:15px}
+.tabela-passos td:first-child{font-family:var(--corpo);font-weight:700}
+.tabela .sim{color:#0E7A4B;font-weight:700}
+
+/* ---------- laboratório livre ---------- */
+.playground{display:flex;flex-wrap:wrap;gap:24px;align-items:stretch}
+.playground > *{flex:1 1 520px;min-width:0}
+.pg-editor{display:flex;flex-direction:column;gap:12px}
+.pg-barra{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pg-barra select{
+  font-family:var(--mono);font-size:14px;padding:7px 10px;border:1px solid var(--borda);
+  border-radius:8px;background:#fff;color:var(--tinta);max-width:100%;
+}
+.pg-editor textarea{
+  width:100%;min-height:460px;resize:vertical;
+  background:var(--code-bg);color:var(--code-fg);border:0;border-radius:var(--raio);
+  padding:22px 24px;font-family:var(--mono);font-size:15px;line-height:1.65;tab-size:2;
+}
+.pg-editor textarea:focus{outline:3px solid var(--verde);outline-offset:2px}
+.pg-resultado{display:flex;flex-direction:column;gap:12px}
+.pg-dica{font-family:var(--mono);font-size:13.5px;color:var(--texto)}
+
+@media (max-width:700px){
+  .codigo--numeros .ln{padding-left:2.6em}
+  .motor{grid-template-columns:1fr}
+}
+
+/* crédito discreto aos slides de origem, no rodapé */
+.rodape .rodape-creditos{margin-top:18px;max-width:900px;font-size:13px;line-height:1.5;color:var(--code-com)}
+.rodape-creditos a{color:inherit}

@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluxo assíncrono — Event Loop, callbacks, iterators, promises e async/await</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="stylesheet" href="css/demos.css">
+</head>
+<body data-periodo="2o_periodo" data-pm="pm4">
+
+<!-- ============================ BARRA ============================ -->
+<div class="barra">
+  <div class="barra-interna">
+    <a class="barra-marca" href="#roteiro"><span class="ponto"></span> fluxo assíncrono</a>
+    <nav class="barra-menu">
+      <a href="#sincrono">síncrono</a>
+      <a href="#bloqueio">bloqueio</a>
+      <a href="#uma-thread">thread</a>
+      <a href="#event-loop">event loop</a>
+      <a href="#duas-filas">filas</a>
+      <a href="#dia-a-dia">dia a dia</a>
+      <a href="#pokedex">pokédex</a>
+      <a href="#callbacks">callbacks</a>
+      <a href="#iterators">iterators</a>
+      <a href="#promises">promises</a>
+      <a href="#combinar">combinar</a>
+      <a href="#async-await">async</a>
+      <a href="#fetch-cache">fetch</a>
+      <a href="#sequencia-paralelo">paralelo</a>
+      <a href="#lab">lab</a>
+    </nav>
+  </div>
+  <div class="progresso"></div>
+</div>
+
+<!-- ============================ CAPA ============================ -->
+<header class="capa">
+  <div class="capa-interna">
+    <div class="capa-texto">
+      <img class="capa-logo" src="img/logo.png" alt="Descomplica + UniAmérica">
+      <div class="capa-meta"><span>2º período</span><span>PM 4 · Projeto Mensal</span></div>
+      <h1>Fluxo assíncrono</h1>
+      <p class="subtitulo">Como o JavaScript lida com tarefas que precisam esperar</p>
+      <p class="assinatura">Event Loop · callbacks · iterators · promises · async/await · Pokédex com JSON e LocalStorage</p>
+    </div>
+    <div class="capa-arte">
+      <div class="troca-capa" aria-hidden="true">
+<pre class="capa-msg"><span class="capa-msg-rotulo">código</span>console.log("A");
+<b>setTimeout</b>(() => {
+  console.log("B");
+}, <b>0</b>);
+console.log("C");</pre>
+        <div class="capa-fio">0 ms não é agora</div>
+<pre class="capa-msg capa-msg--resposta"><span class="capa-msg-rotulo">console</span>A
+C
+B</pre>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ======================= ROTEIRO + LEGENDA ======================= -->
+  <section class="secao" id="roteiro" style="border-top:none">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Aula</span>
+      <h2 class="secao-titulo">O que vamos ver hoje</h2>
+    </div>
+    <p class="secao-lead">Buscar dados na internet, esperar um timer, reagir a um clique: muita coisa no front-end termina <b>depois</b>. Primeiro, o que acontece nos bastidores do navegador; depois, as quatro formas de escrever o que fazer quando o resultado chegar, com uma Pokédex como exemplo.</p>
+
+    <div class="roteiro">
+      <a href="#sincrono"><span class="num">01</span><span class="rotulo">Síncrono, assíncrono e o problema do bloqueio</span></a>
+      <a href="#uma-thread"><span class="num">02</span><span class="rotulo">Uma thread só e os bastidores do navegador</span></a>
+      <a href="#event-loop"><span class="num">03</span><span class="rotulo">O Event Loop passo a passo</span></a>
+      <a href="#duas-filas"><span class="num">04</span><span class="rotulo">Microtarefas, tarefas e o exercício de ordem</span></a>
+      <a href="#pokedex"><span class="num">05</span><span class="rotulo">A Pokédex e os callbacks</span></a>
+      <a href="#iterators"><span class="num">06</span><span class="rotulo">Iterators e geradores</span></a>
+      <a href="#promises"><span class="num">07</span><span class="rotulo">Promises: estados, encadeamento e combinação</span></a>
+      <a href="#async-await"><span class="num">08</span><span class="rotulo">async/await, fetch, cache e paralelo</span></a>
+      <a href="#lab"><span class="num">09</span><span class="rotulo">Laboratório livre</span></a>
+    </div>
+
+    <h3 class="sub-titulo">Como ler as demonstrações desta página</h3>
+    <div class="legenda">
+      <div class="legenda-item"><span class="amostra amostra--pilha"></span> <span>Call Stack</span></div>
+      <div class="legenda-item"><span class="amostra amostra--web"></span> <span>Web APIs (o navegador esperando)</span></div>
+      <div class="legenda-item"><span class="amostra amostra--micro"></span> <span>fila de microtarefas</span></div>
+      <div class="legenda-item"><span class="amostra amostra--macro"></span> <span>fila de tarefas</span></div>
+      <div class="legenda-item"><span class="amostra amostra--atual"></span> <span>linha executando agora</span></div>
+      <div class="legenda-item"><span class="amostra amostra--tempo">1,0 s</span> <span>tempo desde o início da execução</span></div>
+    </div>
+    <div class="cartoes" style="margin-top:22px">
+      <article class="cartao"><h3>Todo console é de verdade</h3><p>Cada caixa de console roda o código do painel ao lado neste navegador, agora. Os tempos à esquerda das linhas são medidos, não escritos à mão.</p></article>
+      <article class="cartao"><h3>Botões de chamada</h3><p>Botões como <code>mostrar(25)</code> rodam o código do painel mais aquela linha. A linha enviada aparece no console depois do sinal <code>›</code>; o valor devolvido, depois de <code>←</code>.</p></article>
+      <article class="cartao"><h3>A mesma Pokédex em todo lugar</h3><p>A partir da seção 10, os exemplos já carregam os dados da Pokédex e as funções de busca, como o <code>api.js</code> do projeto. O <code>fetch</code> é respondido por um servidor simulado, que funciona sem internet.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 01 · SÍNCRONO ======================= -->
+  <section class="secao" id="sincrono">
+    <div class="secao-topo">
+      <span class="selo">01</span>
+      <h2 class="secao-titulo">Código síncrono: uma instrução de cada vez</h2>
+    </div>
+    <p class="secao-lead">No código síncrono cada linha só começa quando a anterior termina, na ordem em que foi escrita. É previsível. Mas e se uma delas demorar muito?</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>pedido.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-pedido">
+function prepararPedido() {
+  console.log("Preparar massa");
+  console.log("Assar pizza");
+  console.log("Servir");
+}
+
+prepararPedido();
+console.log("Pedido concluído");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-pedido">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a ordem da saída é a ordem do código</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <p class="nota-demo">“Pedido concluído” só aparece depois que a função inteira terminou.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Previsível</h3><p>Lendo de cima para baixo você sabe a ordem exata da saída. A chamada <code>prepararPedido()</code> só devolve o controle quando a última linha dela roda.</p></article>
+      <article class="cartao"><h3>A maior parte do código é assim</h3><p>Contas, variáveis, laços, manipulação de texto e de arrays: tudo síncrono, e está certo que seja. Responde em microssegundos.</p></article>
+      <article class="cartao cartao--erro"><h3>O problema aparece quando uma linha espera</h3><p>Se “Assar pizza” levasse 3 segundos, “Servir” e todo o resto esperariam 3 segundos. No navegador, isso inclui a própria tela (próxima seção).</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 02 · BLOQUEIO ======================= -->
+  <section class="secao" id="bloqueio">
+    <div class="secao-topo">
+      <span class="selo">02</span>
+      <h2 class="secao-titulo">O problema do bloqueio</h2>
+    </div>
+    <p class="secao-lead">Uma tarefa lenta e síncrona trava a página inteira. Clique em <code>esperar(3000)</code> e, durante os 3 segundos, tente clicar no contador e rolar a página. Depois compare com o <code>setTimeout</code>.</p>
+
+    <div class="pilha">
+      <div class="preview" data-exec data-codigo="c-bloq" data-html="c-bloq-html">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>clique, e depois tente clicar no contador</code></div>
+        <div class="preview-corpo">
+          <div class="dupla" style="margin-bottom:0">
+          <figure class="painel-codigo">
+            <figcaption>bloqueio.html</figcaption>
+<pre class="codigo" id="c-bloq-html">
+&lt;div class="relogio" id="relogio"&gt;0.0 s&lt;/div&gt;
+&lt;div class="trilho"&gt;&lt;div class="bola" id="bola"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;button id="contar" class="sec"&gt;cliques: 0&lt;/button&gt;&lt;/p&gt;
+&lt;p&gt;
+  &lt;button id="travar"&gt;esperar(3000) com while&lt;/button&gt;
+  &lt;button id="timer"&gt;setTimeout de 3 s&lt;/button&gt;
+&lt;/p&gt;
+</pre>
+          </figure>
+          <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="tela" data-tela></div>
+          <div class="console" data-console data-vazio="(console vazio: clique em um dos botões verdes)"></div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <figure class="painel-codigo painel-codigo--duplo">
+        <figcaption>bloqueio.js · o relógio só anda se a thread estiver livre</figcaption>
+<pre class="codigo" data-lang="js" id="c-bloq">
+function esperar(ms) {
+  const fim = Date.now() + ms;
+  while (Date.now() &lt; fim) {} // ocupa a CPU
+}
+
+// relógio animado com JavaScript
+const relogio = document.querySelector("#relogio");
+const bola = document.querySelector("#bola");
+const inicio = Date.now();
+function animar() {
+  const s = (Date.now() - inicio) / 1000;
+  relogio.textContent = s.toFixed(1) + " s";
+  bola.style.marginLeft = (Math.sin(s * 3) + 1) * 39 + "%";
+  requestAnimationFrame(animar);
+}
+animar();
+
+// contador de cliques
+const contar = document.querySelector("#contar");
+let cliques = 0;
+contar.addEventListener("click", () => {
+  cliques++;
+  contar.textContent = "cliques: " + cliques;
+});
+
+document.querySelector("#travar").addEventListener("click", () => {
+  console.log("Início");
+  esperar(3000); // 3 segundos parado
+  console.log("Fim");
+});
+
+document.querySelector("#timer").addEventListener("click", () => {
+  console.log("Início");
+  setTimeout(() => console.log("Fim"), 3000);
+});
+</pre>
+      </figure>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Durante esses 3 s</h3><p>Os botões não respondem, a rolagem congela e as animações param. A página inteira, não só o quadro: o JavaScript da aula e o do exemplo dividem a mesma thread.</p></article>
+      <article class="cartao"><h3>Os cliques não se perdem</h3><p>Os cliques feitos durante o bloqueio ficam guardados numa fila e são contados todos de uma vez quando o <code>while</code> termina. Essa fila é uma das peças da seção 05.</p></article>
+      <article class="cartao cartao--erro"><h3>Uma requisição pode levar muito mais</h3><p>Se buscar dados na internet fosse síncrono, a tela ficaria congelada pelo tempo da rede: 1 s, 10 s, ou para sempre se a conexão cair. Por isso esperar é sempre assíncrono no navegador.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 03 · LANCHONETE ======================= -->
+  <section class="secao" id="lanchonete">
+    <div class="secao-topo">
+      <span class="selo">03</span>
+      <h2 class="secao-titulo">Síncrono x assíncrono: a lanchonete</h2>
+    </div>
+    <p class="secao-lead">Duas formas de atender na lanchonete. No JavaScript, a “senha” é algo que será resolvido depois: um <b>callback</b>, uma <b>promise</b> ou um <b>await</b>.</p>
+
+    <div class="par">
+      <div class="bloco-branco fila-cena">
+        <span class="estado-fila estado-fila--parada">fila parada</span>
+        <h3>Atendimento síncrono</h3>
+        <div class="fila-linha">
+          <span class="balcao">caixa</span><span class="cliente">1</span>
+          <span class="cliente cliente--espera">2</span><span class="cliente cliente--espera">3</span><span class="cliente cliente--espera">4</span>
+        </div>
+        <p>O caixa anota o pedido, vai até a cozinha e espera o lanche ficar pronto. Ninguém mais é atendido enquanto isso.</p>
+      </div>
+      <div class="bloco-branco fila-cena">
+        <span class="estado-fila estado-fila--andando">fila andando</span>
+        <h3>Atendimento assíncrono</h3>
+        <div class="fila-linha">
+          <span class="balcao">caixa</span><span class="cliente cliente--senha">1</span>
+          <span class="cliente cliente--senha">2</span><span class="cliente cliente--senha">3</span><span class="cliente">4</span>
+        </div>
+        <p>O caixa entrega uma senha e chama o próximo cliente. Quando o lanche fica pronto, a senha é chamada.</p>
+      </div>
+    </div>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela">
+        <thead><tr><th>Aspecto</th><th>Síncrono</th><th>Assíncrono</th></tr></thead>
+        <tbody>
+          <tr><td>Ordem</td><td>Exatamente a ordem escrita</td><td>Parte do código roda depois</td></tr>
+          <tr><td>Espera</td><td>Bloqueia até terminar</td><td>Não bloqueia: segue o resto</td></tr>
+          <tr><td>Exemplos</td><td>Cálculos, variáveis, <code>localStorage</code></td><td><code>fetch</code>, timers, eventos do usuário</td></tr>
+          <tr><td>Resultado</td><td>Disponível na linha seguinte</td><td>Chega por callback, promise ou <code>await</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>síncrono</code><span>o resultado está pronto na linha seguinte</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const total = 2 + 3;
+console.log(total);
+
+localStorage.setItem("treinador", "Ash");
+const nome = localStorage.getItem("treinador");
+console.log(nome);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>assíncrono</code><span>o resultado ainda não chegou na linha seguinte</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+let pokemon;
+setTimeout(() => {
+  pokemon = "Pikachu";
+}, 0);
+console.log("linha seguinte:", pokemon);
+
+setTimeout(() => console.log("depois:", pokemon), 10);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>A senha</h3><p>Assíncrono é receber uma promessa de resultado e seguir em frente. Quem chama não fica parado: registra o que fazer quando o resultado chegar.</p></article>
+      <article class="cartao"><h3>Quem espera é o navegador</h3><p>O timer, a resposta da rede e o clique ficam por conta do navegador. O JavaScript só volta a agir quando há algo pronto para ele.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: ler o resultado cedo demais</h3><p>No segundo exemplo, <code>pokemon</code> ainda é <code>undefined</code> na linha seguinte, mesmo com timer de 0 ms. O valor assíncrono só pode ser usado dentro do callback, do <code>.then</code> ou depois do <code>await</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 04 · UMA THREAD ======================= -->
+  <section class="secao" id="uma-thread">
+    <div class="secao-topo">
+      <span class="selo">04</span>
+      <h2 class="secao-titulo">Fato importante: uma coisa de cada vez</h2>
+    </div>
+    <p class="secao-lead">O JavaScript tem uma única thread principal. Assíncrono não é rodar duas funções ao mesmo tempo: é <b>delegar a espera</b> ao navegador e continuar trabalhando.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>uma-thread.js · um timer de 100 ms e um while de 1 s</figcaption>
+<pre class="codigo" data-lang="js" id="c-thread">
+setTimeout(() => {
+  console.log("timer de 100 ms");
+}, 100);
+
+const fim = Date.now() + 1000;
+while (Date.now() &lt; fim) {} // 1 s de CPU ocupada
+
+console.log("o while terminou");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-thread" data-tempo>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>olhe o tempo de cada linha</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <button type="button" class="btn btn--sec" data-rodar>rodar de novo</button>
+          <p class="nota-demo">O timer venceu aos 0,1 s, mas só rodou depois do while: não havia outra thread para ele.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Assíncrono não é paralelo</h3><p>Duas funções JavaScript nunca rodam ao mesmo tempo na mesma página. Enquanto uma está na pilha, a outra espera a vez, por mais urgente que seja.</p></article>
+      <article class="cartao"><h3>O tempo do timer é um mínimo</h3><p><code>setTimeout(fn, 100)</code> quer dizer “não antes de 100 ms”. Se a thread estiver ocupada, roda mais tarde. Nunca roda antes.</p></article>
+      <article class="cartao cartao--novo"><h3>Para cálculo pesado de verdade</h3><p>Quando o trabalho é da CPU (processar uma imagem, um arquivo enorme), o navegador oferece outra thread: os <b>Web Workers</b>. Fica de fora desta aula, mas é a resposta para “e se eu precisar mesmo de um while longo?”.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 05 · BASTIDORES ======================= -->
+  <section class="secao" id="bastidores">
+    <div class="secao-topo">
+      <span class="selo">05</span>
+      <h2 class="secao-titulo">Os bastidores: quatro peças</h2>
+    </div>
+    <p class="secao-lead">Quatro peças fazem o assíncrono funcionar. O JavaScript cuida de uma (a pilha); o navegador cuida das outras.</p>
+
+    <div class="bastidores">
+      <div class="bastidor"><span class="n">1</span><h3>Call Stack</h3><p>Pilha das funções em execução agora. Uma por vez: a última que entrou é a primeira que sai.</p></div>
+      <div class="seta" aria-hidden="true"></div>
+      <div class="bastidor"><span class="n">2</span><h3>Web APIs</h3><p>O navegador cuida da espera: <code>setTimeout</code>, <code>fetch</code>, eventos de clique.</p></div>
+      <div class="seta" aria-hidden="true"></div>
+      <div class="bastidor"><span class="n">3</span><h3>Fila de tarefas</h3><p>Callbacks prontos aguardando a vez de rodar, na ordem em que ficaram prontos.</p></div>
+      <div class="seta" aria-hidden="true"></div>
+      <div class="bastidor"><span class="n">4</span><h3>Event Loop</h3><p>Quando a pilha esvazia, leva o próximo callback da fila para ela. E repete, para sempre.</p></div>
+    </div>
+    <div class="ciclo">
+      <b>Ciclo:</b>
+      <span>a pilha chama uma Web API</span><i></i>
+      <span>a espera termina e o callback entra na fila</span><i></i>
+      <span>o Event Loop devolve o callback à pilha</span>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>pilha.js · a Call Stack em ação</figcaption>
+<pre class="codigo" data-lang="js" id="c-pilha">
+function servir() {
+  console.log("3. servir: topo da pilha");
+}
+
+function assar() {
+  console.log("2. assar chama servir");
+  servir();
+  console.log("4. servir saiu, de volta em assar");
+}
+
+function preparar() {
+  console.log("1. preparar chama assar");
+  assar();
+  console.log("5. assar saiu, de volta em preparar");
+}
+
+preparar();
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-pilha">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>cada função espera a de cima sair</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <p class="nota-demo">No passo 3 a pilha tem preparar, assar e servir, de baixo para cima.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>A pilha precisa esvaziar</h3><p>O Event Loop só traz um callback da fila quando não há mais nada na pilha, nem o script principal. É a regra que explica todas as ordens de saída desta aula.</p></article>
+      <article class="cartao"><h3>Web APIs não são JavaScript</h3><p><code>setTimeout</code>, <code>fetch</code> e <code>addEventListener</code> são oferecidos pelo navegador. No Node.js, quem faz o mesmo papel é a biblioteca libuv.</p></article>
+      <article class="cartao"><h3>Fila é fila</h3><p>O primeiro callback a ficar pronto é o primeiro a rodar. A exceção são as promises, que têm uma fila só delas (seção 07).</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 06 · EVENT LOOP ======================= -->
+  <section class="secao" id="event-loop">
+    <div class="secao-topo">
+      <span class="selo">06</span>
+      <h2 class="secao-titulo">Hora de prever: qual é a ordem de saída?</h2>
+    </div>
+    <p class="secao-lead">O tempo do timer é 0 ms. Mesmo assim, “B” não aparece em segundo lugar. Pense antes de conferir: por quê?</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>ordem.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-abc">
+console.log("A");
+setTimeout(() => {
+  console.log("B");
+}, 0);
+console.log("C");
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">sua previsão</span><code>clique nas letras na ordem da saída</code></div>
+        <div class="preview-corpo prever" data-prever data-codigo="c-abc" data-fichas="A,B,C">
+          <div class="fichas" data-fichas-area></div>
+          <div class="palpite" data-palpite></div>
+          <div class="botoes">
+            <button type="button" class="btn" data-conferir>rodar e conferir</button>
+            <button type="button" class="btn btn--sec" data-limpar>limpar</button>
+          </div>
+          <p class="veredito" data-veredito></p>
+          <div class="console" data-console data-vazio="(a saída aparece quando você conferir)"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">Passo a passo: por que a saída é A, C, B</h3>
+    <div class="loop" data-loop="abc">
+      <div class="loop-lado">
+        <figure class="painel-codigo">
+          <figcaption>ordem.js</figcaption>
+<pre class="codigo codigo--numeros" data-lang="js">
+console.log("A");
+setTimeout(() => {
+  console.log("B");
+}, 0);
+console.log("C");
+</pre>
+        </figure>
+        <p class="passo-nota" data-nota></p>
+        <div class="passo-barra">
+          <div class="botoes">
+            <button type="button" class="btn" data-proximo>próximo passo</button>
+            <button type="button" class="btn btn--sec" data-reiniciar>reiniciar</button>
+          </div>
+          <span class="passo-conta" data-conta></span>
+        </div>
+        <div class="console" data-console></div>
+      </div>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">bastidores</span><code>as quatro peças a cada passo</code></div>
+        <div class="preview-corpo">
+          <div class="motor">
+            <div class="motor-caixa motor-pilha" data-peca="pilha"><h4><span class="n">1</span>Call Stack</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-web" data-peca="web"><h4><span class="n">2</span>Web APIs</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-micro" data-peca="micro"><h4><span class="n">3</span>Microtarefas</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-macro" data-peca="macro"><h4><span class="n">3</span>Fila de tarefas</h4><div class="motor-itens"></div></div>
+          </div>
+          <div class="motor-laco" data-laco><span class="roda"></span><span><b>Event Loop:</b></span><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>“Assim que possível”, não “agora”</h3><p><code>setTimeout(…, 0)</code> coloca o callback na fila logo que pode. Mas a fila só anda quando a pilha esvazia, e a pilha só esvazia quando o script inteiro termina.</p></article>
+      <article class="cartao"><h3>O script também ocupa a pilha</h3><p>O código solto do arquivo (o “script”) é a primeira coisa na pilha. Enquanto houver uma linha dele para rodar, nenhum callback entra.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: 0 ms nunca é exato</h3><p>Além de esperar a pilha, o navegador pode atrasar o timer: depois de cinco <code>setTimeout</code> aninhados, o mínimo vira 4 ms, e abas em segundo plano esperam até 1 s.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 07 · DUAS FILAS ======================= -->
+  <section class="secao" id="duas-filas">
+    <div class="secao-topo">
+      <span class="selo">07</span>
+      <h2 class="secao-titulo">Duas filas: promises passam na frente dos timers</h2>
+    </div>
+    <p class="secao-lead">Os callbacks de promises não entram na mesma fila dos timers. Eles têm uma fila própria, a de <b>microtarefas</b>, que tem prioridade.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>filas.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-filas">
+console.log("1");
+setTimeout(() => console.log("2"), 0);
+Promise.resolve().then(() => console.log("3"));
+console.log("4");
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">sua previsão</span><code>em que ordem saem os números?</code></div>
+        <div class="preview-corpo prever" data-prever data-codigo="c-filas" data-fichas="1,2,3,4">
+          <div class="fichas" data-fichas-area></div>
+          <div class="palpite" data-palpite></div>
+          <div class="botoes">
+            <button type="button" class="btn" data-conferir>rodar e conferir</button>
+            <button type="button" class="btn btn--sec" data-limpar>limpar</button>
+          </div>
+          <p class="veredito" data-veredito></p>
+          <div class="console" data-console data-vazio="(a saída aparece quando você conferir)"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">Passo a passo: microtarefas primeiro</h3>
+    <div class="loop" data-loop="filas">
+      <div class="loop-lado">
+        <figure class="painel-codigo">
+          <figcaption>filas.js</figcaption>
+<pre class="codigo codigo--numeros" data-lang="js">
+console.log("1");
+setTimeout(() => console.log("2"), 0);
+Promise.resolve().then(() => console.log("3"));
+console.log("4");
+</pre>
+        </figure>
+        <p class="passo-nota" data-nota></p>
+        <div class="passo-barra">
+          <div class="botoes">
+            <button type="button" class="btn" data-proximo>próximo passo</button>
+            <button type="button" class="btn btn--sec" data-reiniciar>reiniciar</button>
+          </div>
+          <span class="passo-conta" data-conta></span>
+        </div>
+        <div class="console" data-console></div>
+      </div>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">bastidores</span><code>as quatro peças a cada passo</code></div>
+        <div class="preview-corpo">
+          <div class="motor">
+            <div class="motor-caixa motor-pilha" data-peca="pilha"><h4><span class="n">1</span>Call Stack</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-web" data-peca="web"><h4><span class="n">2</span>Web APIs</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-micro" data-peca="micro"><h4><span class="n">3</span>Microtarefas</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-macro" data-peca="macro"><h4><span class="n">3</span>Fila de tarefas</h4><div class="motor-itens"></div></div>
+          </div>
+          <div class="motor-laco" data-laco><span class="roda"></span><span><b>Event Loop:</b></span><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Microtarefas</h3><p>Callbacks de promises (<code>.then</code>, <code>.catch</code>, o que vem depois de um <code>await</code>) e <code>queueMicrotask</code>. A fila é esvaziada <b>inteira</b> sempre que a pilha fica vazia.</p></article>
+      <article class="cartao"><h3>Tarefas (macrotarefas)</h3><p><code>setTimeout</code>, <code>setInterval</code> e eventos. <b>Uma</b> por volta do Event Loop. A especificação do HTML chama só de “tarefas”; “macrotarefa” é o apelido que a comunidade usa.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: microtarefa sem fim trava a tela</h3><p>Como a fila de microtarefas é esvaziada inteira, uma promise que agenda outra promise para sempre nunca deixa a vez para os cliques nem para o desenho da tela. O efeito é o mesmo do <code>while</code> da seção 02.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 08 · EXERCÍCIO ======================= -->
+  <section class="secao" id="exercicio">
+    <div class="secao-topo">
+      <span class="selo">08</span>
+      <h2 class="secao-titulo">Exercício rápido: escreva a ordem antes de testar</h2>
+    </div>
+    <p class="secao-lead">Separe as linhas em três grupos: <b>síncronas</b>, <b>microtarefas</b> e <b>tarefas</b>. Depois ordene os timers pelo tempo.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>exercicio.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-ex">
+console.log("A");
+setTimeout(() => console.log("B"), 100);
+setTimeout(() => console.log("C"), 0);
+Promise.resolve().then(() => console.log("D"));
+console.log("E");
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">sua previsão</span><code>cinco letras, três grupos</code></div>
+        <div class="preview-corpo prever" data-prever data-codigo="c-ex" data-fichas="A,B,C,D,E">
+          <div class="fichas" data-fichas-area></div>
+          <div class="palpite" data-palpite></div>
+          <div class="botoes">
+            <button type="button" class="btn" data-conferir>rodar e conferir</button>
+            <button type="button" class="btn btn--sec" data-limpar>limpar</button>
+          </div>
+          <p class="veredito" data-veredito></p>
+          <div class="console" data-console data-vazio="(a saída aparece quando você conferir)"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-titulo">Correção passo a passo</h3>
+    <div class="loop" data-loop="exercicio">
+      <div class="loop-lado">
+        <figure class="painel-codigo">
+          <figcaption>exercicio.js</figcaption>
+<pre class="codigo codigo--numeros" data-lang="js">
+console.log("A");
+setTimeout(() => console.log("B"), 100);
+setTimeout(() => console.log("C"), 0);
+Promise.resolve().then(() => console.log("D"));
+console.log("E");
+</pre>
+        </figure>
+        <p class="passo-nota" data-nota></p>
+        <div class="passo-barra">
+          <div class="botoes">
+            <button type="button" class="btn" data-proximo>próximo passo</button>
+            <button type="button" class="btn btn--sec" data-reiniciar>reiniciar</button>
+          </div>
+          <span class="passo-conta" data-conta></span>
+        </div>
+        <div class="console" data-console></div>
+      </div>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">bastidores</span><code>as quatro peças a cada passo</code></div>
+        <div class="preview-corpo">
+          <div class="motor">
+            <div class="motor-caixa motor-pilha" data-peca="pilha"><h4><span class="n">1</span>Call Stack</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-web" data-peca="web"><h4><span class="n">2</span>Web APIs</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-micro" data-peca="micro"><h4><span class="n">3</span>Microtarefas</h4><div class="motor-itens"></div></div>
+            <div class="motor-caixa motor-macro" data-peca="macro"><h4><span class="n">3</span>Fila de tarefas</h4><div class="motor-itens"></div></div>
+          </div>
+          <div class="motor-laco" data-laco><span class="roda"></span><span><b>Event Loop:</b></span><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela tabela-passos">
+        <thead><tr><th>Grupo</th><th>Linhas</th><th>Quando rodam</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Síncronas</td><td>A, E</td><td>Na hora, na ordem do código</td></tr>
+          <tr><td>2 · Microtarefas</td><td>D</td><td>Assim que a pilha esvazia, todas de uma vez</td></tr>
+          <tr><td>3 · Tarefas</td><td>C (0 ms), B (100 ms)</td><td>Uma por volta, na ordem em que os timers vencem</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Resumo da Aula 1</h3><p>O JavaScript executa uma instrução por vez na Call Stack. Tarefas demoradas ficam com o navegador, nas Web APIs. O Event Loop devolve os callbacks à pilha quando ela fica vazia.</p></article>
+      <article class="cartao"><h3>Prioridade</h3><p>Microtarefas (promises) rodam antes de tarefas (timers), mesmo que o timer tenha sido criado antes e seja de 0 ms.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: confiar na ordem entre timers diferentes</h3><p>Entre dois timers, quem vence primeiro roda primeiro, não quem foi escrito primeiro. Se a ordem importa, encadeie: faça o segundo começar dentro do primeiro, ou use promises.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 09 · DIA A DIA ======================= -->
+  <section class="secao" id="dia-a-dia">
+    <div class="secao-topo">
+      <span class="selo">09</span>
+      <h2 class="secao-titulo">No dia a dia: onde o assíncrono aparece no front-end</h2>
+    </div>
+    <p class="secao-lead">Requisições, timers e eventos são assíncronos. O <code>localStorage</code>, que vai aparecer muito na Pokédex, não é.</p>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec data-tempo>
+        <div class="mini-titulo"><code>fetch</code><span>busca dados sem travar a tela</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+console.log("pedindo o pokedex.json…");
+
+fetch("pokedex.json")
+  .then((resposta) => resposta.json())
+  .then((dados) => console.log(dados.length, "Pokémon chegaram"));
+
+console.log("a tela continua respondendo");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+        <p class="nota-demo">Nesta página, um servidor simulado responde em 0,4 s.</p>
+      </div>
+      <div class="mini" data-exec data-tempo>
+        <div class="mini-titulo"><code>setInterval</code><span>agenda código para depois, de novo e de novo</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+let n = 0;
+const id = setInterval(() => {
+  n++;
+  console.log("tique", n);
+  if (n === 3) clearInterval(id);
+}, 500);
+
+console.log("intervalo agendado");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-codigo="c-evento" data-html="c-evento-html">
+        <div class="mini-titulo"><code>addEventListener</code><span>roda quando o usuário age</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" id="c-evento-html">
+&lt;button id="pokebola"&gt;Capturar&lt;/button&gt;
+</pre>
+<pre class="codigo" data-lang="js" id="c-evento">
+const botao = document.querySelector("#pokebola");
+botao.addEventListener("click", () => {
+  console.log("clicou: o callback rodou agora");
+});
+console.log("ouvinte registrado; o script terminou");
+</pre>
+        </figure>
+        <div class="tela" data-tela></div>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>localStorage</code><span>síncrono: responde na hora, sem await</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+localStorage.setItem("favorito", 25);
+const fav = localStorage.getItem("favorito");
+
+console.log("favorito:", fav);
+console.log(typeof fav);   // guarda só texto
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Três fontes de “depois”</h3><p>Requisições (<code>fetch</code>), timers (<code>setTimeout</code>, <code>setInterval</code>) e eventos (<code>addEventListener</code>). Em todos, você entrega uma função e o navegador chama quando for a hora.</p></article>
+      <article class="cartao"><h3>localStorage é síncrono</h3><p><code>getItem</code> e <code>setItem</code> respondem na hora, sem <code>await</code>. Funciona porque os dados são poucos e ficam no próprio computador.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: localStorage só guarda texto</h3><p>O número 25 voltou como o texto <code>"25"</code>. Para guardar um array ou um objeto, use <code>JSON.stringify</code> ao salvar e <code>JSON.parse</code> ao ler (seção 21).</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 10 · POKÉDEX ======================= -->
+  <section class="secao" id="pokedex">
+    <div class="secao-topo">
+      <span class="selo">10</span>
+      <h2 class="secao-titulo">A base dos exemplos: os dados da Pokédex</h2>
+    </div>
+    <p class="secao-lead">Daqui em diante, tudo gira em torno de uma Pokédex guardada em <code>pokedex.json</code>. Cada Pokémon tem <code>id</code>, <code>nome</code>, <code>tipos</code> e <code>hp</code>.</p>
+
+    <div class="dupla">
+      <div style="display:flex;flex-direction:column;gap:20px">
+      <figure class="painel-codigo">
+        <figcaption>pokedex.json</figcaption>
+<pre class="codigo" data-lang="js" id="c-json">
+[
+  { "id": 1,   "nome": "Bulbasaur",  "tipos": ["grama", "veneno"], "hp": 45 },
+  { "id": 4,   "nome": "Charmander", "tipos": ["fogo"],            "hp": 39 },
+  { "id": 7,   "nome": "Squirtle",   "tipos": ["água"],            "hp": 44 },
+  { "id": 25,  "nome": "Pikachu",    "tipos": ["elétrico"],        "hp": 35 },
+  { "id": 37,  "nome": "Vulpix",     "tipos": ["fogo"],            "hp": 38 },
+  { "id": 43,  "nome": "Oddish",     "tipos": ["grama", "veneno"], "hp": 45 },
+  { "id": 54,  "nome": "Psyduck",    "tipos": ["água"],            "hp": 50 },
+  { "id": 58,  "nome": "Growlithe",  "tipos": ["fogo"],            "hp": 55 },
+  { "id": 100, "nome": "Voltorb",    "tipos": ["elétrico"],        "hp": 40 },
+  { "id": 133, "nome": "Eevee",      "tipos": ["normal"],          "hp": 55 }
+]
+</pre>
+      </figure>
+      <figure class="painel-codigo">
+          <figcaption>api.js · indicador de carregando (nos exemplos, uma linha no console)</figcaption>
+<pre class="codigo" data-lang="js" id="c-carregando">
+function mostrarCarregando() {
+  console.log("(carregando…)");
+}
+function esconderCarregando() {
+  console.log("(carregando escondido)");
+}
+</pre>
+        </figure>
+      </div>
+      <div class="preview" data-exec data-api>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a variável pokedex guarda esse array</code></div>
+        <div class="preview-corpo">
+          <figure class="painel-codigo">
+            <figcaption>listar.js</figcaption>
+<pre class="codigo" data-lang="js">
+console.log(pokedex.length, "Pokémon na Pokédex");
+for (const p of pokedex) {
+  console.log(`#${p.id} ${p.nome} · ${p.tipos.join("/")} · HP ${p.hp}`);
+}
+</pre>
+          </figure>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>API simulada</h3><p>A variável <code>pokedex</code> guarda esse array e um <code>setTimeout</code> de 1 s imita a rede. Assim dá para estudar a espera sem depender de um servidor de verdade. As duas funções de busca estão nas seções 11 e 16; as de carregando, aqui ao lado.</p></article>
+      <article class="cartao"><h3>Rode com um servidor local</h3><p>Quando o projeto usar <code>fetch("pokedex.json")</code>, abra pelo Live Server do VS Code (ou <code>npx serve</code>, ou <code>python -m http.server</code>), não com duplo clique no arquivo.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: fetch e file://</h3><p>Aberto direto do disco (<code>file://</code>), o navegador bloqueia o <code>fetch</code> de arquivos locais e o console mostra um erro de CORS. O código está certo; falta o servidor.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 11 · CALLBACKS ======================= -->
+  <section class="secao" id="callbacks">
+    <div class="secao-topo">
+      <span class="selo">11</span>
+      <h2 class="secao-titulo">Callbacks: uma função para ser chamada depois</h2>
+    </div>
+    <p class="secao-lead">Um <b>callback</b> é uma função entregue a outra para ser chamada quando a tarefa terminar. A busca simulada avisa quando acaba chamando o callback.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>api.js · busca com callback</figcaption>
+<pre class="codigo" data-lang="js" id="c-cb">
+function buscarPokemonCB(id, callback) {
+  setTimeout(() => {
+    const pokemon = pokedex.find((p) => p.id === id);
+    if (!pokemon) {
+      callback(new Error(`Pokémon ${id} não existe`));
+      return;
+    }
+    callback(null, pokemon);
+  }, 1000); // simula 1 s de rede
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-api data-tempo>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>usando a busca</code></div>
+        <div class="preview-corpo">
+          <figure class="painel-codigo">
+            <figcaption>usar.js</figcaption>
+<pre class="codigo" data-lang="js">
+function mostrar(id) {
+  buscarPokemonCB(id, (erro, pokemon) => {
+    if (erro) {
+      console.error(erro.message);
+      return;
+    }
+    console.log(pokemon.nome);
+  });
+  console.log("Buscando…");
+}
+</pre>
+          </figure>
+          <div class="chamadas">
+            <button data-chamada="mostrar(25);"></button>
+            <button data-chamada="mostrar(99);"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Erro primeiro</h3><p>O callback recebe <code>(erro, dados)</code>. Se deu certo, <code>erro</code> é <code>null</code>. É uma convenção muito usada no Node.js: quem chama é obrigado a olhar o erro antes dos dados.</p></article>
+      <article class="cartao"><h3>“Buscando…” aparece primeiro</h3><p>A busca é assíncrona: <code>buscarPokemonCB</code> só agenda o timer e devolve o controle. O código segue e o callback roda 1 s depois.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: esquecer o return</h3><p>Sem o <code>return</code> depois de <code>callback(erro)</code>, a função continua e chama o callback uma segunda vez, agora com <code>pokemon</code> indefinido. O mesmo vale dentro do callback de quem usa.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 12 · CALLBACK HELL ======================= -->
+  <section class="secao" id="callback-hell">
+    <div class="secao-topo">
+      <span class="selo">12</span>
+      <h2 class="secao-titulo">O problema: callback hell</h2>
+    </div>
+    <p class="secao-lead">Para montar um time de três Pokémon, cada busca vai dentro do callback da anterior. O código anda para a direita e o tratamento de erro se repete em cada nível.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>time-callbacks.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-hell">
+function montarTime(time) {
+  console.log("time:", time.map((p) => p.nome).join(", "));
+}
+
+console.log("buscando o time…");
+buscarPokemonCB(1, (e1, p1) => {
+  if (e1) return console.error(e1.message);
+  buscarPokemonCB(4, (e2, p2) => {
+    if (e2) return console.error(e2.message);
+    buscarPokemonCB(7, (e3, p3) => {
+      if (e3) return console.error(e3.message);
+      montarTime([p1, p2, p3]);
+    });
+  });
+});
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-hell" data-api data-tempo>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>três buscas, uma depois da outra</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <button type="button" class="btn btn--sec" data-rodar>rodar de novo</button>
+          <p class="nota-demo">3 s para três buscas que não dependem uma da outra.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Pirâmide da perdição</h3><p>Cada nível de espera é um nível de indentação. Com cinco buscas o código fica ilegível, e mexer na ordem significa reescrever a pirâmide.</p></article>
+      <article class="cartao"><h3>Uma espera de cada vez</h3><p>As três buscas são independentes, mas cada uma só começa quando a anterior termina: 3 s em vez de 1 s. Com promises dá para disparar as três juntas (seção 22).</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: checar o erro só no fim</h3><p>Um atalho comum é um único <code>if (e1 || e2 || e3) return;</code> no nível mais fundo. Se a primeira busca falha, as outras rodam mesmo assim e o erro some sem mensagem. Cada nível precisa do seu teste.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 13 · ITERATORS ======================= -->
+  <section class="secao" id="iterators">
+    <div class="secao-topo">
+      <span class="selo">13</span>
+      <h2 class="secao-titulo">Iterators: next() devolve { value, done }</h2>
+    </div>
+    <p class="secao-lead">Um <b>iterator</b> percorre uma coleção um item por vez, sob demanda. Cada chamada de <code>next()</code> entrega o próximo item, até <code>done</code> virar <code>true</code>.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>iterator.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-it">
+const time = ["Bulbasaur", "Charmander", "Squirtle"];
+const it = time[Symbol.iterator]();
+
+// clique em it.next() quantas vezes quiser:
+// { value: 'Bulbasaur', done: false }
+// { value: 'Charmander', done: false }
+// { value: 'Squirtle', done: false }
+// { value: undefined, done: true }
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-it" data-sessao>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o mesmo iterator, chamada após chamada</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="it.next()"></button>
+            <button type="button" class="btn btn--sec" data-rodar>recomeçar</button>
+          </div>
+          <div class="console" data-console data-vazio="(clique em it.next())"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>for…of</code><span>usa o mesmo protocolo por baixo</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const time = ["Bulbasaur", "Charmander"];
+for (const nome of time) console.log(nome);
+
+for (const letra of "Pika") console.log(letra);
+
+const tipos = new Set(["fogo", "água", "fogo"]);
+for (const t of tipos) console.log(t);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>for…of</code> em objeto<span>objeto comum não é iterável</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const pikachu = { nome: "Pikachu", hp: 35 };
+
+for (const [chave, valor] of Object.entries(pikachu)) {
+  console.log(chave, valor);
+}
+
+for (const x of pikachu) console.log(x);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>next()</h3><p>Cada chamada entrega um objeto <code>{ value, done }</code>. Enquanto <code>done</code> é <code>false</code>, <code>value</code> traz o item; no fim, <code>value</code> é <code>undefined</code>.</p></article>
+      <article class="cartao"><h3>for…of</h3><p>Chama <code>next()</code> por você até <code>done</code> ser <code>true</code>. Funciona em arrays, strings, <code>Map</code>, <code>Set</code> e em qualquer objeto que tenha <code>[Symbol.iterator]</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: for…of em objeto comum</h3><p>Objeto literal não tem <code>[Symbol.iterator]</code>: dá <code>TypeError</code>. Para percorrer as propriedades, use <code>Object.entries</code>, <code>Object.keys</code> ou <code>for…in</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 14 · GERADORES ======================= -->
+  <section class="secao" id="geradores">
+    <div class="secao-topo">
+      <span class="selo">14</span>
+      <h2 class="secao-titulo">Geradores: function* e yield</h2>
+    </div>
+    <p class="secao-lead">Uma função geradora cria um iterator. Ela para em cada <code>yield</code> e só continua no próximo <code>next()</code>: ótimo para um botão “Próximo” na Pokédex.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>gerador.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-gen">
+function* porTipo(lista, tipo) {
+  for (const pokemon of lista) {
+    if (pokemon.tipos.includes(tipo)) {
+      yield pokemon;
+    }
+  }
+}
+
+const fogo = porTipo(pokedex, "fogo");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-gen" data-api data-sessao>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>um Pokémon de fogo por clique</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="fogo.next()"></button>
+            <button data-chamada="[...porTipo(pokedex, &quot;grama&quot;)].map((p) => p.nome)"></button>
+            <button type="button" class="btn btn--sec" data-rodar>recomeçar</button>
+          </div>
+          <div class="console" data-console data-vazio="(clique em fogo.next())"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec data-sessao>
+        <div class="mini-titulo"><code>yield</code><span>pausa e continua</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function* contar() {
+  console.log("começou");
+  yield 1;
+  console.log("voltou depois do 1");
+  yield 2;
+  console.log("terminou");
+}
+
+const g = contar();   // nada roda ainda
+</pre>
+        </figure>
+        <div class="chamadas">
+          <button data-chamada="g.next()"></button>
+          <button type="button" class="btn btn--sec" data-rodar>recomeçar</button>
+        </div>
+        <div class="console" data-console data-vazio="(nada rodou: clique em g.next())"></div>
+      </div>
+      <div class="mini" data-exec data-api>
+        <div class="mini-titulo"><code>.values().filter()</code><span>novidade: métodos de iterator (ES2025)</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const fortes = pokedex.values()
+  .filter((p) => p.hp >= 45)
+  .map((p) => p.nome)
+  .take(3);
+
+console.log(fortes.next().value);
+console.log([...fortes]);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+        <p class="nota-demo">Chrome 122+, Firefox 131+ e Safari 18.4+. Em navegador antigo: TypeError.</p>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Pausa e continua</h3><p>Chamar <code>contar()</code> não roda nada: só cria o iterator. Cada <code>next()</code> roda até o próximo <code>yield</code> e para ali, lembrando onde estava.</p></article>
+      <article class="cartao"><h3>Sob demanda</h3><p>O gerador só procura o próximo Pokémon de fogo quando alguém pede. Com uma lista enorme, nada é processado à toa.</p></article>
+      <article class="cartao cartao--novo"><h3>Novidade: métodos de iterator</h3><p>Desde 2025, todo iterator tem <code>.filter</code>, <code>.map</code>, <code>.take</code> e outros, também sob demanda: <code>take(3)</code> para de procurar no terceiro. Para um filtro simples, substitui o gerador.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 15 · PROMISES ======================= -->
+  <section class="secao" id="promises">
+    <div class="secao-topo">
+      <span class="selo">15</span>
+      <h2 class="secao-titulo">Promises: três estados possíveis</h2>
+    </div>
+    <p class="secao-lead">Uma <b>promise</b> é um objeto que representa um valor que ainda vai chegar. Ela nasce <b>pending</b> e muda uma única vez: para <b>fulfilled</b> ou para <b>rejected</b>.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>estados.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-estados">
+const estado = document.querySelector("#estado");
+const resultado = document.querySelector("#resultado");
+
+function mostrar(nome, texto) {
+  estado.textContent = nome;
+  estado.className = "estado " + nome;
+  resultado.textContent = texto;
+}
+
+function acompanhar(id) {
+  const promessa = buscarPokemon(id);
+  mostrar("pending", "");
+  promessa
+    .then((pokemon) => mostrar("fulfilled", pokemon.nome))
+    .catch((erro) => mostrar("rejected", erro.message));
+}
+
+document.querySelector("#b25").addEventListener("click", () => acompanhar(25));
+document.querySelector("#b99").addEventListener("click", () => acompanhar(99));
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-estados" data-html="c-estados-html" data-api>
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>clique e acompanhe o estado</code></div>
+        <div class="preview-corpo">
+          <figure class="painel-codigo">
+            <figcaption>estados.html</figcaption>
+<pre class="codigo" id="c-estados-html">
+&lt;button id="b25"&gt;buscarPokemon(25)&lt;/button&gt;
+&lt;button id="b99" class="sec"&gt;buscarPokemon(99)&lt;/button&gt;
+&lt;p&gt;estado: &lt;span id="estado" class="estado"&gt;nenhuma busca&lt;/span&gt;&lt;/p&gt;
+&lt;p id="resultado" class="mono"&gt;&lt;/p&gt;
+</pre>
+          </figure>
+          <div class="tela" data-tela></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini">
+        <div class="mini-titulo"><code>pending</code> <code>fulfilled</code> <code>rejected</code><span>os três estados</span></div>
+        <div class="rolagem-x">
+          <table class="tabela">
+            <thead><tr><th>Estado</th><th>Significa</th><th>Quem recebe</th></tr></thead>
+            <tbody>
+              <tr><td><code>pending</code></td><td>Pendente: a operação ainda está em andamento</td><td>ninguém, ainda</td></tr>
+              <tr><td><code>fulfilled</code></td><td>Resolvida: deu certo</td><td>o valor vai para <code>.then()</code></td></tr>
+              <tr><td><code>rejected</code></td><td>Rejeitada: deu errado</td><td>o erro vai para <code>.catch()</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>resolve</code> duas vezes<span>só a primeira mudança vale</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const p = new Promise((resolve, reject) => {
+  resolve("primeiro");
+  resolve("segundo");        // ignorado
+  reject(new Error("erro")); // ignorado
+});
+
+p.then((v) => console.log("then:", v))
+ .catch((e) => console.log("catch:", e.message));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Um objeto, não o valor</h3><p><code>buscarPokemon(25)</code> devolve na hora uma promise pendente. O Pokémon chega depois, dentro do <code>.then</code>.</p></article>
+      <article class="cartao"><h3>Muda uma vez só</h3><p>Depois de resolvida ou rejeitada (“settled”, encerrada), a promise não volta atrás. Quem chamar <code>.then</code> mais tarde recebe o mesmo valor, na hora.</p></article>
+      <article class="cartao"><h3>Por isso não há corrida</h3><p>Com callback, nada impede uma função de chamar o callback duas vezes (seção 11). Com promise, a segunda chamada de <code>resolve</code> é simplesmente ignorada.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 16 · NOVA PROMISE ======================= -->
+  <section class="secao" id="nova-promise">
+    <div class="secao-topo">
+      <span class="selo">16</span>
+      <h2 class="secao-titulo">Transformando a busca em promise</h2>
+    </div>
+    <p class="secao-lead">A função não recebe mais callback: ela <b>devolve uma promise</b>, e quem chama decide o que fazer com <code>.then</code> e <code>.catch</code>.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>api.js · busca com promise</figcaption>
+<pre class="codigo" data-lang="js" id="c-promise">
+function buscarPokemon(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const pokemon = pokedex.find((p) => p.id === id);
+      if (pokemon) resolve(pokemon);
+      else reject(new Error(`Pokémon ${id} não existe`));
+    }, 1000);
+  });
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-api data-tempo>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>quem chama decide</code></div>
+        <div class="preview-corpo">
+          <figure class="painel-codigo">
+            <figcaption>usar.js</figcaption>
+<pre class="codigo" data-lang="js">
+function mostrar(id) {
+  console.log("Buscando…");
+  buscarPokemon(id)
+    .then((pokemon) => console.log(pokemon.nome))
+    .catch((erro) => console.error(erro.message));
+}
+</pre>
+          </figure>
+          <div class="chamadas">
+            <button data-chamada="mostrar(25);"></button>
+            <button data-chamada="mostrar(99);"></button>
+            <button data-chamada="buscarPokemon(99);"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>resolve e reject</h3><p>O <code>new Promise</code> recebe uma função com dois controles: <code>resolve(valor)</code> quando deu certo, <code>reject(erro)</code> quando deu errado. O <code>setTimeout</code> continua lá dentro.</p></article>
+      <article class="cartao"><h3>Mesma convenção de erro</h3><p>Rejeite sempre com um <code>new Error(...)</code>, como no callback. Quem trata tem <code>name</code>, <code>message</code> e <code>stack</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: promise rejeitada sem .catch</h3><p>O terceiro botão busca o 99 sem <code>.catch</code>: o erro aparece como <b>Uncaught (in promise)</b>. Toda promise que pode falhar precisa de alguém que trate a falha.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 17 · ENCADEAR ======================= -->
+  <section class="secao" id="encadear">
+    <div class="secao-topo">
+      <span class="selo">17</span>
+      <h2 class="secao-titulo">Encadeando com .then, .catch e .finally</h2>
+    </div>
+    <p class="secao-lead">Cada <code>.then</code> recebe o que o anterior retornou. Um único <code>.catch</code> trata o erro de qualquer etapa e o <code>.finally</code> roda nos dois casos. Sem pirâmide.</p>
+
+    <div class="dupla">
+        <figure class="painel-codigo">
+          <figcaption>dois.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-encadear">
+function buscarDois(a, b) {
+  mostrarCarregando();
+  buscarPokemon(a)
+    .then((p1) => {
+      console.log(p1.nome);
+      return buscarPokemon(b);
+    })
+    .then((p2) => console.log(p2.nome))
+    .catch((erro) => console.error(erro.message))
+    .finally(() => esconderCarregando());
+}
+</pre>
+        </figure>
+      <div class="preview" data-exec data-codigo="c-encadear" data-api data-tempo>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o erro de qualquer etapa cai no mesmo catch</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="buscarDois(1, 4);"></button>
+            <button data-chamada="buscarDois(1, 99);"></button>
+            <button data-chamada="buscarDois(99, 4);"></button>
+          </div>
+          <div class="console" data-console></div>
+          <p class="nota-demo">Com 99 na primeira busca, o primeiro .then é pulado inteiro: a segunda busca nem começa.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>return</code> esquecido<span>o próximo .then não espera nada</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+buscarPokemon(1)
+  .then((p1) => {
+    console.log(p1.nome);
+    buscarPokemon(4);   // faltou o return
+  })
+  .then((p2) => console.log("p2:", p2));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>.then</code> dentro de <code>.then</code><span>a pirâmide voltou</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+buscarPokemon(1).then((p1) => {
+  buscarPokemon(4).then((p2) => {
+    console.log(p1.nome, p2.nome);
+  });
+});
+// funciona, mas é o callback hell de novo:
+// retorne a promise e encadeie por fora
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Retorne para encadear</h3><p>Se o <code>.then</code> retorna uma promise, o próximo <code>.then</code> espera por ela. Se retorna um valor comum, o próximo recebe o valor na hora.</p></article>
+      <article class="cartao"><h3>Um catch para todos</h3><p>Um erro em qualquer etapa pula os <code>.then</code> seguintes e cai no <code>.catch</code>. O tratamento fica num lugar só, ao contrário da pirâmide.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: esquecer o return</h3><p>Sem <code>return</code>, a segunda busca roda solta: o próximo <code>.then</code> recebe <code>undefined</code> na hora, e se ela falhar, o <code>.catch</code> da corrente não fica sabendo.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 18 · COMBINAR ======================= -->
+  <section class="secao" id="combinar">
+    <div class="secao-topo">
+      <span class="selo">18</span>
+      <h2 class="secao-titulo">Combinando várias promises</h2>
+    </div>
+    <p class="secao-lead">Quatro métodos esperam várias promises ao mesmo tempo. Escolha pelo que você precisa quando uma delas falha.</p>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela">
+        <thead><tr><th>Método</th><th>O que faz</th><th>Exemplo na Pokédex</th></tr></thead>
+        <tbody>
+          <tr><td><code>Promise.all</code></td><td>Espera todas; rejeita se uma falhar</td><td>Montar um time de 3 Pokémon</td></tr>
+          <tr><td><code>Promise.allSettled</code></td><td>Espera todas e informa o resultado de cada uma</td><td>Listar quais buscas falharam</td></tr>
+          <tr><td><code>Promise.race</code></td><td>Fica com a primeira que terminar, dando certo ou não</td><td>Limite de tempo para a busca</td></tr>
+          <tr><td><code>Promise.any</code></td><td>Fica com a primeira que der certo</td><td>Tentar duas fontes de dados</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>Promise.all</code><span>tudo ou nada</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function montar(ids) {
+  Promise.all(ids.map(buscarPokemon))
+    .then((time) => console.log(time.map((p) => p.nome)))
+    .catch((erro) => console.error(erro.message));
+}
+</pre>
+        </figure>
+        <div class="chamadas">
+          <button data-chamada="montar([1, 4, 7]);"></button>
+          <button data-chamada="montar([1, 99, 7]);"></button>
+        </div>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>Promise.allSettled</code><span>o resultado de cada uma</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+Promise.allSettled([25, 99, 7].map(buscarPokemon))
+  .then((resultados) => {
+    for (const r of resultados) {
+      if (r.status === "fulfilled") console.log("ok:", r.value.nome);
+      else console.warn("falhou:", r.reason.message);
+    }
+  });
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-tempo>
+        <div class="mini-titulo"><code>Promise.race</code><span>a primeira que terminar</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const atraso = (ms, valor) =>
+  new Promise((resolve) => setTimeout(() => resolve(valor), ms));
+
+Promise.race([atraso(800, "fonte A"), atraso(300, "fonte B")])
+  .then((v) => console.log("venceu:", v));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>Promise.any</code><span>a primeira que der certo</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const falha = (ms, msg) =>
+  new Promise((_, reject) => setTimeout(() => reject(new Error(msg)), ms));
+
+Promise.any([falha(200, "servidor 1 fora do ar"), buscarPokemon(25)])
+  .then((p) => console.log("any:", p.nome));
+
+Promise.race([falha(200, "servidor 1 fora do ar"), buscarPokemon(25)])
+  .catch((e) => console.error("race:", e.message));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>A ordem do resultado é a ordem do pedido</h3><p><code>Promise.all</code> devolve os valores na ordem do array de entrada, não na ordem em que cada um ficou pronto.</p></article>
+      <article class="cartao"><h3>race x any</h3><p>No último exemplo, a falha de 200 ms vence a <code>race</code> (que fica com a primeira a terminar, mesmo com erro). A <code>any</code> ignora a falha e espera o Pikachu.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: quando todas falham</h3><p><code>Promise.any</code> só rejeita se <b>todas</b> falharem, com um <code>AggregateError</code> que guarda a lista de erros em <code>.errors</code>. <code>Promise.allSettled</code> nunca rejeita.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 19 · ASYNC/AWAIT ======================= -->
+  <section class="secao" id="async-await">
+    <div class="secao-topo">
+      <span class="selo">19</span>
+      <h2 class="secao-titulo">async / await: esperando a promise sem .then</h2>
+    </div>
+    <p class="secao-lead"><code>async</code> e <code>await</code> são promises com cara de código síncrono. A função para no <code>await</code> até a promise terminar, e os erros são tratados com <code>try/catch</code>.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>mostrar.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-async">
+async function mostrarPokemon(id) {
+  try {
+    const pokemon = await buscarPokemon(id);
+    console.log(pokemon.nome);
+  } catch (erro) {
+    console.error(erro.message);
+  } finally {
+    esconderCarregando();
+  }
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-async" data-api data-tempo>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a mesma busca, sem .then</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="mostrarPokemon(25);"></button>
+            <button data-chamada="mostrarPokemon(99);"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>await</code> pausa a função<span>não a página</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+async function lenta() {
+  console.log("1. antes do await");
+  await buscarPokemon(25);
+  console.log("3. depois do await");
+}
+
+lenta();
+console.log("2. o resto do código seguiu");
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>async</code> sempre devolve promise<span>mesmo com return de um número</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+async function dobro(n) {
+  return n * 2;
+}
+
+const r = dobro(21);
+console.log(r);
+r.then((v) => console.log("valor:", v));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api>
+        <div class="mini-titulo">esquecer o <code>await</code><span>o erro mais comum</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+async function nomeDo(id) {
+  const pokemon = buscarPokemon(id);   // faltou o await
+  console.log(pokemon);
+  console.log(pokemon.nome);
+}
+
+nomeDo(25);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api>
+        <div class="mini-titulo"><code>await</code> fora de <code>async</code><span>o script nem começa</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+function carregar() {
+  const pokemon = await buscarPokemon(25);
+  console.log(pokemon.nome);
+}
+
+carregar();
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Regras</h3><p><code>await</code> só funciona dentro de função <code>async</code> ou no topo de um módulo (<code>&lt;script type="module"&gt;</code>). Uma função <code>async</code> sempre devolve uma promise. Erros são tratados com <code>try/catch</code>.</p></article>
+      <article class="cartao"><h3>Pausa a função, não a página</h3><p>No <code>await</code>, a função sai da pilha e o resto do código continua. O que vem depois do <code>await</code> volta como microtarefa quando a promise termina.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: esquecer o await</h3><p>Sem <code>await</code>, a variável guarda a promise pendente, não o Pokémon: <code>pokemon.nome</code> dá <code>undefined</code> sem erro nenhum. É o bug mais comum com <code>async</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 20 · TRÊS ESTILOS ======================= -->
+  <section class="secao" id="tres-estilos">
+    <div class="secao-topo">
+      <span class="selo">20</span>
+      <h2 class="secao-titulo">Comparando: a mesma busca em três estilos</h2>
+    </div>
+    <p class="secao-lead">O resultado é o mesmo. Muda a legibilidade e a forma de tratar erros. Troque o 25 por 99 no laboratório para ver o caminho do erro em cada um.</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>callback</code><span>erro primeiro</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const mostrar = (p) => console.log("mostrar:", p.nome);
+const falhar = (e) => console.error("falhar:", e.message);
+
+buscarPokemonCB(25, (erro, p) => {
+  if (erro) return falhar(erro);
+  mostrar(p);
+});
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>promise</code><span>.then e .catch</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const mostrar = (p) => console.log("mostrar:", p.nome);
+const falhar = (e) => console.error("falhar:", e.message);
+
+buscarPokemon(25)
+  .then(mostrar)
+  .catch(falhar);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api data-tempo data-modulo>
+        <div class="mini-titulo"><code>async / await</code><span>try e catch (no topo de um módulo)</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const mostrar = (p) => console.log("mostrar:", p.nome);
+const falhar = (e) => console.error("falhar:", e.message);
+
+try {
+  const p = await buscarPokemon(25);
+  mostrar(p);
+} catch (erro) {
+  falhar(erro);
+}
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Callback</h3><p>Simples para uma espera só. Com várias, aninha e repete o tratamento de erro em cada nível.</p></article>
+      <article class="cartao"><h3>Promise</h3><p>Encadeia em vez de aninhar e trata erros num <code>.catch</code> só. Também é o que permite combinar com <code>Promise.all</code>.</p></article>
+      <article class="cartao"><h3>async / await</h3><p>A mesma promise por baixo, lida de cima para baixo como código síncrono. É o estilo mais usado hoje; <code>.then</code> continua útil em cadeias curtas.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 21 · FETCH E CACHE ======================= -->
+  <section class="secao" id="fetch-cache">
+    <div class="secao-topo">
+      <span class="selo">21</span>
+      <h2 class="secao-titulo">Carregando o JSON com fetch e cache</h2>
+    </div>
+    <p class="secao-lead">Na primeira visita, a Pokédex vem da rede com <code>fetch</code> e é guardada no <code>localStorage</code>. Na segunda, vem do cache, sem esperar a rede.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>carregar.js · dois awaits: a resposta chegar e o corpo virar JSON</figcaption>
+<pre class="codigo" data-lang="js" id="c-fetch">
+async function carregarPokedex() {
+  const salvo = localStorage.getItem("pokedex");
+  if (salvo) return JSON.parse(salvo); // cache
+  console.log("buscando na rede…");
+  const resposta = await fetch("pokedex.json");
+  if (!resposta.ok) throw new Error("Falha ao carregar");
+  const dados = await resposta.json();
+  localStorage.setItem("pokedex", JSON.stringify(dados));
+  return dados;
+}
+
+const visita1 = await carregarPokedex();
+console.log("1ª visita:", visita1.length, "Pokémon");
+
+const visita2 = await carregarPokedex();
+console.log("2ª visita:", visita2.length, "Pokémon");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-fetch" data-tempo data-modulo>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a 2ª visita não espera nada</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <button type="button" class="btn btn--sec" data-rodar>rodar de novo</button>
+          <p class="nota-demo">Nesta página, um servidor simulado responde em 0,4 s e o localStorage começa vazio a cada execução.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec data-modulo>
+        <div class="mini-titulo"><code>404</code><span>o servidor respondeu: fetch não rejeita</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const resposta = await fetch("pokedex-antiga.json");
+console.log("ok:", resposta.ok);
+console.log("status:", resposta.status);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-modulo>
+        <div class="mini-titulo">sem rede<span>aí sim, fetch rejeita</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+try {
+  await fetch("https://offline.exemplo/pokedex.json");
+} catch (erro) {
+  console.error(erro.name + ": " + erro.message);
+}
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Dois awaits</h3><p>O primeiro espera a resposta chegar (cabeçalhos e status). O segundo, <code>resposta.json()</code>, espera o corpo inteiro e converte de JSON. Os dois são assíncronos.</p></article>
+      <article class="cartao"><h3>Cache: stringify e parse</h3><p>O <code>localStorage</code> guarda texto. <code>JSON.stringify</code> transforma o array em texto para salvar; <code>JSON.parse</code> faz o caminho de volta.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: fetch só rejeita sem rede</h3><p>404 e 500 chegam como resposta normal, com <code>resposta.ok</code> falso. Sem o <code>if (!resposta.ok) throw ...</code>, o código tenta ler JSON de uma página de erro.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 22 · SEQUÊNCIA X PARALELO ======================= -->
+  <section class="secao" id="sequencia-paralelo">
+    <div class="secao-topo">
+      <span class="selo">22</span>
+      <h2 class="secao-titulo">Em sequência ou em paralelo?</h2>
+    </div>
+    <p class="secao-lead">Três buscas de 1 s cada. Com um <code>await</code> por volta do laço, levam cerca de 3 s; disparadas juntas com <code>Promise.all</code>, cerca de 1 s.</p>
+
+    <div class="galeria">
+      <div class="mini" data-exec data-api data-tempo data-modulo>
+        <div class="mini-titulo"><code>for…of</code> + <code>await</code><span>em sequência: cerca de 3 s</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+console.log("começou");
+const time = [];
+for (const id of [1, 4, 7]) {
+  time.push(await buscarPokemon(id)); // espera cada uma
+}
+console.log(time.map((p) => p.nome));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api data-tempo data-modulo>
+        <div class="mini-titulo"><code>Promise.all</code><span>em paralelo: cerca de 1 s</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+console.log("começou");
+const ids = [1, 4, 7];
+const time = await Promise.all(ids.map(buscarPokemon));
+console.log(time.map((p) => p.nome));
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-api data-tempo>
+        <div class="mini-titulo"><code>forEach</code> + <code>await</code><span>não espera ninguém</span></div>
+        <figure class="painel-codigo">
+<pre class="codigo" data-lang="js">
+const time = [];
+[1, 4, 7].forEach(async (id) => {
+  time.push(await buscarPokemon(id));
+});
+console.log("tamanho do time:", time.length);
+setTimeout(() => console.log("1,5 s depois:", time.length), 1500);
+</pre>
+        </figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Sequência: quando uma depende da outra</h3><p>Se a segunda busca precisa do resultado da primeira (o id da evolução, por exemplo), o <code>await</code> dentro do laço é o certo.</p></article>
+      <article class="cartao"><h3>Paralelo: quando são independentes</h3><p>Um time de três Pokémon não depende de ordem. Disparar as três buscas juntas e esperar com <code>Promise.all</code> leva o tempo da mais lenta.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: await dentro de forEach</h3><p>O <code>forEach</code> chama a função <code>async</code> e não espera a promise que ela devolve. O código seguinte roda com o time vazio. Use <code>for…of</code> ou <code>Promise.all</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 23 · CORRIDA ======================= -->
+  <section class="secao" id="corrida">
+    <div class="secao-topo">
+      <span class="selo">23</span>
+      <h2 class="secao-titulo">Limite de tempo com Promise.race</h2>
+    </div>
+    <p class="secao-lead">Uma promise que rejeita depois de alguns milissegundos vira um cronômetro. Na corrida com a busca, quem terminar primeiro decide. Com a API levando 1 s, um limite de 500 ms faz a busca perder.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>limite.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-race">
+function tempoLimite(ms) {
+  return new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Tempo esgotado")), ms)
+  );
+}
+
+function buscarComLimite(id, ms) {
+  Promise.race([buscarPokemon(id), tempoLimite(ms)])
+    .then((p) => console.log(p.nome))
+    .catch((erro) => console.error(erro.message));
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-race" data-api data-tempo>
+        <div class="preview-topo"><span class="preview-selo">console</span><code>ajuste os tempos e observe</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="buscarComLimite(25, 500);"></button>
+            <button data-chamada="buscarComLimite(25, 1500);"></button>
+            <button data-chamada="buscarComLimite(99, 1500);"></button>
+          </div>
+          <div class="console" data-console></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Quem chega primeiro</h3><p>Com 500 ms, o cronômetro rejeita antes da busca resolver: “Tempo esgotado”. Com 1500 ms, a busca vence. Com o 99, a busca falha antes do limite e a mensagem é a dela.</p></article>
+      <article class="cartao"><h3>A perdedora continua rodando</h3><p><code>Promise.race</code> só ignora o resultado de quem perdeu. A busca de 1 s continua até o fim; o timer de 1500 ms também. Nada é cancelado.</p></article>
+      <article class="cartao cartao--novo"><h3>Com fetch de verdade: AbortSignal.timeout</h3><p><code>fetch(url, { signal: AbortSignal.timeout(500) })</code> cancela a própria requisição depois de 500 ms e rejeita com <code>TimeoutError</code>. Funciona em todos os navegadores atuais.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= LAB LIVRE ======================= -->
+  <section class="secao" id="lab">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Lab</span>
+      <h2 class="secao-titulo">Laboratório livre</h2>
+    </div>
+    <p class="secao-lead">Escreva JavaScript à esquerda e execute: o console aparece à direita, com o tempo de cada linha. <code>pokedex</code>, <code>buscarPokemonCB</code>, <code>buscarPokemon</code> e <code>fetch("pokedex.json")</code> já funcionam, e o <code>await</code> funciona direto.</p>
+
+    <div class="playground" data-playground>
+      <div class="pg-editor">
+        <div class="pg-barra">
+          <select data-exemplos aria-label="Carregar exemplo">
+            <option value="">carregar um exemplo…</option>
+            <option value="ordem">ordem de saída: A a E</option>
+            <option value="bloqueio">uma thread: o while atrasa o timer</option>
+            <option value="callback">callback com erro primeiro</option>
+            <option value="gerador">gerador por tipo</option>
+            <option value="all">Promise.all</option>
+            <option value="settled">Promise.allSettled</option>
+            <option value="sequencia">sequência x paralelo</option>
+            <option value="fetch">fetch e cache</option>
+            <option value="race">limite de tempo com race</option>
+            <option value="esqueceu">mistério: o await esquecido</option>
+          </select>
+          <button type="button" class="btn" data-rodar-pg>Executar</button>
+          <span class="pg-dica">Ctrl + Enter também executa</span>
+        </div>
+        <textarea spellcheck="false" aria-label="Editor de JavaScript"></textarea>
+      </div>
+      <div class="pg-resultado">
+        <div class="preview-topo" style="border:1px solid var(--borda);border-radius:var(--raio);background:#fff">
+          <span class="preview-selo">console</span><code>a saída do seu código</code>
+        </div>
+        <div class="console console--alto" data-console></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= REFERÊNCIA RÁPIDA ======================= -->
+  <section class="secao" id="referencia">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Resumo</span>
+      <h2 class="secao-titulo">Referência rápida</h2>
+    </div>
+    <p class="secao-lead">Tudo o que apareceu hoje, numa tabela.</p>
+
+    <div class="rolagem-x">
+      <table class="tabela">
+        <thead><tr><th>Família</th><th>Itens</th><th>Para que serve</th></tr></thead>
+        <tbody>
+          <tr><td>Bastidores</td><td>Call Stack · Web APIs · filas · Event Loop</td><td>Uma thread executa; o navegador espera; o Event Loop devolve o callback quando a pilha esvazia.</td></tr>
+          <tr><td>Ordem</td><td>síncrono › microtarefas › tarefas</td><td>Promises (<code>.then</code>, <code>await</code>) antes de timers e eventos, mesmo com <code>setTimeout(…, 0)</code>.</td></tr>
+          <tr><td>Timers</td><td><code>setTimeout(fn, ms)</code> <code>setInterval(fn, ms)</code> <code>clearInterval(id)</code></td><td>Rodar depois de um tempo mínimo; repetir; parar.</td></tr>
+          <tr><td>Eventos</td><td><code>el.addEventListener("click", fn)</code></td><td>Rodar quando o usuário age.</td></tr>
+          <tr><td>Callback</td><td><code>buscar(id, (erro, dados) => { })</code></td><td>Função chamada no fim; erro primeiro. Aninha fácil.</td></tr>
+          <tr><td>Iterator</td><td><code>it.next()</code> › <code>{ value, done }</code> <code>for…of</code></td><td>Percorrer um item por vez; <code>for…of</code> chama <code>next()</code> por você.</td></tr>
+          <tr><td>Gerador</td><td><code>function* f() { yield x; }</code></td><td>Criar um iterator que pausa em cada <code>yield</code>.</td></tr>
+          <tr><td>Promise</td><td><code>new Promise((resolve, reject) => { })</code></td><td>Valor futuro: pending › fulfilled ou rejected, uma vez só.</td></tr>
+          <tr><td>Encadear</td><td><code>.then(fn)</code> <code>.catch(fn)</code> <code>.finally(fn)</code></td><td>Próxima etapa (retorne a promise!); um tratamento para todas; o que roda sempre.</td></tr>
+          <tr><td>Combinar</td><td><code>Promise.all</code> <code>allSettled</code> <code>race</code> <code>any</code></td><td>Todas ou nada; cada resultado; a primeira a terminar; a primeira que der certo.</td></tr>
+          <tr><td>async / await</td><td><code>async function f() { const x = await p; }</code></td><td>Esperar a promise sem <code>.then</code>; erros com <code>try/catch</code>; a função sempre devolve promise.</td></tr>
+          <tr><td>Rede e cache</td><td><code>await fetch(url)</code> <code>await resposta.json()</code> <code>resposta.ok</code></td><td>Buscar; converter o corpo; conferir o status (404 não rejeita). Rode com servidor local, não <code>file://</code>.</td></tr>
+          <tr><td>localStorage</td><td><code>getItem</code> <code>setItem</code> <code>JSON.stringify</code> <code>JSON.parse</code></td><td>Síncrono, só texto: converta arrays e objetos.</td></tr>
+          <tr><td>Paralelo</td><td><code>await Promise.all(ids.map(buscar))</code></td><td>Disparar juntas o que não depende de ordem. Nunca <code>await</code> dentro de <code>forEach</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ======================= RODAPÉ ======================= -->
+<footer class="rodape">
+  <div class="rodape-interna">
+    <div>
+      <h2>Bom código!</h2>
+      <p>O JavaScript faz uma coisa de cada vez. Saber o que fica para depois é o que separa a tela que trava da tela que responde.</p>
+      <div class="rodape-meta">2º período · PM 4 — Projeto Mensal</div>
+      <p class="rodape-creditos">Créditos: adaptada dos slides <i>Aula 1 — Introdução ao fluxo de execução assíncrono</i> e <i>Aula 2 — Callbacks, iterators, promises e async/await</i> (Métodos Ágeis, Protótipos de Alta Fidelidade e Telas Funcionais). Pokémon e os nomes dos personagens são marcas da Nintendo, Game Freak e Creatures, usados aqui só como exemplo de dados.</p>
+    </div>
+    <img src="img/logo.png" alt="Descomplica + UniAmérica">
+  </div>
+</footer>
+
+<button class="voltar-topo" aria-label="Voltar ao topo">&#8593;</button>
+
+<script src="js/aula.js"></script>
+</body>
+</html>
