@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revisão para a prova · HTTP, assíncrono, fetch, Intl e módulos</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="stylesheet" href="css/demos.css">
+<link rel="stylesheet" href="css/revisao.css">
+</head>
+<body data-periodo="2o_periodo" data-pm="pm4">
+
+<!-- ============================ BARRA ============================ -->
+<div class="barra">
+  <div class="barra-interna">
+    <a class="barra-marca" href="#roteiro"><span class="ponto"></span> Revisão</a>
+    <nav class="barra-menu">
+      <a href="#http">http</a>
+      <a href="#estado">estado</a>
+      <a href="#metodos">métodos</a>
+      <a href="#status">status</a>
+      <a href="#https">https</a>
+      <a href="#assincrono">assíncrono</a>
+      <a href="#promise">promise</a>
+      <a href="#async">async</a>
+      <a href="#fetch">fetch</a>
+      <a href="#erros">erros</a>
+      <a href="#post">post</a>
+      <a href="#dom">dom</a>
+      <a href="#intl">intl</a>
+      <a href="#iife">iife</a>
+      <a href="#modulos">módulos</a>
+      <a href="#simulado">simulado</a>
+    </nav>
+  </div>
+  <div class="progresso"></div>
+</div>
+
+<!-- ============================ CAPA ============================ -->
+<header class="capa">
+  <div class="capa-interna">
+    <div class="capa-texto">
+      <img class="capa-logo" src="img/logo.png" alt="Descomplica + UniAmérica">
+      <div class="capa-meta"><span>2º período</span><span>PM 4 · Projeto Mensal</span></div>
+      <h1>Revisão para a prova</h1>
+      <p class="subtitulo">Tudo o que a prova cobra, com código rodando e um simulado no fim</p>
+      <p class="assinatura">JavaScript e Web · HTTP, HTTPS, Promises, async/await, fetch, Intl.DateTimeFormat, IIFE e módulos</p>
+    </div>
+    <div class="capa-arte">
+      <div class="troca-capa" aria-hidden="true">
+<pre class="capa-msg"><span class="capa-msg-rotulo">o que revisar</span>cliente · servidor · HTTP · HTTPS
+métodos · status · sem estado
+síncrono · Promise · async/await
+fetch · Response · json() · ok
+Intl.DateTimeFormat · timeZone
+IIFE · escopo · import / export</pre>
+        <div class="capa-fio">revise, rode, responda</div>
+<pre class="capa-msg capa-msg--resposta"><span class="capa-msg-rotulo">simulado</span>10 perguntas
+7 objetivas + 3 no estilo ENADE</pre>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ======================= ROTEIRO + LEGENDA ======================= -->
+  <section class="secao" id="roteiro" style="border-top:none">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Revisão</span>
+      <h2 class="secao-titulo">O que vamos revisar hoje</h2>
+    </div>
+    <p class="secao-lead">Os assuntos da prova, na ordem em que um pedido acontece: o navegador conversa com o servidor por HTTP, espera a resposta sem travar, lê os dados com <code>fetch</code>, mostra na tela com a data certa e organiza o código em funções e módulos. No fim, um simulado com 10 perguntas.</p>
+
+    <div class="roteiro">
+      <a href="#http"><span class="num">01</span><span class="rotulo">Cliente, servidor e HTTP sem estado</span></a>
+      <a href="#metodos"><span class="num">02</span><span class="rotulo">Métodos, GET na URL e códigos de status</span></a>
+      <a href="#https"><span class="num">03</span><span class="rotulo">HTTPS: o HTTP protegido por TLS</span></a>
+      <a href="#assincrono"><span class="num">04</span><span class="rotulo">Síncrono, assíncrono e os estados de uma Promise</span></a>
+      <a href="#async"><span class="num">05</span><span class="rotulo">async/await e try...catch</span></a>
+      <a href="#fetch"><span class="num">06</span><span class="rotulo">fetch: Response, json() e quando dá errado</span></a>
+      <a href="#post"><span class="num">07</span><span class="rotulo">Enviar dados com POST e mostrar na tela</span></a>
+      <a href="#intl"><span class="num">08</span><span class="rotulo">Datas com Intl.DateTimeFormat e fusos horários</span></a>
+      <a href="#iife"><span class="num">09</span><span class="rotulo">IIFE, escopo e módulos com import/export</span></a>
+      <a href="#simulado"><span class="num">10</span><span class="rotulo">Laboratório livre e perguntas simuladas</span></a>
+    </div>
+
+    <h3 class="sub-titulo">Como ler as demonstrações desta página</h3>
+    <div class="legenda">
+      <div class="legenda-item"><span class="amostra" style="background:var(--code-bg)"></span> <span><b>console</b>: o código do painel ao lado rodando agora, neste navegador</span></div>
+      <div class="legenda-item"><span class="amostra" style="background:#fff;border:1px solid var(--borda);box-shadow:inset 0 9px 0 #F2F4F3"></span> <span><b>rede</b>: cada requisição, com método, status e tempo (como a aba Rede do F12)</span></div>
+      <div class="legenda-item"><span class="amostra amostra--coluna"></span> <span>tracejado cinza: cada item que o JavaScript criou na tela</span></div>
+      <div class="legenda-item"><span class="origem">aula: …</span> <span>a aula em que o assunto foi visto, para estudar de novo</span></div>
+    </div>
+    <div class="cartoes" style="margin-top:22px">
+      <article class="cartao"><h3>Todo console é de verdade</h3><p>Cada console executa o código do painel ao lado. Os botões rodam o mesmo código num caso diferente: outro filme, sem Internet, servidor com erro.</p></article>
+      <article class="cartao"><h3>Uma API de filmes para a revisão</h3><p>Os exemplos conversam com <code>https://api.cinema.local</code>, uma API REST que roda dentro desta página. Ela responde como uma API real, com status, cabeçalhos e JSON, e funciona sem Internet.</p></article>
+      <article class="cartao"><h3>Leia, preveja, rode</h3><p>Antes de olhar o console, tente dizer o que vai aparecer. É exatamente o que a prova pede: ler um trecho de código e explicar o resultado.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= PARTE 1 ======================= -->
+  <div class="parte" id="parte-1">
+    <span class="parte-num">1</span>
+    <div>
+      <h2>A Web e o protocolo HTTP</h2>
+      <p>Quem pede, quem responde, como a conversa é escrita e como ela fica segura.</p>
+    </div>
+  </div>
+
+  <!-- ======================= 01 · CLIENTE E SERVIDOR ======================= -->
+  <section class="secao" id="http">
+    <div class="secao-topo">
+      <span class="selo">01</span>
+      <h2 class="secao-titulo">Cliente e servidor: um pedido, uma resposta</h2>
+      <span class="origem">aula: Web APIs e HTTP · PM 3</span>
+    </div>
+    <p class="secao-lead">O <b>cliente</b> (o navegador) pede um recurso e apresenta o resultado para quem usa. O <b>servidor</b> recebe o pedido, processa e devolve uma resposta. Toda conversa HTTP tem essa forma, e quem começa é sempre o cliente.</p>
+
+    <div class="caminho-demo" data-caminho>
+      <div class="chamadas">
+        <button type="button" class="chamada" data-filme="1">pedir o filme 1</button>
+        <button type="button" class="chamada" data-filme="3">pedir o filme 3</button>
+        <button type="button" class="chamada" data-filme="99">pedir o filme 99</button>
+      </div>
+      <div class="caminho">
+        <div class="etapa"><span class="num">1</span><h4>Cliente monta o pedido</h4><p>Método, endereço e cabeçalhos: o que quer e em que formato aceita.</p></div>
+        <div class="etapa"><span class="num">2</span><h4>O pedido viaja</h4><p>O DNS acha o endereço do servidor; a rede leva a mensagem até ele.</p></div>
+        <div class="etapa"><span class="num">3</span><h4>Servidor processa</h4><p>Consulta os dados, decide o código de status e monta a resposta.</p></div>
+        <div class="etapa"><span class="num">4</span><h4>Cliente apresenta</h4><p>Lê a resposta e mostra o resultado na tela de quem pediu.</p></div>
+      </div>
+      <div class="par">
+        <figure class="painel-codigo"><figcaption>pedido HTTP · o que o cliente envia</figcaption><pre class="codigo" data-lang="http" data-pedido></pre></figure>
+        <figure class="painel-codigo"><figcaption>resposta HTTP · o que o servidor devolve</figcaption><pre class="codigo" data-lang="http" data-resposta></pre></figure>
+      </div>
+      <div class="tela-cliente"><span class="tela-cliente-rotulo">tela do cliente</span><div data-tela-cliente><span class="espera">clique num dos botões acima</span></div></div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Papel do cliente</h3><p>Solicita recursos (uma página, uma imagem, um JSON) e apresenta o resultado ao usuário. No front-end, o cliente é o navegador rodando o seu HTML, CSS e JavaScript.</p></article>
+      <article class="cartao"><h3>Papel do servidor</h3><p>Guarda os dados e as regras, processa cada requisição e devolve a resposta com um código de status. Não toma a iniciativa: espera ser chamado.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: os papéis não se misturam</h3><p>Cliente e servidor não são o mesmo programa nem trocam de lugar a cada mensagem. A mensagem tem sempre a mesma forma: linha inicial, cabeçalhos, uma linha em branco e o corpo (que pode estar vazio).</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 02 · SEM ESTADO ======================= -->
+  <section class="secao" id="estado">
+    <div class="secao-topo">
+      <span class="selo">02</span>
+      <h2 class="secao-titulo">HTTP não guarda estado</h2>
+      <span class="origem">aula: Web APIs e HTTP · PM 3</span>
+    </div>
+    <p class="secao-lead">Para o protocolo, cada requisição é independente: o servidor não lembra do pedido anterior. Por isso quem já fez login precisa <b>levar a identificação em todo pedido</b>, num cookie ou num token.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>perfil.js · o mesmo endereço, com e sem credencial</figcaption>
+<pre class="codigo" data-lang="js" id="c-estado">
+const base = "https://api.cinema.local";
+
+let r = await fetch(`${base}/perfil`);
+console.log("1. sem credencial:", r.status);
+
+r = await fetch(`${base}/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ usuario: "bia", senha: "1234" })
+});
+const { token } = await r.json();
+console.log("2. login:", r.status, "token:", token);
+
+r = await fetch(`${base}/perfil`, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+console.log("3. com o token:", r.status, await r.json());
+
+r = await fetch(`${base}/perfil`);       // esqueceu o token
+console.log("4. de novo sem:", r.status, await r.json());
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-estado">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o servidor não lembra do pedido 3</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console data-tempo></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Cada pedido chega sozinho</h3><p>O pedido 4 vem logo depois do 3, do mesmo navegador, e mesmo assim recebe <code>401</code>. O servidor só sabe quem é você pelo que está <b>naquela</b> mensagem.</p></article>
+      <article class="cartao"><h3>Cookie ou token</h3><p>A “sessão” é construída pela aplicação: o servidor entrega um identificador no login e o cliente o reapresenta a cada envio, no cabeçalho <code>Cookie</code> (o navegador manda sozinho) ou em <code>Authorization</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: “o HTTP mantém a sessão aberta”</h3><p>Não mantém. Também não guarda a senha no servidor nem “invalida” a identificação a cada pedido: ele simplesmente não tem memória. Sem estado = <i>stateless</i>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 03 · MÉTODOS ======================= -->
+  <section class="secao" id="metodos">
+    <div class="secao-topo">
+      <span class="selo">03</span>
+      <h2 class="secao-titulo">Métodos: o que o cliente quer fazer</h2>
+      <span class="origem">aula: Web APIs e HTTP · PM 3</span>
+    </div>
+    <p class="secao-lead">O mesmo endereço, <code>/filmes/3</code>, faz coisas diferentes conforme o método. Repare no que o <code>PUT</code> faz com os campos que não foram enviados.</p>
+
+    <div class="pilha">
+      <div class="preview" data-exec data-codigo="c-metodos">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o PUT apagou genero e nota</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+      <figure class="painel-codigo painel-codigo--duplo">
+        <figcaption>metodos.js · um recurso, cinco métodos</figcaption>
+<pre class="codigo" data-lang="js" id="c-metodos">
+const url = "https://api.cinema.local/filmes";
+const json = { "Content-Type": "application/json" };
+
+let r = await fetch(`${url}/3`);                       // GET: ler
+console.log("GET   ", r.status, await r.json());
+
+r = await fetch(`${url}/3`, {                         // PATCH: só uma parte
+  method: "PATCH", headers: json,
+  body: JSON.stringify({ nota: 9.1 })
+});
+console.log("PATCH ", r.status, await r.json());
+
+r = await fetch(`${url}/3`, {                         // PUT: troca tudo
+  method: "PUT", headers: json,
+  body: JSON.stringify({ titulo: "Bacurau", ano: 2019 })
+});
+console.log("PUT   ", r.status, await r.json());
+
+r = await fetch(url, {                                // POST: cria um novo
+  method: "POST", headers: json,
+  body: JSON.stringify({ titulo: "Aquarius", ano: 2016 })
+});
+console.log("POST  ", r.status, await r.json());
+
+r = await fetch(`${url}/3`, { method: "DELETE" });    // DELETE: apaga
+console.log("DELETE", r.status);
+</pre>
+      </figure>
+    </div>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela">
+        <thead><tr><th>Método</th><th>Operação (CRUD)</th><th>Corpo</th><th>Idempotente</th><th>Resposta típica</th></tr></thead>
+        <tbody>
+          <tr><td><code>GET</code></td><td>ler (Read), sem alterar nada</td><td>não</td><td>sim</td><td><code>200</code> com os dados</td></tr>
+          <tr><td><code>POST</code></td><td>criar um novo recurso (Create)</td><td>sim</td><td>não: dois POSTs criam dois</td><td><code>201 Created</code> com o recurso e o <code>id</code></td></tr>
+          <tr><td><code>PUT</code></td><td>substituir o recurso inteiro (Update)</td><td>sim, completo</td><td>sim</td><td><code>200</code>; campo não enviado some</td></tr>
+          <tr><td><code>PATCH</code></td><td>alterar só alguns campos (Update)</td><td>sim, parcial</td><td>depende</td><td><code>200</code> com o recurso atualizado</td></tr>
+          <tr><td><code>DELETE</code></td><td>apagar (Delete)</td><td>não</td><td>sim</td><td><code>204 No Content</code> ou <code>200</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>PUT x PATCH</h3><p>Trocar o cadastro inteiro: <code>PUT</code>, mandando todos os campos. Mudar só o telefone: <code>PATCH</code>, mandando só o telefone.</p></article>
+      <article class="cartao"><h3>Idempotente</h3><p>Repetir o pedido deixa o servidor no mesmo estado. Apagar o filme 3 duas vezes dá no mesmo; criar duas vezes cria dois filmes.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: o método não é enfeite</h3><p>Trocar <code>POST</code> por <code>PUT</code> não muda “só o formato do corpo”: muda o que o servidor faz com o recurso. Um <code>DELETE</code> enviado por engano apaga de verdade.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 04 · GET E A URL ======================= -->
+  <section class="secao" id="get">
+    <div class="secao-topo">
+      <span class="selo">04</span>
+      <h2 class="secao-titulo">GET leva os parâmetros na URL</h2>
+      <span class="origem">aulas: Web APIs e HTTP · PM 3 e AJAX · PM 4</span>
+    </div>
+    <p class="secao-lead">No <code>GET</code>, os filtros viajam no próprio endereço, depois do <code>?</code>. O endereço do resultado pode ser salvo nos favoritos, compartilhado e guardado em cache. Mude os filtros e veja a URL mudar.</p>
+
+    <div class="pilha">
+      <div class="preview" data-exec data-codigo="c-get" data-html="h-get">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>formulário de busca: cada busca é um GET com outra URL</code></div>
+        <div class="preview-corpo">
+          <div class="tela" data-tela></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+      <div class="par">
+        <figure class="painel-codigo">
+          <figcaption>busca.html</figcaption>
+<pre class="codigo" data-lang="html" id="h-get">
+&lt;h3>Buscar filmes&lt;/h3>
+&lt;form id="busca">
+  &lt;label>gênero
+    &lt;select name="genero">
+      &lt;option value="">todos&lt;/option>
+      &lt;option>drama&lt;/option>
+      &lt;option>comédia&lt;/option>
+      &lt;option>ação&lt;/option>
+      &lt;option>suspense&lt;/option>
+    &lt;/select>
+  &lt;/label>
+  &lt;label>lançado desde
+    &lt;input name="desde" value="2000">
+  &lt;/label>
+  &lt;button>buscar&lt;/button>
+&lt;/form>
+&lt;p class="url" id="endereco">&lt;/p>
+&lt;ul id="lista">&lt;/ul>
+</pre>
+        </figure>
+        <figure class="painel-codigo">
+          <figcaption>busca.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-get">
+const form = document.querySelector("#busca");
+const endereco = document.querySelector("#endereco");
+const lista = document.querySelector("#lista");
+
+form.addEventListener("submit", async (evento) => {
+  evento.preventDefault();          // não recarrega a página
+  const filtros = new URLSearchParams(new FormData(form));
+  const url = `https://api.cinema.local/filmes?${filtros}`;
+  endereco.textContent = url;
+
+  const resposta = await fetch(url);  // GET é o padrão
+  const filmes = await resposta.json();
+  lista.innerHTML = "";
+  for (const filme of filmes) {
+    const li = document.createElement("li");
+    li.textContent = `${filme.titulo} (${filme.ano})`;
+    lista.appendChild(li);
+  }
+});
+
+form.requestSubmit();               // a primeira busca
+</pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Leitura segura</h3><p><code>GET</code> pede dados sem alterar o estado do recurso. Por isso o navegador pode repetir, guardar em cache e deixar você favoritar o endereço do resultado.</p></article>
+      <article class="cartao"><h3>Query string</h3><p>Depois do <code>?</code>, pares <code>chave=valor</code> separados por <code>&amp;</code>. <code>URLSearchParams</code> monta e codifica: o espaço e o acento de “comédia” viram <code>%C3%A9</code> sozinhos.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: senha em GET</h3><p>Tudo o que está na URL fica no histórico, nos favoritos e nos logs do servidor. Dados sensíveis vão no corpo de um <code>POST</code>, e o corpo só fica protegido no caminho com HTTPS.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 05 · STATUS ======================= -->
+  <section class="secao" id="status">
+    <div class="secao-topo">
+      <span class="selo">05</span>
+      <h2 class="secao-titulo">Códigos de status: o primeiro dígito diz tudo</h2>
+      <span class="origem">aula: Web APIs e HTTP · PM 3</span>
+    </div>
+    <p class="secao-lead">Toda resposta começa com um número de três dígitos. A <b>faixa</b> (o primeiro dígito) diz se deu certo e de quem é a responsabilidade quando não deu. Digite um código ou clique num exemplo.</p>
+
+    <div class="lab" data-status-lab>
+      <div class="lab-controles">
+        <h4>código de status</h4>
+        <div class="lab-campo"><label for="st-num">resposta.status</label><input type="number" id="st-num" value="404" min="100" max="599"></div>
+        <div class="chamadas chamadas--st">
+          <button data-codigo-st="200">200</button><button data-codigo-st="201">201</button><button data-codigo-st="204">204</button>
+          <button data-codigo-st="301">301</button><button data-codigo-st="304">304</button><button data-codigo-st="400">400</button>
+          <button data-codigo-st="401">401</button><button data-codigo-st="403">403</button><button data-codigo-st="404">404</button>
+          <button data-codigo-st="500">500</button><button data-codigo-st="502">502</button><button data-codigo-st="503">503</button>
+        </div>
+      </div>
+      <div class="lab-saida">
+        <div class="lab-palco lab-palco--status" data-palco></div>
+        <div class="lab-codigo"><pre class="codigo" data-lang="js" data-saida></pre></div>
+      </div>
+    </div>
+
+    <div class="faixas">
+      <div class="faixa faixa--1"><b>1xx</b><span>informação</span><small>o pedido segue em andamento</small></div>
+      <div class="faixa faixa--2"><b>2xx</b><span>sucesso</span><small>200 OK · 201 Created · 204 No Content</small></div>
+      <div class="faixa faixa--3"><b>3xx</b><span>redirecionamento</span><small>301 mudou de endereço · 304 use o cache</small></div>
+      <div class="faixa faixa--4"><b>4xx</b><span>erro do cliente</span><small>400 · 401 · 403 · 404: o pedido veio errado</small></div>
+      <div class="faixa faixa--5"><b>5xx</b><span>erro do servidor</span><small>500 · 502 · 503: o servidor falhou</small></div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Para quem encaminhar</h3><p>4xx: quem fez o pedido corrige (URL, login, permissão, dados). 5xx: a equipe do servidor ou da infraestrutura investiga. 3xx: normalmente o navegador resolve sozinho.</p></article>
+      <article class="cartao"><h3>401 x 403</h3><p><code>401</code>: não sei quem você é (falta login ou token). <code>403</code>: sei quem você é, mas você não tem permissão. Nos dois casos o problema está no pedido.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: as faixas são padrão</h3><p>Os significados são definidos pela especificação do HTTP, iguais em qualquer servidor. Nem toda faixa é falha: 2xx e 3xx são respostas normais.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 06 · HTTPS ======================= -->
+  <section class="secao" id="https">
+    <div class="secao-topo">
+      <span class="selo">06</span>
+      <h2 class="secao-titulo">HTTPS: o mesmo HTTP, dentro do TLS</h2>
+      <span class="origem">novo nesta revisão · visto de passagem em Web APIs e HTTP</span>
+    </div>
+    <p class="secao-lead">HTTPS não é outro protocolo, com outros métodos e outros status: é o HTTP transportado sobre <b>TLS</b>. O TLS cifra a conversa, confere se ela não foi alterada e prova, com um certificado digital, que o servidor é quem diz ser.</p>
+
+    <div class="caminho caminho--fixo">
+      <div class="etapa feita"><span class="num">1</span><h4>Olá</h4><p>O navegador diz quais versões do TLS e quais cifras aceita.</p></div>
+      <div class="etapa feita"><span class="num">2</span><h4>Certificado</h4><p>O servidor apresenta um certificado assinado por uma autoridade confiável: autenticação.</p></div>
+      <div class="etapa feita"><span class="num">3</span><h4>Chave da sessão</h4><p>Os dois combinam uma chave secreta que nunca passou pela rede.</p></div>
+      <div class="etapa feita"><span class="num">4</span><h4>HTTP cifrado</h4><p>Os mesmos GET e POST de sempre, ilegíveis para quem está no caminho.</p></div>
+    </div>
+
+    <div class="https" data-https>
+      <div class="chamadas">
+        <button class="chamada" data-protocolo="http">http:// · sem TLS</button>
+        <button class="chamada" data-protocolo="https">https:// · HTTP + TLS</button>
+        <button type="button" class="chamada chamada--perigo" data-adulterar>alguém altera a mensagem no caminho</button>
+      </div>
+      <div class="https-grade">
+        <div class="https-col">
+          <h4>no navegador (edite)</h4>
+          <textarea spellcheck="false" aria-label="Pedido HTTP enviado pelo navegador">POST /login HTTP/1.1
+Host: portal.escola.local
+Content-Type: application/json
+
+{"usuario":"bia","senha":"girassol42"}</textarea>
+        </div>
+        <div class="https-col">
+          <h4 data-rotulo-rede>o que passa pelo Wi-Fi</h4>
+          <pre class="codigo https-rede" data-lang="texto" data-na-rede></pre>
+        </div>
+        <div class="https-col">
+          <h4>o que o servidor recebe</h4>
+          <pre class="https-servidor" data-no-servidor></pre>
+        </div>
+      </div>
+      <p class="nota-demo">A cifra é de verdade: AES-GCM de 256 bits, da Web Crypto API do navegador, com uma chave nova a cada carga da página. É o mesmo tipo de cifra que o TLS usa depois do aperto de mão.</p>
+    </div>
+
+    <div class="cartoes cartoes--4">
+      <article class="cartao"><h3>Confidencialidade</h3><p>Quem intercepta vê só bytes embaralhados: nem a senha, nem o caminho <code>/login</code>, nem os cabeçalhos.</p></article>
+      <article class="cartao"><h3>Integridade</h3><p>Se 1 bit muda no caminho, a verificação falha e a mensagem é rejeitada. Sem TLS, a alteração passa despercebida.</p></article>
+      <article class="cartao"><h3>Autenticação</h3><p>O certificado digital prova que você fala com o servidor do domínio, e não com um impostor no meio do caminho.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: TLS x SSL</h3><p>TLS é o sucessor do SSL, que está obsoleto e inseguro. Porta padrão: <code>443</code> (HTTP usa <code>80</code>). Criptografia vale para a conversa toda, não só para senhas nem só para pagamentos.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= PARTE 2 ======================= -->
+  <div class="parte" id="parte-2">
+    <span class="parte-num">2</span>
+    <div>
+      <h2>Fluxo assíncrono</h2>
+      <p>Por que esperar sem travar, o que é uma Promise e as duas formas de escrever a espera.</p>
+    </div>
+  </div>
+
+  <!-- ======================= 07 · SÍNCRONO X ASSÍNCRONO ======================= -->
+  <section class="secao" id="assincrono">
+    <div class="secao-topo">
+      <span class="selo">07</span>
+      <h2 class="secao-titulo">Síncrono x assíncrono</h2>
+      <span class="origem">aula: Fluxo assíncrono · PM 4</span>
+    </div>
+    <p class="secao-lead">O JavaScript da página roda numa thread só. Uma operação <b>síncrona</b> ocupa essa thread até terminar e nada mais acontece. Uma <b>assíncrona</b> é entregue ao navegador e o código segue; o resultado chega depois. Clique em “clique aqui” durante cada consulta.</p>
+
+    <div class="bloqueio" data-bloqueio>
+      <div class="bloqueio-pista"><span class="bolinha" data-bolinha></span></div>
+      <div class="bloqueio-painel">
+        <div class="bloqueio-relogio"><small>relógio da página</small><b data-relogio>0,0 s</b></div>
+        <button type="button" class="btn btn--sec" data-clique>clique aqui · <span data-cliques>0</span></button>
+        <button type="button" class="btn" data-sincrono>consulta síncrona (2,5 s)</button>
+        <button type="button" class="btn" data-assincrono>consulta assíncrona (fetch)</button>
+      </div>
+      <div class="console bloqueio-log" data-log></div>
+    </div>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>ordem.js · em que ordem as linhas aparecem?</figcaption>
+<pre class="codigo" data-lang="js" id="c-ordem">
+console.log("1. pede a lista de filmes");
+
+fetch("https://api.cinema.local/filmes")
+  .then(resposta => resposta.json())
+  .then(filmes => console.log("3. chegaram", filmes.length, "filmes"));
+
+setTimeout(() => console.log("4. um timer de 1 segundo"), 1000);
+
+console.log("2. o código continua sem esperar");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-ordem">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o número à direita é o tempo de cada linha</code></div>
+        <div class="preview-corpo"><div class="console" data-console data-tempo></div></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Síncrono bloqueia</h3><p>A próxima instrução só começa quando a atual termina. Numa consulta demorada, a tela congela: animação parada, cliques acumulados para depois.</p></article>
+      <article class="cartao"><h3>Assíncrono não espera parado</h3><p>Requisições, timers e leitura de arquivos correm “por fora”. Quando o resultado fica pronto, a função combinada (callback, <code>.then</code>, <code>await</code>) continua o trabalho.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: assíncrono não é “mais rápido”</h3><p>A consulta demora o mesmo nos dois casos. A diferença é que a página continua respondendo. E operações assíncronas falham do mesmo jeito: precisam de tratamento de erro.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 08 · PROMISE ======================= -->
+  <section class="secao" id="promise">
+    <div class="secao-topo">
+      <span class="selo">08</span>
+      <h2 class="secao-titulo">Promise: três estados, e não volta atrás</h2>
+      <span class="origem">aulas: Fluxo assíncrono e AJAX · PM 4</span>
+    </div>
+    <p class="secao-lead">Uma Promise representa um valor que <b>ainda pode não estar disponível</b>. Ela nasce <b>pendente</b> e termina uma única vez: <b>realizada</b>, com um valor, ou <b>rejeitada</b>, com um motivo. Depois disso, o estado não muda mais.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>promise.js · o que os botões ao lado fazem</figcaption>
+<pre class="codigo" data-lang="js">
+let resolver, rejeitar;
+const p = new Promise((resolve, reject) => {
+  resolver = resolve;     // resolve(valor)  -> realizada
+  rejeitar = reject;      // reject(motivo)  -> rejeitada
+});
+// aqui p está pendente: o valor ainda não existe
+
+p.then(valor => console.log("realizada:", valor))
+ .catch(motivo => console.error("rejeitada:", motivo.message));
+
+resolver("ingressos: 2");                // a primeira decide
+rejeitar(new Error("sessão esgotada"));  // ignorada
+</pre>
+      </figure>
+      <div class="preview">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>uma Promise de verdade, nesta página</code></div>
+        <div class="preview-corpo">
+          <div class="promessa" data-promessa>
+            <div class="estados">
+              <div class="estado" data-e="pendente"><b>pendente</b><span>pending · ainda sem valor</span></div>
+              <div class="estados-fim">
+                <div class="estado estado--ok" data-e="realizada"><b>realizada</b><span>fulfilled · tem um valor</span></div>
+                <div class="estado estado--erro" data-e="rejeitada"><b>rejeitada</b><span>rejected · tem um motivo</span></div>
+              </div>
+            </div>
+            <p class="promessa-atual">estado: <b data-estado></b> · <span data-valor></span></p>
+            <div class="chamadas">
+              <button type="button" class="chamada" data-nova>nova Promise</button>
+              <button type="button" class="chamada" data-resolver>resolve("ingressos: 2")</button>
+              <button type="button" class="chamada" data-rejeitar>reject(new Error("sessão esgotada"))</button>
+            </div>
+            <div class="console" data-log></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Três estados</h3><p>Pendente (<i>pending</i>), realizada (<i>fulfilled</i>) e rejeitada (<i>rejected</i>). Realizada ou rejeitada = “resolvida” (<i>settled</i>).</p></article>
+      <article class="cartao"><h3>Uma vez só</h3><p>Resolva uma Promise e tente rejeitá-la: nada acontece. Ela não alterna entre estados nem volta a ficar pendente. Para tentar de novo, crie outra.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: Promise também falha</h3><p>Ser Promise não impede o erro: uma rejeição sem <code>.catch</code> (ou sem <code>try...catch</code> no <code>await</code>) vira <code>Uncaught (in promise)</code> no console.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 09 · THEN CATCH FINALLY ======================= -->
+  <section class="secao" id="then">
+    <div class="secao-topo">
+      <span class="selo">09</span>
+      <h2 class="secao-titulo">Encadeando com .then, .catch e .finally</h2>
+      <span class="origem">aulas: Fluxo assíncrono e AJAX · PM 4</span>
+    </div>
+    <p class="secao-lead">Cada <code>.then</code> recebe o que o anterior devolveu e devolve uma nova Promise. O <code>.catch</code> pega uma rejeição de qualquer ponto acima dele. O <code>.finally</code> roda nos dois casos.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>cadeia.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-then">
+fetch("https://api.cinema.local/filmes/2")
+  .then(resposta => resposta.json())     // devolve outra Promise
+  .then(filme => {
+    console.log("filme:", filme.titulo);
+    return filme.ano;                    // vai para o próximo then
+  })
+  .then(ano => console.log("ano:", ano))
+  .catch(erro => console.error("falhou:", erro.message))
+  .finally(() => console.log("fim da busca"));
+
+console.log("esta linha aparece primeiro");
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-then">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a mesma cadeia, com e sem Internet</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="">com Internet</button>
+            <button data-chamada="" data-rede="offline">sem Internet</button>
+          </div>
+          <div class="console" data-console data-tempo></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>O retorno vira a entrada</h3><p>O que um <code>.then</code> devolve chega no próximo. Se devolver uma Promise (como <code>resposta.json()</code>), o próximo espera ela terminar.</p></article>
+      <article class="cartao"><h3>Um catch para a cadeia toda</h3><p>Rejeição do <code>fetch</code> ou <code>throw</code> dentro de qualquer <code>.then</code>: tudo pula direto para o <code>.catch</code> mais próximo abaixo.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: esquecer o return</h3><p>Com chaves, <code>.then(r => { r.json(); })</code> não devolve nada e o próximo <code>.then</code> recebe <code>undefined</code>. Sem chaves, a arrow function devolve sozinha.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 10 · ASYNC / AWAIT ======================= -->
+  <section class="secao" id="async">
+    <div class="secao-topo">
+      <span class="selo">10</span>
+      <h2 class="secao-titulo">async/await: a mesma Promise, sem .then</h2>
+      <span class="origem">aulas: Fluxo assíncrono e AJAX · PM 4</span>
+    </div>
+    <p class="secao-lead"><code>async</code> e <code>await</code> são outra forma de escrever Promises. O <code>await</code> pausa <b>só a função</b> até a Promise resolver; a página continua livre. O resultado é o mesmo da cadeia de <code>.then</code>.</p>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>com .then</code><span>cadeia de Promises</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+function carregar() {
+  return fetch("https://api.cinema.local/filmes/5")
+    .then(resposta => resposta.json())
+    .then(filme => filme.titulo);
+}
+
+carregar().then(titulo => console.log("then:", titulo));
+console.log("a página segue");
+</pre></figure>
+        <div class="console" data-console data-tempo></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>com async/await</code><span>mesmo resultado, leitura de cima para baixo</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+async function carregar() {
+  const resposta = await fetch("https://api.cinema.local/filmes/5");
+  const filme = await resposta.json();
+  return filme.titulo;
+}
+
+carregar().then(titulo => console.log("await:", titulo));
+console.log("a página segue");
+</pre></figure>
+        <div class="console" data-console data-tempo></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>async sempre devolve Promise</code><span>mesmo que o return seja um número</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+async function nota() {
+  return 8.6;
+}
+console.log(nota());                 // não é 8.6
+console.log(nota() instanceof Promise);
+console.log(await nota());           // agora sim
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>await precisa de Promise</code><span>sem await, você guarda a Promise, não o valor</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const semAwait = fetch("https://api.cinema.local/filmes/1");
+console.log(semAwait);               // Promise {…}
+
+const comAwait = await fetch("https://api.cinema.local/filmes/1");
+console.log(comAwait.status);        // 200
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Escrita alternativa</h3><p><code>await p</code> faz o mesmo que <code>p.then(...)</code>: espera a Promise e entrega o valor. Por baixo, continua sendo Promise.</p></article>
+      <article class="cartao"><h3>Pausa a função, não a página</h3><p>Enquanto <code>carregar()</code> espera, a linha “a página segue” já rodou. <code>await</code> não torna nada síncrono.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: await não substitui o fetch</h3><p>O <code>await</code> espera; quem faz a requisição continua sendo o <code>fetch</code>. E os erros continuam existindo: trate com <code>try...catch</code> (próxima seção).</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 11 · TRY CATCH ======================= -->
+  <section class="secao" id="trycatch">
+    <div class="secao-topo">
+      <span class="selo">11</span>
+      <h2 class="secao-titulo">try...catch com await</h2>
+      <span class="origem">aulas: try...catch · PM 3 e AJAX · PM 4</span>
+    </div>
+    <p class="secao-lead">Com <code>await</code>, uma Promise rejeitada vira uma exceção comum, que o <code>catch</code> pega. O <code>throw</code> transforma um 404 em erro também, e o <code>finally</code> roda sempre.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>carregar-filme.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-try">
+async function carregarFilme(id) {
+  try {
+    const resposta = await fetch(`https://api.cinema.local/filmes/${id}`);
+    if (!resposta.ok) {
+      throw new Error(`HTTP ${resposta.status}`);
+    }
+    const filme = await resposta.json();
+    console.log("achei:", filme.titulo);
+    return filme;
+  } catch (erro) {
+    console.error("não deu:", erro.message);
+    return null;
+  } finally {
+    console.log("busca encerrada");
+  }
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-try">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>um botão por caso</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="await carregarFilme(4);">carregarFilme(4)</button>
+            <button data-chamada="await carregarFilme(99);">carregarFilme(99)</button>
+            <button data-chamada="await carregarFilme(4);" data-rede="offline">carregarFilme(4) sem Internet</button>
+          </div>
+          <div class="console" data-console></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>try sem await</code><span>o try termina antes de a Promise falhar</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+try {
+  fetch("https://api.cinema.local/filmes/1")
+    .then(() => { throw new Error("falhou depois"); });
+} catch (erro) {
+  console.log("o catch pegou?", erro.message);
+}
+console.log("o try já acabou");
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>try com await</code><span>agora a falha acontece dentro do try</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+try {
+  await fetch("https://api.cinema.local/filmes/1")
+    .then(() => { throw new Error("falhou depois"); });
+} catch (erro) {
+  console.log("o catch pegou:", erro.message);
+}
+console.log("o try já acabou");
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>try: a ação arriscada</h3><p>Coloque no <code>try</code> o <code>await fetch</code>, a conferência do status e a leitura do corpo: qualquer um dos três pode falhar.</p></article>
+      <article class="cartao"><h3>catch: o resgate</h3><p>Registre o erro (<code>console.error</code>) e mostre uma mensagem útil para quem usa. Nunca deixe o <code>catch</code> vazio: o erro some e ninguém descobre.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: try sem await</h3><p>Sem <code>await</code>, o <code>try</code> só vê a criação da Promise, que não falha. A rejeição chega depois e escapa como <code>Uncaught (in promise)</code>.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= PARTE 3 ======================= -->
+  <div class="parte" id="parte-3">
+    <span class="parte-num">3</span>
+    <div>
+      <h2>Requisições com fetch</h2>
+      <p>O que o fetch devolve, como ler o corpo, quando conferir o status e como enviar dados.</p>
+    </div>
+  </div>
+
+  <!-- ======================= 12 · FETCH NATIVA ======================= -->
+  <section class="secao" id="fetch">
+    <div class="secao-topo">
+      <span class="selo">12</span>
+      <h2 class="secao-titulo">fetch: a API nativa do navegador</h2>
+      <span class="origem">aula: AJAX e Intl · PM 4</span>
+    </div>
+    <p class="secao-lead">A <b>Fetch API</b> já vem em todo navegador moderno: não precisa instalar biblioteca nem baixar arquivo. <code>fetch(url, opções)</code> faz a requisição HTTP e devolve uma Promise na hora.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>console do navegador, sem nenhum &lt;script src&gt;</figcaption>
+<pre class="codigo" data-lang="js" id="c-nativa">
+console.log(typeof fetch);              // existe sem importar nada
+console.log(window.fetch === fetch);    // é do objeto window
+
+const promessa = fetch("https://api.cinema.local/filmes");
+console.log(promessa);                  // devolve na hora...
+console.log(promessa instanceof Promise);
+
+const resposta = await promessa;        // ...e resolve depois
+console.log("status:", resposta.status);
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-nativa">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>fetch faz parte do navegador</code></div>
+        <div class="preview-corpo"><div class="console" data-console data-tempo></div></div>
+      </div>
+    </div>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela">
+        <thead><tr><th>Jeito de fazer a requisição</th><th>De onde vem</th><th>Precisa instalar?</th></tr></thead>
+        <tbody>
+          <tr><td><code>fetch()</code></td><td>API nativa dos navegadores (e do Node.js a partir da versão 18)</td><td>não</td></tr>
+          <tr><td><code>XMLHttpRequest</code></td><td>API nativa antiga, baseada em eventos e callbacks</td><td>não, mas é verbosa</td></tr>
+          <tr><td><code>axios</code>, <code>$.ajax</code> (jQuery)</td><td>bibliotecas externas</td><td>sim: mais um arquivo para carregar</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Menos peso</h3><p>Trocar uma biblioteca de requisições pelo <code>fetch</code> tira um arquivo do carregamento da página. Tudo o que ela fazia, o navegador já faz.</p></article>
+      <article class="cartao"><h3>Assíncrona por natureza</h3><p><code>fetch</code> nunca devolve os dados direto: devolve uma Promise. Por isso aparece sempre com <code>.then</code> ou <code>await</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: confundir API com serviço</h3><p>“Fetch API” é a interface do navegador para fazer requisições. APIs como a do GitHub ou a do Firebase são <b>serviços</b> que você acessa com o fetch.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 13 · RESPONSE ======================= -->
+  <section class="secao" id="response">
+    <div class="secao-topo">
+      <span class="selo">13</span>
+      <h2 class="secao-titulo">O que chega no primeiro .then: um Response</h2>
+      <span class="origem">aula: AJAX e Intl · PM 4</span>
+    </div>
+    <p class="secao-lead">A Promise do <code>fetch</code> resolve com um objeto <b>Response</b>: a descrição da resposta HTTP (status, <code>ok</code>, cabeçalhos, URL). Os dados ainda não estão prontos; o corpo é um fluxo que precisa ser lido.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>response.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-response">
+fetch("https://api.cinema.local/filmes")
+  .then(resposta => {
+    console.log(resposta);
+    console.log("status:", resposta.status);
+    console.log("ok:", resposta.ok);
+    console.log("tipo:", resposta.headers.get("Content-Type"));
+    console.log("é a lista?", Array.isArray(resposta));
+    console.log("filmes?", resposta.length);
+  });
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-response">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>metadados sim, dados ainda não</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>O que o Response tem</h3><p><code>status</code> (200, 404…), <code>ok</code> (true de 200 a 299), <code>statusText</code>, <code>headers</code>, <code>url</code> e o <code>body</code>, ainda não lido.</p></article>
+      <article class="cartao"><h3>Duas esperas</h3><p>Primeiro chegam o status e os cabeçalhos (a Promise do <code>fetch</code>). Depois o corpo é baixado e convertido (a Promise do <code>json()</code>).</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: tratar o Response como os dados</h3><p>Não é o array, não é o texto do corpo, não é só o número do status e não é a requisição enviada. É a resposta inteira, esperando ser lida.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 14 · JSON() ======================= -->
+  <section class="secao" id="json">
+    <div class="secao-topo">
+      <span class="selo">14</span>
+      <h2 class="secao-titulo">response.json(): ler o corpo e converter</h2>
+      <span class="origem">aula: AJAX e Intl · PM 4</span>
+    </div>
+    <p class="secao-lead"><code>json()</code> lê o corpo da resposta até o fim e converte o texto JSON em objeto JavaScript. Como a leitura também leva tempo, ele devolve <b>outra Promise</b>.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>ler-corpo.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-json">
+const resposta = await fetch("https://api.cinema.local/filmes");
+
+const leitura = resposta.json();
+console.log(leitura);                    // outra Promise
+
+const filmes = await leitura;            // agora sim, os dados
+console.log(Array.isArray(filmes), filmes.length, "filmes");
+console.log("o primeiro:", filmes[0].titulo);
+console.log(filmes[0]);
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-json">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>do texto JSON para objeto JavaScript</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>text()</code><span>o corpo como texto, sem converter</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const r = await fetch("https://api.cinema.local/filmes/1");
+const texto = await r.text();
+console.log(typeof texto);
+console.log(texto.titulo);   // texto não tem propriedades
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>o corpo se lê uma vez</code><span>depois de lido, acabou</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const r = await fetch("https://api.cinema.local/filmes/1");
+console.log((await r.json()).titulo);
+console.log(await r.json());   // segunda leitura
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>then sem return</code><span>o próximo then recebe undefined</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+fetch("https://api.cinema.local/filmes/1")
+  .then(r => { r.json(); })          // faltou return
+  .then(filme => console.log(filme));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>O padrão de duas linhas</h3><p><code>const r = await fetch(url);</code> e <code>const dados = await r.json();</code>. Ou, com <code>.then</code>: <code>.then(r => r.json()).then(dados => ...)</code>.</p></article>
+      <article class="cartao"><h3>json() é do Response</h3><p>Ele atua na <b>resposta</b> que chegou. Não converte a requisição antes do envio (isso é o <code>JSON.stringify</code>, seção 16) nem cria um JSON vazio.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: corpo que não é JSON</h3><p>Se o servidor devolver HTML (uma página de erro, por exemplo), <code>json()</code> rejeita com <code>SyntaxError</code>. Mais um motivo para conferir o status antes.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 15 · ERROS HTTP ======================= -->
+  <section class="secao" id="erros">
+    <div class="secao-topo">
+      <span class="selo">15</span>
+      <h2 class="secao-titulo">404 e 500 não caem no catch</h2>
+      <span class="origem">aula: AJAX e Intl · PM 4</span>
+    </div>
+    <p class="secao-lead">A Promise do <code>fetch</code> só é <b>rejeitada</b> quando a requisição não se completa: sem Internet, servidor fora do ar, endereço inválido. Um 404 ou um 500 é uma resposta completa, então a Promise <b>resolve</b> normalmente. Quem transforma isso em erro é você, conferindo <code>ok</code> ou <code>status</code>.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>buscar.js · conferindo ok</figcaption>
+<pre class="codigo" data-lang="js" id="c-erros">
+async function buscar(caminho) {
+  try {
+    const resposta = await fetch(`https://api.cinema.local${caminho}`);
+    console.log("a Promise resolveu com status", resposta.status);
+    if (!resposta.ok) {
+      throw new Error(`HTTP ${resposta.status}`);
+    }
+    const dados = await resposta.json();
+    console.log("sucesso:", dados.titulo);
+  } catch (erro) {
+    console.error("catch:", erro.message);
+  }
+}
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-erros">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>um botão por caso</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="await buscar('/filmes/2');">200 · buscar('/filmes/2')</button>
+            <button data-chamada="await buscar('/filmes/99');">404 · buscar('/filmes/99')</button>
+            <button data-chamada="await buscar('/instavel');">500 · buscar('/instavel')</button>
+            <button data-chamada="await buscar('/filmes/2');" data-rede="offline">sem Internet</button>
+          </div>
+          <div class="console" data-console></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem conferir ok</code><span>o 500 passa como se fosse sucesso</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+fetch("https://api.cinema.local/instavel")
+  .then(resposta => resposta.json())
+  .then(dados => console.log("tela de sucesso com:", dados))
+  .catch(erro => console.error("o catch nem é chamado", erro));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>conferindo ok no then</code><span>o throw leva o 500 até o catch</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+fetch("https://api.cinema.local/instavel")
+  .then(resposta => {
+    if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+    return resposta.json();
+  })
+  .then(dados => console.log("sucesso:", dados))
+  .catch(erro => console.error("agora sim:", erro.message));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela">
+        <thead><tr><th>Situação</th><th>A Promise do fetch</th><th><code>resposta.ok</code></th><th>Cai no catch?</th></tr></thead>
+        <tbody>
+          <tr><td>200, 201, 204</td><td>resolve</td><td><code>true</code></td><td>não, e não deve</td></tr>
+          <tr><td>404, 401, 400 (erro do cliente)</td><td>resolve</td><td><code>false</code></td><td>só se você der <code>throw</code></td></tr>
+          <tr><td>500, 502, 503 (erro do servidor)</td><td>resolve</td><td><code>false</code></td><td>só se você der <code>throw</code></td></tr>
+          <tr><td>sem Internet, servidor inalcançável, URL inválida</td><td>rejeita com <code>TypeError</code></td><td>não existe resposta</td><td>sim, sozinha</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Por que é assim</h3><p>Para o <code>fetch</code>, conseguir uma resposta já é sucesso: a requisição se completou. Se o conteúdo é bom ou ruim, é decisão da aplicação.</p></article>
+      <article class="cartao"><h3>A regra prática</h3><p>Todo <code>fetch</code> merece <code>if (!resposta.ok) throw new Error(...)</code> antes do <code>json()</code>, mais um <code>catch</code> no fim. Assim os dois tipos de falha chegam ao mesmo lugar.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: a posição do catch não é o problema</h3><p>Mover o <code>.catch</code> para antes dos <code>.then</code> não faz ele pegar um 404. Nem o fetch repete a requisição sozinho. O que falta é conferir o status.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 16 · POST ======================= -->
+  <section class="secao" id="post">
+    <div class="secao-topo">
+      <span class="selo">16</span>
+      <h2 class="secao-titulo">Enviando dados: POST com JSON</h2>
+      <span class="origem">aula: AJAX e Intl · PM 4</span>
+    </div>
+    <p class="secao-lead">Para enviar, o <code>fetch</code> recebe um segundo argumento com o método, os cabeçalhos e o corpo. O corpo trafega como <b>texto</b>: <code>JSON.stringify</code> transforma o objeto em texto JSON e o cabeçalho <code>Content-Type</code> avisa o servidor de como interpretar esse texto.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>cadastrar.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-post">
+const novo = { titulo: "Que Horas Ela Volta?", ano: 2015, genero: "drama" };
+
+const resposta = await fetch("https://api.cinema.local/filmes", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(novo)
+});
+
+console.log(resposta.status, resposta.statusText);
+console.log(await resposta.json());
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-post">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>201 Created, com o id que o servidor gerou</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <div data-painel-rede></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>JSON.stringify</code><span>de objeto para texto</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const novo = { titulo: "Aquarius", ano: 2016 };
+const texto = JSON.stringify(novo);
+console.log(typeof novo, "→", typeof texto);
+console.log(texto);
+console.log(JSON.parse(texto).ano);   // e o caminho de volta
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem JSON.stringify</code><span>o objeto vira "[object Object]"</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const r = await fetch("https://api.cinema.local/filmes", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: { titulo: "Aquarius", ano: 2016 }
+});
+console.log(r.status, await r.json());
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>sem Content-Type</code><span>o servidor não sabe ler o corpo</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const r = await fetch("https://api.cinema.local/filmes", {
+  method: "POST",
+  body: JSON.stringify({ titulo: "Aquarius", ano: 2016 })
+});
+console.log(r.status, r.statusText);
+console.log(await r.json());
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>JSON.stringify</h3><p>Converte o objeto JavaScript em texto JSON. Não criptografa, não valida campos: só serializa. O caminho inverso é <code>JSON.parse</code> (e o <code>json()</code> da resposta).</p></article>
+      <article class="cartao"><h3>Content-Type</h3><p>Cabeçalho que diz o formato do corpo: <code>application/json</code>. Não define idioma nem criptografia. Sem ele, o <code>fetch</code> manda <code>text/plain</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: “o fetch converte sozinho”</h3><p>Não converte. Objeto no <code>body</code> vira o texto <code>"[object Object]"</code>, e o servidor responde 400. Os dois, <code>stringify</code> e <code>Content-Type</code>, são necessários.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 17 · DOM ======================= -->
+  <section class="secao" id="dom">
+    <div class="secao-topo">
+      <span class="selo">17</span>
+      <h2 class="secao-titulo">Da resposta para a tela</h2>
+      <span class="origem">aula: AJAX e Intl · PM 4</span>
+    </div>
+    <p class="secao-lead">O caminho completo: um elemento vazio no HTML, a requisição assíncrona, a conversão da resposta, um elemento criado para cada item e uma mensagem clara quando falha. Teste os três botões.</p>
+
+    <div class="pilha">
+      <div class="preview" data-exec data-codigo="c-dom" data-html="h-dom">
+        <div class="preview-topo"><span class="preview-selo">preview</span><code>a página montada pelo código abaixo</code></div>
+        <div class="preview-corpo">
+          <div class="chamadas">
+            <button data-chamada="">com Internet</button>
+            <button data-chamada="" data-latencia="3000">servidor lento (3 s)</button>
+            <button data-chamada="" data-rede="offline">sem Internet</button>
+          </div>
+          <div class="tela" data-tela></div>
+        </div>
+      </div>
+      <div class="pilha-codigo">
+        <figure class="painel-codigo">
+          <figcaption>index.html · só o lugar onde a lista vai entrar</figcaption>
+<pre class="codigo" data-lang="html" id="h-dom">
+&lt;h3>Em cartaz&lt;/h3>
+&lt;p id="aviso">&lt;/p>
+&lt;ul id="lista">&lt;/ul>
+
+&lt;script src="filmes.js">&lt;/script>
+</pre>
+        </figure>
+        <figure class="painel-codigo painel-codigo--duplo">
+          <figcaption>filmes.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-dom">
+const aviso = document.querySelector("#aviso");
+const lista = document.querySelector("#lista");
+
+async function carregarFilmes() {
+  aviso.textContent = "carregando…";
+  aviso.className = "espera";
+  try {
+    const resposta = await fetch("https://api.cinema.local/filmes");
+    if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+    const filmes = await resposta.json();
+
+    for (const filme of filmes) {
+      const li = document.createElement("li");
+      const titulo = document.createElement("b");
+      titulo.textContent = filme.titulo;
+      li.append(titulo, `${filme.ano} · ${filme.genero}`);
+      lista.appendChild(li);
+    }
+    aviso.textContent = `${filmes.length} filmes`;
+    aviso.className = "ok";
+  } catch (erro) {
+    console.error(erro);
+    aviso.textContent = "Não foi possível carregar os filmes. Tente de novo.";
+    aviso.className = "erro";
+  }
+}
+
+carregarFilmes();
+</pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Os três passos do DOM</h3><p><code>createElement</code> cria o elemento, <code>textContent</code> põe o texto e <code>appendChild</code> (ou <code>append</code>) coloca na página. Um elemento por item do array.</p></article>
+      <article class="cartao"><h3>Quem espera precisa saber</h3><p>“carregando…” antes, a contagem no sucesso e uma mensagem amigável na falha. O detalhe técnico vai para o <code>console.error</code>, não para a tela.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: innerHTML com dados de fora</h3><p>Montar HTML concatenando o que veio do servidor abre espaço para injeção de código. Para texto, prefira <code>textContent</code>, que nunca interpreta tags.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= PARTE 4 ======================= -->
+  <div class="parte" id="parte-4">
+    <span class="parte-num">4</span>
+    <div>
+      <h2>Datas com Intl</h2>
+      <p>O mesmo instante escrito do jeito de cada lugar e de cada fuso.</p>
+    </div>
+  </div>
+
+  <!-- ======================= 18 · DATETIMEFORMAT ======================= -->
+  <section class="secao" id="intl">
+    <div class="secao-topo">
+      <span class="selo">18</span>
+      <h2 class="secao-titulo">Intl.DateTimeFormat: locale e opções</h2>
+      <span class="origem">aula: AJAX e Intl · PM 4</span>
+    </div>
+    <p class="secao-lead">A API de internacionalização nativa do JavaScript formata a data segundo a convenção de cada localidade. Você escolhe <b>o que</b> aparece (dia da semana, dia, mês, ano, hora) e <b>como</b>; a ordem, as palavras e os separadores vêm do locale.</p>
+
+    <div class="lab" data-lab-data>
+      <div class="lab-controles lab-controles--grade">
+        <h4>controles</h4>
+        <div class="lab-campo"><label for="df-inst">instante</label>
+          <select id="df-inst" data-campo="instante">
+            <option value="2026-12-04T22:45:00Z">2026-12-04T22:45:00Z</option>
+            <option value="2026-12-31T23:30:00Z">2026-12-31T23:30:00Z (virada em UTC)</option>
+            <option value="2027-03-09T08:05:00-03:00">2027-03-09T08:05:00-03:00</option>
+          </select></div>
+        <div class="lab-campo"><label for="df-loc">locale</label>
+          <select id="df-loc" data-campo="locale">
+            <option>pt-BR</option><option>pt-PT</option><option>en-US</option><option>en-GB</option><option>es-AR</option><option>de-DE</option><option>ja-JP</option>
+          </select></div>
+        <div class="lab-campo"><label for="df-wd">weekday</label>
+          <select id="df-wd" data-campo="weekday"><option value="">(não mostrar)</option><option selected>long</option><option>short</option><option>narrow</option></select></div>
+        <div class="lab-campo"><label for="df-d">day</label>
+          <select id="df-d" data-campo="day"><option value="">(não mostrar)</option><option selected>numeric</option><option>2-digit</option></select></div>
+        <div class="lab-campo"><label for="df-m">month</label>
+          <select id="df-m" data-campo="month"><option value="">(não mostrar)</option><option>numeric</option><option>2-digit</option><option selected>long</option><option>short</option></select></div>
+        <div class="lab-campo"><label for="df-y">year</label>
+          <select id="df-y" data-campo="year"><option value="">(não mostrar)</option><option selected>numeric</option><option>2-digit</option></select></div>
+        <div class="lab-campo"><label for="df-h">hour</label>
+          <select id="df-h" data-campo="hour"><option value="">(não mostrar)</option><option>numeric</option><option>2-digit</option></select></div>
+        <div class="lab-campo"><label for="df-min">minute</label>
+          <select id="df-min" data-campo="minute"><option value="">(não mostrar)</option><option>numeric</option><option>2-digit</option></select></div>
+        <div class="lab-campo"><label for="df-12">hour12</label>
+          <select id="df-12" data-campo="hour12"><option value="">(padrão do locale)</option><option value="false">false (24 h)</option><option value="true">true (12 h)</option></select></div>
+        <div class="lab-campo"><label for="df-tz">timeZone</label>
+          <select id="df-tz" data-campo="timeZone"><option value="">(fuso deste computador)</option><option selected>America/Sao_Paulo</option><option>America/Manaus</option><option>UTC</option><option>Europe/Lisbon</option><option>Asia/Tokyo</option></select></div>
+      </div>
+      <div class="lab-saida">
+        <div class="lab-palco" data-palco></div>
+        <div class="lab-codigo"><pre class="codigo" data-lang="js" data-saida></pre></div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>dateStyle</code><span>estilos prontos, sem escolher campo a campo</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const quando = new Date("2026-12-04T22:45:00Z");
+const estilos = ["full", "long", "medium", "short"];
+for (const dateStyle of estilos) {
+  const f = new Intl.DateTimeFormat("pt-BR", {
+    dateStyle, timeZone: "America/Sao_Paulo"
+  });
+  console.log(dateStyle.padEnd(6), f.format(quando));
+}
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>o mesmo pedido, três locales</code><span>a ordem e as palavras mudam</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const quando = new Date("2026-12-04T22:45:00Z");
+const opcoes = {
+  weekday: "long", day: "numeric", month: "long",
+  year: "numeric", timeZone: "America/Sao_Paulo"
+};
+for (const locale of ["pt-BR", "en-US", "de-DE"]) {
+  const f = new Intl.DateTimeFormat(locale, opcoes);
+  console.log(locale, f.format(quando));
+}
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>hora só quando pedida</code><span>sem hour e minute, não há hora</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const quando = new Date("2026-12-04T22:45:00Z");
+const tz = "America/Sao_Paulo";
+const so = new Intl.DateTimeFormat("pt-BR",
+  { day: "2-digit", month: "long", timeZone: tz });
+const com = new Intl.DateTimeFormat("pt-BR",
+  { day: "2-digit", month: "long", timeZone: tz,
+    hour: "2-digit", minute: "2-digit" });
+console.log(so.format(quando));
+console.log(com.format(quando));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec>
+        <div class="mini-titulo"><code>24 horas x 12 horas</code><span>o locale decide; hour12 força</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const quando = new Date("2026-12-04T22:45:00Z");
+const op = { hour: "numeric", minute: "2-digit",
+  timeZone: "America/Sao_Paulo" };
+const br = new Intl.DateTimeFormat("pt-BR", op);
+const us = new Intl.DateTimeFormat("en-US", op);
+const br12 = new Intl.DateTimeFormat("pt-BR", { ...op, hour12: true });
+console.log("pt-BR:", br.format(quando));
+console.log("en-US:", us.format(quando));
+console.log("pt-BR, hour12:", br12.format(quando));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Leitura do resultado</h3><p>Em <code>pt-BR</code>: dia da semana e mês por extenso em minúsculas, “de” entre as partes e hora em 24 horas. <code>"2-digit"</code> põe o zero à esquerda (<code>04</code>); <code>"numeric"</code> não (<code>4</code>).</p></article>
+      <article class="cartao"><h3>Só aparece o que foi pedido</h3><p>Pediu <code>weekday</code>, <code>day</code>, <code>month</code> e <code>year</code>? Sai a data sem hora. A hora entra quando você pede <code>hour</code> e <code>minute</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: “a API ignora o locale”</h3><p>Ignora não: é justamente o locale que decide o formato. <code>en-US</code> escreve mês antes do dia; <code>pt-BR</code>, dia antes do mês. Não é preciso montar nada à mão.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 19 · TIMEZONE ======================= -->
+  <section class="secao" id="fuso">
+    <div class="secao-topo">
+      <span class="selo">19</span>
+      <h2 class="secao-titulo">timeZone: um instante, vários relógios</h2>
+      <span class="origem">aula: AJAX e Intl · PM 4</span>
+    </div>
+    <p class="secao-lead">Um <code>Date</code> guarda um <b>instante</b>, igual no mundo inteiro. O <code>Z</code> no fim do texto quer dizer UTC. A opção <code>timeZone</code> decide em qual relógio esse instante será escrito, e às vezes muda até o dia.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>fusos.js</figcaption>
+<pre class="codigo" data-lang="js" id="c-fusos">
+const instante = new Date("2026-12-31T23:30:00Z");   // Z = UTC
+
+const fusos = ["UTC", "America/Sao_Paulo", "America/Manaus",
+               "Europe/Lisbon", "Asia/Tokyo"];
+
+for (const timeZone of fusos) {
+  const f = new Intl.DateTimeFormat("pt-BR", {
+    day: "numeric", month: "long", year: "numeric",
+    hour: "2-digit", minute: "2-digit",
+    timeZone
+  });
+  console.log(timeZone.padEnd(18), f.format(instante));
+}
+
+// sem timeZone: o fuso do computador que roda o código
+console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-fusos">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>em Tóquio já é 2027</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Leia o Z</h3><p><code>"…T23:30:00Z"</code> é 23h30 em UTC. São Paulo está 3 horas atrás (20h30); Tóquio, 9 horas à frente (8h30 do dia seguinte).</p></article>
+      <article class="cartao"><h3>Declare o fuso</h3><p>Sem <code>timeZone</code>, o resultado depende do computador do usuário. Para que todos vejam o mesmo relógio, declare: <code>timeZone: "America/Sao_Paulo"</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: data sem hora é UTC</h3><p><code>new Date("2026-12-04")</code> é meia-noite em UTC, que no Brasil ainda é dia 3. Prefira o texto completo, com hora e fuso.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= PARTE 5 ======================= -->
+  <div class="parte" id="parte-5">
+    <span class="parte-num">5</span>
+    <div>
+      <h2>Organizar o código: IIFE e módulos</h2>
+      <p>Assunto da prova que não teve aula própria: como isolar variáveis e dividir o código em arquivos.</p>
+    </div>
+  </div>
+
+  <!-- ======================= 20 · IIFE ======================= -->
+  <section class="secao" id="iife">
+    <div class="secao-topo">
+      <span class="selo">20</span>
+      <h2 class="secao-titulo">IIFE: a função que se executa sozinha</h2>
+      <span class="origem">novo nesta revisão</span>
+    </div>
+    <p class="secao-lead"><b>IIFE</b> (<i>Immediately Invoked Function Expression</i>) é uma função definida e executada no mesmo lugar. Ela não precisa de nome nem de uma chamada depois: o par de parênteses do fim a invoca na hora.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>iife.js · nenhuma função é chamada pelo nome</figcaption>
+<pre class="codigo" data-lang="js" id="c-iife">
+(function () {
+  console.log("1. rodei sem ninguém me chamar");
+})();
+
+(() => {
+  console.log("2. com arrow function também vale");
+})();
+
+(function (sala) {
+  console.log("3. recebi um argumento:", sala);
+})("Sala 4");
+
+const sessao = (function () {
+  const inicio = "19:30";
+  return { inicio, lugares: 120 };
+})();
+console.log("4. o que a IIFE devolveu:", sessao);
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-iife" data-jeito="classico">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>quatro IIFEs, quatro execuções</code></div>
+        <div class="preview-corpo">
+          <div class="console" data-console></div>
+          <div class="anatomia">
+            <div class="anatomia-linha"><code><span class="an-1">(</span><span class="an-f">function () { … }</span><span class="an-1">)</span><span class="an-2">()</span>;</code></div>
+            <div class="anatomia-legenda">
+              <span><i class="an-1"></i>1º par: transforma a declaração em <b>expressão</b></span>
+              <span><i class="an-f"></i>a função, sem nome</span>
+              <span><i class="an-2"></i>2º par: <b>chama</b> a função na hora</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="galeria galeria--duplo">
+      <div class="mini" data-exec data-jeito="classico">
+        <div class="mini-titulo"><code>sem o primeiro par de parênteses</code><span>vira declaração, que exige nome</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+function () {
+  console.log("nunca roda");
+}();
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-jeito="classico">
+        <div class="mini-titulo"><code>sem o par do fim</code><span>a função é criada, mas ninguém a chama</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+(function () {
+  console.log("também nunca roda");
+});
+console.log("fim do arquivo");
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Para que serve</h3><p>Rodar um trecho de inicialização uma vez só e, principalmente, criar um <b>escopo isolado</b>: o que é declarado lá dentro não vaza para o resto da página (próxima seção).</p></article>
+      <article class="cartao"><h3>Onde você encontra</h3><p>Em scripts legados e em bibliotecas antigas, de antes dos módulos ES6. O arquivo <code>aula.js</code> desta página começa com uma IIFE.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: “toda função precisa de nome”</h3><p>Só a <b>declaração</b> de função precisa. Entre parênteses, ela é uma <b>expressão</b> e pode ser anônima, sem precisar ser guardada numa variável.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 21 · ESCOPO ======================= -->
+  <section class="secao" id="escopo">
+    <div class="secao-topo">
+      <span class="selo">21</span>
+      <h2 class="secao-titulo">Escopo: o que fica dentro, o que fica fora</h2>
+      <span class="origem">novo nesta revisão</span>
+    </div>
+    <p class="secao-lead">Cada função cria um escopo. Quem está dentro <b>enxerga e pode alterar</b> as variáveis de fora; quem está fora <b>não enxerga</b> as de dentro. A IIFE usa essa regra para esconder variáveis do escopo global.</p>
+
+    <div class="dupla">
+      <figure class="painel-codigo">
+        <figcaption>escopo.js · script comum, como num arquivo .js</figcaption>
+<pre class="codigo" data-lang="js" id="c-escopo">
+let ingressos = 100;               // fora: escopo global
+
+(function () {
+  let vendidos = 30;               // dentro: só existe aqui
+  ingressos -= vendidos;           // dentro altera o de fora
+  console.log("dentro:", ingressos, vendidos);
+})();
+
+console.log("fora:", ingressos);
+console.log(typeof vendidos);      // não existe aqui fora
+console.log(vendidos);             // usar direto é erro
+</pre>
+      </figure>
+      <div class="preview" data-exec data-codigo="c-escopo" data-jeito="classico">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>o de fora mudou; o de dentro não aparece</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec data-jeito="classico">
+        <div class="mini-titulo"><code>mesmo nome, dentro e fora</code><span>o de dentro esconde o de fora</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+var tema = "claro";
+(function () {
+  var tema = "escuro";        // outra variável
+  console.log("dentro:", tema);
+})();
+console.log("fora:", tema);
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-jeito="classico">
+        <div class="mini-titulo"><code>var global vira window.algo</code><span>a IIFE não deixa vazar</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+var versao = "1.0";
+(function () {
+  var chave = "segredo";
+})();
+console.log(window.versao);   // qualquer script alcança
+console.log(window.chave);    // ficou protegida
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-jeito="classico">
+        <div class="mini-titulo"><code>a referência que sai</code><span>o que a IIFE devolve continua alcançável</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+const contador = (function () {
+  let total = 0;
+  return { somar() { total++; return total; } };
+})();
+contador.somar();
+console.log(contador.somar());   // 2: total sobreviveu
+console.log(typeof total);       // mas só por somar()
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>De dentro para fora: sim</h3><p>A função enxerga o escopo onde foi criada (escopo léxico). Por isso <code>ingressos -= vendidos</code> altera a variável global.</p></article>
+      <article class="cartao"><h3>De fora para dentro: não</h3><p><code>typeof</code> de uma variável que não existe devolve <code>"undefined"</code>, sem erro. Usá-la direto lança <code>ReferenceError</code>.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: a IIFE não protege tudo</h3><p>Ela isola o que é declarado dentro. Se o código de dentro altera uma variável de fora, ou devolve uma referência para fora, essa parte continua exposta.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 22 · MÓDULOS: EXPORT NOMEADO ======================= -->
+  <section class="secao" id="modulos">
+    <div class="secao-topo">
+      <span class="selo">22</span>
+      <h2 class="secao-titulo">Módulos: export e import com chaves</h2>
+      <span class="origem">novo nesta revisão · visto de passagem em AJAX e Intl</span>
+    </div>
+    <p class="secao-lead">Desde o ES6, a linguagem tem um sistema de módulos próprio, sem biblioteca: cada arquivo é um módulo, <code>export</code> escolhe o que sai dele e <code>import</code> traz para outro arquivo. Nada vira global.</p>
+
+    <div class="pilha">
+      <div class="preview" data-exec data-codigo="m-app" data-arquivos="m-ingressos" data-jeito="modulo">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>módulos ES de verdade, rodando neste navegador</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+      <div class="par par--arquivos">
+        <figure class="painel-codigo">
+          <figcaption>ingressos.js</figcaption>
+<pre class="codigo" data-lang="js" id="m-ingressos" data-arquivo="./ingressos.js">
+export const MEIA = 0.5;
+
+export function precoFinal(preco, meia) {
+  return meia ? preco * MEIA : preco;
+}
+
+function arredondar(valor) {       // sem export: fica só aqui
+  return Math.round(valor * 100) / 100;
+}
+</pre>
+        </figure>
+        <figure class="painel-codigo">
+          <figcaption>app.js · carregado com &lt;script type="module" src="app.js"&gt;</figcaption>
+<pre class="codigo" data-lang="js" id="m-app">
+import { precoFinal, MEIA } from "./ingressos.js";
+
+console.log("desconto da meia:", MEIA);
+console.log("inteira:", precoFinal(40, false));
+console.log("meia:", precoFinal(40, true));
+console.log(typeof arredondar);
+</pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec data-arquivos="m-ingressos" data-jeito="modulo">
+        <div class="mini-titulo"><code>importar o que não foi exportado</code><span>o módulo nem começa a rodar</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+import { arredondar } from "./ingressos.js";
+console.log(arredondar(3.14159));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-arquivos="m-ingressos" data-jeito="modulo">
+        <div class="mini-titulo"><code>import { … as … }</code><span>renomear na chegada</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+import { precoFinal as preco } from "./ingressos.js";
+console.log(preco(30, true));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-arquivos="m-ingressos" data-jeito="modulo">
+        <div class="mini-titulo"><code>import * as</code><span>tudo o que foi exportado, num objeto</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+import * as ingressos from "./ingressos.js";
+console.log(Object.keys(ingressos));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Nativo e no navegador</h3><p><code>import</code> e <code>export</code> fazem parte da linguagem e funcionam nos navegadores com <code>&lt;script type="module"&gt;</code>, e também no Node.js. Não exigem biblioteca externa.</p></article>
+      <article class="cartao"><h3>Exportar não esconde, publica</h3><p>O que tem <code>export</code> fica disponível para outros arquivos; o que não tem continua privado do módulo, como <code>arredondar</code>. Ganha-se reutilização e organização.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: abrir por duplo clique</h3><p>Pelo endereço <code>file://</code> o navegador bloqueia módulos. Rode com um servidor local (Live Server, por exemplo). Nesta página eles funcionam porque a demonstração os carrega por dentro.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= 23 · EXPORT DEFAULT ======================= -->
+  <section class="secao" id="default">
+    <div class="secao-topo">
+      <span class="selo">23</span>
+      <h2 class="secao-titulo">export default: importar sem chaves</h2>
+      <span class="origem">novo nesta revisão</span>
+    </div>
+    <p class="secao-lead">Um módulo pode ter <b>uma</b> exportação padrão. Ela é importada <b>sem chaves</b> e pode receber o nome que você quiser. As chaves são só para as exportações nomeadas.</p>
+
+    <div class="pilha">
+      <div class="preview" data-exec data-codigo="m-app2" data-arquivos="m-duracao" data-jeito="modulo">
+        <div class="preview-topo"><span class="preview-selo">console</span><code>a padrão sem chaves, a nomeada com</code></div>
+        <div class="preview-corpo"><div class="console" data-console></div></div>
+      </div>
+      <div class="par par--arquivos">
+        <figure class="painel-codigo">
+          <figcaption>duracao.js</figcaption>
+<pre class="codigo" data-lang="js" id="m-duracao" data-arquivo="./duracao.js">
+export default function duracao(minutos) {
+  const h = Math.floor(minutos / 60);
+  return `${h}h${minutos % 60}min`;
+}
+
+export const UNIDADE = "minutos";
+</pre>
+        </figure>
+        <figure class="painel-codigo">
+          <figcaption>app.js</figcaption>
+<pre class="codigo" data-lang="js" id="m-app2">
+import duracao, { UNIDADE } from "./duracao.js";
+
+console.log(duracao(130));
+console.log("entrada em", UNIDADE);
+</pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <div class="mini" data-exec data-arquivos="m-duracao" data-jeito="modulo">
+        <div class="mini-titulo"><code>qualquer nome</code><span>quem importa escolhe</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+import formatarTempo from "./duracao.js";
+console.log(formatarTempo(95));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-arquivos="m-duracao" data-jeito="modulo">
+        <div class="mini-titulo"><code>padrão importada com chaves</code><span>procura uma exportação nomeada que não existe</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+import { duracao } from "./duracao.js";
+console.log(duracao(95));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+      <div class="mini" data-exec data-arquivos="m-duracao" data-jeito="modulo">
+        <div class="mini-titulo"><code>{ default as … }</code><span>o nome verdadeiro dela é default</span></div>
+        <figure class="painel-codigo"><pre class="codigo" data-lang="js">
+import { default as tempo } from "./duracao.js";
+console.log(tempo(60));
+</pre></figure>
+        <div class="console" data-console></div>
+      </div>
+    </div>
+
+    <div class="rolagem-x" style="margin-bottom:28px">
+      <table class="tabela">
+        <thead><tr><th></th><th>Exportação nomeada</th><th>Exportação padrão</th></tr></thead>
+        <tbody>
+          <tr><td>como exportar</td><td><code>export function precoFinal() {}</code></td><td><code>export default function duracao() {}</code></td></tr>
+          <tr><td>quantas por arquivo</td><td>quantas quiser</td><td>no máximo uma (e convive com as nomeadas)</td></tr>
+          <tr><td>como importar</td><td><code>import { precoFinal } from "./ingressos.js"</code></td><td><code>import duracao from "./duracao.js"</code></td></tr>
+          <tr><td>nome na importação</td><td>o mesmo do export (ou <code>as</code> para renomear)</td><td>qualquer um</td></tr>
+          <tr><td>erro comum</td><td>esquecer as chaves</td><td>colocar chaves: <code>does not provide an export named</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cartoes">
+      <article class="cartao"><h3>Chaves = nomeada</h3><p>Com chaves, o <code>import</code> procura uma exportação com aquele nome exato. Sem chaves, pega a padrão, seja qual for o nome dela.</p></article>
+      <article class="cartao"><h3>A padrão convive com as outras</h3><p>“Uma exportação por arquivo” não é regra: a regra é uma <b>padrão</b> por arquivo, mais quantas nomeadas quiser. A função padrão recebe parâmetros normalmente.</p></article>
+      <article class="cartao cartao--erro"><h3>Armadilha: o erro aponta o import</h3><p>A mensagem <code>does not provide an export named 'duracao'</code> não é falta de extensão no caminho nem nome de arquivo diferente da função: é a chave a mais.</p></article>
+    </div>
+  </section>
+
+  <!-- ======================= LABORATÓRIO LIVRE ======================= -->
+  <section class="secao" id="lab">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Lab</span>
+      <h2 class="secao-titulo">Laboratório livre</h2>
+    </div>
+    <p class="secao-lead">Escreva JavaScript à esquerda e execute: o console e as requisições aparecem à direita. O <code>await</code> funciona direto e o <code>fetch</code> alcança a API de filmes (<code>/filmes</code>, <code>/filmes/1</code>, <code>/login</code>, <code>/perfil</code>, <code>/status/404</code>, <code>/instavel</code>). Carregue um exemplo e modifique.</p>
+
+    <div class="playground" data-playground>
+      <div class="pg-editor">
+        <div class="pg-barra">
+          <select data-exemplos aria-label="Carregar exemplo">
+            <option value="">carregar um exemplo…</option>
+            <option value="filmes">fetch · listar filmes e tratar erro</option>
+            <option value="crud">HTTP · POST, PATCH, PUT e DELETE</option>
+            <option value="status">HTTP · ok em cada código de status</option>
+            <option value="token">HTTP · sem estado: o token em todo pedido</option>
+            <option value="ordem">assíncrono · qual linha sai primeiro?</option>
+            <option value="promise">Promise · realizada ou rejeitada</option>
+            <option value="datas">Intl · um instante, cinco fusos</option>
+            <option value="iife">IIFE · contador privado</option>
+          </select>
+          <button type="button" class="btn" data-rodar-pg>Executar</button>
+          <span class="pg-dica">Ctrl + Enter também executa</span>
+        </div>
+        <textarea spellcheck="false" aria-label="Editor de JavaScript"></textarea>
+      </div>
+      <div class="pg-resultado">
+        <div class="preview-topo" style="border:1px solid var(--borda);border-radius:var(--raio);background:#fff">
+          <span class="preview-selo">console</span><code>a saída do seu código</code>
+        </div>
+        <div class="console console--alto" data-console data-tempo></div>
+        <div data-painel-rede></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= REFERÊNCIA RÁPIDA ======================= -->
+  <section class="secao" id="referencia">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Resumo</span>
+      <h2 class="secao-titulo">Referência rápida</h2>
+    </div>
+    <p class="secao-lead">A revisão inteira numa tabela.</p>
+
+    <div class="rolagem-x">
+      <table class="tabela">
+        <thead><tr><th>Assunto</th><th>O que lembrar</th><th>Seção</th></tr></thead>
+        <tbody>
+          <tr><td>Cliente e servidor</td><td>cliente pede e apresenta; servidor processa e responde; quem inicia é o cliente</td><td><a href="#http">01</a></td></tr>
+          <tr><td>HTTP sem estado</td><td>cada requisição é independente; a identificação (cookie, token) vai em todo envio</td><td><a href="#estado">02</a></td></tr>
+          <tr><td>Métodos</td><td><code>GET</code> lê · <code>POST</code> cria · <code>PUT</code> substitui tudo · <code>PATCH</code> altera parte · <code>DELETE</code> apaga</td><td><a href="#metodos">03</a></td></tr>
+          <tr><td>GET</td><td>não altera o recurso; parâmetros na URL (<code>?chave=valor&amp;…</code>); dá para salvar e compartilhar; nada sensível</td><td><a href="#get">04</a></td></tr>
+          <tr><td>Status</td><td>1xx informação · 2xx sucesso · 3xx redirecionamento · 4xx erro do cliente · 5xx erro do servidor</td><td><a href="#status">05</a></td></tr>
+          <tr><td>HTTPS</td><td>HTTP sobre TLS (sucessor do SSL): confidencialidade, integridade e autenticação por certificado; porta 443</td><td><a href="#https">06</a></td></tr>
+          <tr><td>Síncrono x assíncrono</td><td>síncrono bloqueia até terminar; assíncrono deixa o fluxo seguir e entrega o resultado depois</td><td><a href="#assincrono">07</a></td></tr>
+          <tr><td>Promise</td><td>pendente → realizada (valor) ou rejeitada (motivo); depois de resolvida, não muda mais</td><td><a href="#promise">08</a></td></tr>
+          <tr><td><code>.then</code> / <code>.catch</code> / <code>.finally</code></td><td>o retorno de um then é a entrada do próximo; catch pega rejeição de qualquer ponto acima</td><td><a href="#then">09</a></td></tr>
+          <tr><td><code>async</code> / <code>await</code></td><td>escrita alternativa sobre Promises; await pausa a função, não a página; async devolve Promise</td><td><a href="#async">10</a></td></tr>
+          <tr><td><code>try...catch</code></td><td>com await, a rejeição vira exceção; sem await, o try não vê a falha</td><td><a href="#trycatch">11</a></td></tr>
+          <tr><td><code>fetch</code></td><td>API nativa do navegador, sem instalação; devolve uma Promise</td><td><a href="#fetch">12</a></td></tr>
+          <tr><td><code>Response</code></td><td>o primeiro then recebe status, ok, headers e o corpo ainda não lido</td><td><a href="#response">13</a></td></tr>
+          <tr><td><code>json()</code></td><td>lê o corpo e converte em objeto; devolve outra Promise; o corpo só se lê uma vez</td><td><a href="#json">14</a></td></tr>
+          <tr><td><code>ok</code> e <code>status</code></td><td>fetch só rejeita sem resposta; 404 e 500 resolvem: confira <code>ok</code> e dê <code>throw</code></td><td><a href="#erros">15</a></td></tr>
+          <tr><td>POST com JSON</td><td><code>method</code>, <code>headers: { "Content-Type": "application/json" }</code> e <code>body: JSON.stringify(obj)</code></td><td><a href="#post">16</a></td></tr>
+          <tr><td>DOM</td><td><code>createElement</code> + <code>textContent</code> + <code>appendChild</code>; aviso de carregamento e de falha</td><td><a href="#dom">17</a></td></tr>
+          <tr><td><code>Intl.DateTimeFormat</code></td><td><code>new Intl.DateTimeFormat(locale, opções).format(data)</code>; só aparece o campo pedido</td><td><a href="#intl">18</a></td></tr>
+          <tr><td><code>timeZone</code></td><td><code>Z</code> = UTC; o fuso escolhido pode mudar a hora e o dia</td><td><a href="#fuso">19</a></td></tr>
+          <tr><td>IIFE</td><td><code>(function () { … })();</code> define e executa na hora, sem nome nem chamada</td><td><a href="#iife">20</a></td></tr>
+          <tr><td>Escopo</td><td>dentro enxerga e altera o de fora; fora não enxerga o de dentro (<code>typeof</code> → <code>"undefined"</code>)</td><td><a href="#escopo">21</a></td></tr>
+          <tr><td>Export nomeado</td><td><code>export function f</code> → <code>import { f } from "./arquivo.js"</code></td><td><a href="#modulos">22</a></td></tr>
+          <tr><td>Export padrão</td><td><code>export default function f</code> → <code>import qualquerNome from "./arquivo.js"</code>, sem chaves</td><td><a href="#default">23</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- ======================= PERGUNTAS SIMULADAS ======================= -->
+<section class="secao atividade simulado" id="simulado">
+  <div class="wrap">
+    <div class="secao-topo">
+      <span class="selo selo--escuro">Simulado</span>
+      <h2 class="secao-titulo">Perguntas simuladas</h2>
+    </div>
+    <p class="secao-lead">Dez perguntas no formato da prova: sete objetivas e três no estilo ENADE. Leia, escolha uma alternativa e veja a explicação.</p>
+
+    <div class="placar-barra">
+      <span class="placar" data-placar></span>
+      <button type="button" class="btn btn--sec" data-zerar>recomeçar o simulado</button>
+    </div>
+
+    <div class="questoes">
+
+      <!-- 1 -->
+      <article class="questao" data-questao data-correta="C">
+        <div class="questao-topo"><span class="questao-num">01</span><span class="questao-fonte">Objetiva</span></div>
+        <div class="questao-enunciado">
+          <p>Uma aplicação de relatórios trava a interface enquanto consulta o servidor: durante a espera, nenhum botão responde ao clique. A equipe avalia reescrever a consulta de forma assíncrona.</p>
+          <p class="questao-pergunta">Qual alternativa descreve corretamente a diferença entre operações síncronas e assíncronas?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>A operação assíncrona é sempre mais rápida que a síncrona, independentemente da tarefa executada.</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>A operação síncrona existe apenas em linguagens de paradigma procedural.</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>A operação síncrona bloqueia a execução até ser concluída, enquanto a assíncrona permite que o restante do fluxo prossiga enquanto o resultado não chega.</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>A operação síncrona exige o uso de múltiplas threads para ser concluída.</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>A operação assíncrona dispensa qualquer forma de tratamento de erro.</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: C.</b> A consulta síncrona ocupa a única thread do JavaScript da página até terminar, por isso nenhum clique é atendido. A assíncrona entrega a espera ao navegador e o código segue; o resultado chega depois. Assíncrono não é mais rápido (a consulta demora o mesmo) e continua precisando de tratamento de erro.</p>
+          <div class="questao-rodape"><a href="#assincrono">revise a seção 07</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 2 -->
+      <article class="questao" data-questao data-correta="E">
+        <div class="questao-topo"><span class="questao-num">02</span><span class="questao-fonte">Objetiva</span></div>
+        <div class="questao-enunciado">
+          <p>Em uma apresentação interna sobre programação assíncrona, pede-se uma definição precisa de Promise e do seu ciclo de vida, para padronizar o vocabulário da equipe.</p>
+          <p class="questao-pergunta">Qual alternativa descreve corretamente uma Promise em JavaScript?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>Representa um valor sempre disponível no momento da criação, apenas armazenado para uso posterior.</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>Alterna continuamente entre os estados pendente e realizada enquanto a operação estiver em andamento.</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>Executa a operação de forma síncrona e devolve o resultado na mesma linha em que foi criada.</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>Substitui a necessidade de tratamento de erro, porque operações baseadas em Promise não falham.</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>Representa um valor que ainda pode não estar disponível e assume um entre três estados: pendente, realizada ou rejeitada; uma vez realizada ou rejeitada, não retorna ao estado anterior.</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: E.</b> A Promise nasce pendente e se resolve uma única vez, como realizada (com valor) ou rejeitada (com motivo). Depois disso o estado é definitivo: não alterna nem volta. Ela não é síncrona e pode falhar, por isso existe o estado rejeitada.</p>
+          <div class="questao-rodape"><a href="#promise">revise a seção 08</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 3 -->
+      <article class="questao" data-questao data-correta="B">
+        <div class="questao-topo"><span class="questao-num">03</span><span class="questao-fonte">Objetiva</span></div>
+        <div class="questao-enunciado">
+          <p>Durante a modernização de um módulo, a equipe reescreve um encadeamento de Promises usando as palavras-chave async e await, e precisa justificar a mudança para a coordenação técnica.</p>
+<pre class="codigo" data-lang="js">
+async function carregar() {
+  const resposta = await fetch("https://api.escola.com/turmas");
+  const turmas = await resposta.json();
+  return turmas;
+}
+</pre>
+          <p class="questao-pergunta">Qual alternativa descreve corretamente a relação entre essa forma de escrita e o encadeamento com Promises?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>O uso de await torna a operação síncrona e bloqueia toda a página durante a espera pela resposta.</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>As duas formas produzem o mesmo resultado, porque async e await são escritas alternativas sobre Promises; o await suspende a execução da função até a Promise ser resolvida, sem bloquear o restante da página.</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>Uma função declarada como async devolve o valor diretamente, sem envolvê-lo em uma Promise.</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>O await dispensa qualquer tratamento de erro, porque exceções deixam de ocorrer nesse formato.</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>O await substitui a Fetch API, tornando desnecessária a chamada de fetch na requisição.</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: B.</b> <code>async/await</code> é outra forma de escrever Promises: o <code>await</code> pausa apenas a função <code>carregar</code> até a Promise resolver, e a página segue livre. Uma função <code>async</code> sempre devolve uma Promise, os erros continuam existindo (use <code>try...catch</code>) e quem faz a requisição continua sendo o <code>fetch</code>.</p>
+          <div class="questao-rodape"><a href="#async">revise a seção 10</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 4 -->
+      <article class="questao" data-questao data-correta="D">
+        <div class="questao-topo"><span class="questao-num">04</span><span class="questao-fonte">Objetiva</span></div>
+        <div class="questao-enunciado">
+          <p>Uma equipe constrói a área restrita de um sistema de agendamento. Nos testes, percebe-se que o servidor não reconhece o usuário já autenticado quando ele navega para outra página, exigindo que a identificação seja reapresentada a cada acesso.</p>
+          <p class="questao-pergunta">Qual característica do protocolo HTTP explica esse comportamento?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>O HTTP mantém uma sessão permanente aberta entre cliente e servidor até que o navegador seja encerrado.</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>O HTTP guarda automaticamente os dados de autenticação no servidor durante toda a navegação do usuário.</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>O HTTP transmite exclusivamente conteúdo em formato de texto, o que impede o transporte de credenciais.</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>O HTTP não mantém estado entre requisições: cada uma é tratada de forma independente, e por isso a identificação precisa ser transportada a cada envio, por token ou cookie.</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>O HTTP aplica criptografia a todas as conexões, o que invalida a identificação a cada nova requisição.</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: D.</b> O HTTP é <i>stateless</i>: o servidor trata cada requisição sozinha e não lembra da anterior. A aplicação resolve isso enviando um cookie ou um token em todo pedido. O HTTP não mantém sessão aberta, não guarda credenciais sozinho e não cifra nada (quem cifra é o TLS, no HTTPS).</p>
+          <div class="questao-rodape"><a href="#estado">revise a seção 02</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 5 -->
+      <article class="questao" data-questao data-correta="C">
+        <div class="questao-topo"><span class="questao-num">05</span><span class="questao-fonte">Objetiva</span></div>
+        <div class="questao-enunciado">
+          <p>Ao analisar o log de uma API, a equipe de sustentação encontra respostas com os códigos 201, 301, 403 e 502 e precisa classificá-las para definir a quem encaminhar cada ocorrência.</p>
+          <p class="questao-pergunta">Qual alternativa apresenta corretamente o significado das faixas de códigos de status do HTTP?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>A faixa 2xx indica erro no servidor, a 3xx indica sucesso, a 4xx indica redirecionamento e a 5xx indica erro do cliente.</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>A faixa 2xx indica requisição pendente, a 3xx indica sucesso parcial, a 4xx indica sucesso total e a 5xx indica reenvio.</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>A faixa 2xx indica sucesso, a 3xx indica redirecionamento, a 4xx indica erro atribuível ao cliente e a 5xx indica erro no servidor.</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>Todas as faixas indicam falha, variando apenas o grau de gravidade registrado no log.</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>As faixas não possuem significado padronizado e são definidas livremente por cada servidor.</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: C.</b> 201 (Created) é sucesso, 301 (Moved Permanently) é redirecionamento, 403 (Forbidden) é erro do cliente, que não tem permissão, e 502 (Bad Gateway) é erro do lado do servidor. As faixas são definidas pela especificação do HTTP e valem para qualquer servidor.</p>
+          <div class="questao-rodape"><a href="#status">revise a seção 05</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 6 -->
+      <article class="questao" data-questao data-correta="E">
+        <div class="questao-topo"><span class="questao-num">06</span><span class="questao-fonte">Objetiva</span></div>
+        <div class="questao-enunciado">
+          <p>Um formulário de matrícula precisa enviar os dados preenchidos para a API da instituição. A pessoa responsável escreve o trecho abaixo e recebe, na revisão, o pedido de explicar o papel de cada elemento do envio.</p>
+<pre class="codigo" data-lang="js">
+fetch("https://api.escola.com/alunos", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ nome: "Ana", turma: "2B" })
+});
+</pre>
+          <p class="questao-pergunta">Qual alternativa explica corretamente a função de JSON.stringify e do cabeçalho Content-Type nesse envio?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>JSON.stringify criptografa os dados antes do envio, e o Content-Type define o algoritmo de criptografia utilizado.</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>JSON.stringify valida os campos do formulário, e o Content-Type determina quais deles são obrigatórios.</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>JSON.stringify converte o texto recebido em objeto, e o Content-Type indica o idioma da resposta esperada.</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>Ambos são opcionais, porque a Fetch API converte objetos e define cabeçalhos automaticamente.</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>JSON.stringify converte o objeto JavaScript em texto, porque o corpo da requisição trafega como texto, e o Content-Type informa ao servidor em que formato esse texto deve ser interpretado.</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: E.</b> O corpo de uma requisição HTTP é texto, então o objeto precisa ser serializado com <code>JSON.stringify</code>. O cabeçalho <code>Content-Type: application/json</code> diz ao servidor como ler esse texto. Sem <code>stringify</code>, o objeto viraria <code>"[object Object]"</code>; quem converte texto em objeto é <code>JSON.parse</code> (ou o <code>json()</code> da resposta).</p>
+          <div class="questao-rodape"><a href="#post">revise a seção 16</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 7 -->
+      <article class="questao" data-questao data-correta="D">
+        <div class="questao-topo"><span class="questao-num">07</span><span class="questao-fonte">Objetiva</span></div>
+        <div class="questao-enunciado">
+          <p>Para evitar colisão de nomes em um script compartilhado entre páginas, um desenvolvedor isola parte da lógica dentro de uma função autoexecutável e verifica, no console, o que permanece acessível depois da execução.</p>
+<pre class="codigo" data-lang="js">
+let contadorGlobal = 5;
+(function () {
+  let contadorLocal = 10;
+  contadorGlobal += contadorLocal;
+})();
+console.log(contadorGlobal);
+console.log(typeof contadorLocal);
+</pre>
+          <p class="questao-pergunta">Qual alternativa descreve corretamente a saída produzida no console?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>Interrompe a execução com erro, porque variáveis criadas dentro da função tornam-se automaticamente globais.</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>Exibe 10 nas duas saídas, porque a função autoexecutável não estabelece escopo isolado.</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>Exibe 5 na primeira saída, porque variáveis internas não podem alterar valores declarados fora da função.</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>Exibe 15 e depois "undefined", porque a função cria um escopo próprio que impede o acesso externo à variável interna, sem impedir a alteração da variável externa.</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>Exibe 0 na segunda saída, porque variáveis locais são reinicializadas ao fim da execução.</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: D.</b> De dentro da IIFE dá para alterar a variável de fora: 5 + 10 = 15. A variável interna não existe fora da função, e <code>typeof</code> de uma variável inexistente devolve o texto <code>"undefined"</code>, sem lançar erro.</p>
+          <div class="questao-rodape"><a href="#escopo">revise a seção 21</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 8 -->
+      <article class="questao questao--enade" data-questao data-correta="A">
+        <div class="questao-topo"><span class="questao-num">08</span><span class="questao-fonte">ENADE adaptado</span></div>
+        <div class="questao-enunciado">
+          <p>Uma equipe integra o sistema acadêmico de uma instituição a uma API REST externa, da qual recupera a grade de horários. A integração emprega a Fetch API. Analise as asserções a seguir:</p>
+          <p class="assercao"><b>I.</b> Ao utilizar a Fetch API para consumir uma API REST, a resposta inicial precisa ser convertida antes que os dados possam ser manipulados pela aplicação.</p>
+          <p class="porque">PORQUE</p>
+          <p class="assercao"><b>II.</b> A Fetch API devolve uma Promise que resolve para um objeto Response, o qual não contém diretamente os dados, mas metadados como status e cabeçalhos; a extração do conteúdo exige a chamada de um método de leitura, que também devolve uma Promise.</p>
+          <p class="questao-pergunta">A respeito dessas asserções, assinale a alternativa correta:</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>As asserções I e II são verdadeiras, e a II justifica corretamente a I.</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>As asserções I e II são verdadeiras, mas a II não justifica a I.</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>A asserção I é verdadeira, e a II é falsa.</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>A asserção I é falsa, e a II é verdadeira.</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>As asserções I e II são falsas.</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: A.</b> I é verdadeira: o que chega primeiro não são os dados. II é verdadeira e explica o porquê: o <code>fetch</code> resolve com um <code>Response</code> (status, <code>ok</code>, cabeçalhos), e o conteúdo só aparece depois de <code>json()</code> ou <code>text()</code>, que devolvem outra Promise.</p>
+          <div class="questao-rodape"><a href="#response">revise as seções 13 e 14</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 9 -->
+      <article class="questao questao--enade" data-questao data-correta="D">
+        <div class="questao-topo"><span class="questao-num">09</span><span class="questao-fonte">ENADE adaptado</span></div>
+        <div class="questao-enunciado">
+          <p>Uma empresa de tecnologia desenvolve uma plataforma educacional multilíngue para estudantes de diferentes países. Durante os testes de usabilidade, usuários relataram datas inconsistentes: algumas exibidas no formato norte-americano, outras no europeu, e várias sem considerar o fuso horário correto.</p>
+          <p>A equipe adotou a API Intl.DateTimeFormat, nativa do JavaScript, por permitir formatação customizada, suporte a múltiplas localidades e tratamento de fusos horários. Ao configurar as opções avançadas, porém, surgiram divergências entre o resultado esperado e o exibido, sobretudo nos casos em que se declarava explicitamente um fuso diferente do local de execução.</p>
+          <p>Para validar o entendimento do time, o arquiteto do sistema propôs a análise do trecho a seguir:</p>
+<pre class="codigo" data-lang="js">
+const data = new Date("2025-03-15T12:00:00Z");
+const formatador = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: "America/Sao_Paulo",
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+});
+console.log(formatador.format(data));
+</pre>
+          <p class="questao-pergunta">Sabendo que o instante indicado corresponde a 9 horas no fuso America/Sao_Paulo, qual será a saída exibida no console, segundo as convenções da localidade pt-BR?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>sábado, 15/03/2025 09:00</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>Saturday, March 15, 2025</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>15 de março de 2025, sábado, 09h00</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>sábado, 15 de março de 2025</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>sábado, março 15, 2025</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: D.</b> 12h em UTC são 9h em São Paulo, ainda no dia 15. As opções pedem dia da semana, dia, mês por extenso e ano, mas não pedem hora nem minuto, então a hora não aparece. O locale <code>pt-BR</code> escreve dia antes do mês, com “de” entre as partes e o dia da semana na frente.</p>
+          <div class="questao-rodape"><a href="#intl">revise as seções 18 e 19</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+      <!-- 10 -->
+      <article class="questao questao--enade" data-questao data-correta="C">
+        <div class="questao-topo"><span class="questao-num">10</span><span class="questao-fonte">ENADE adaptado</span></div>
+        <div class="questao-enunciado">
+          <p>Uma equipe iniciante desenvolve o sistema de uma biblioteca escolar. Para organizar o código, as funções auxiliares foram separadas em módulos conforme a especificação ES6. A função de cálculo de multa por atraso ficou em arquivo próprio.</p>
+          <p>Após ajustar a forma de exportação e de importação, a equipe executou o arquivo principal para conferir o resultado.</p>
+<pre class="codigo" data-lang="js">
+// arquivo: multas.js
+export default function calcularMulta(dias) {
+  return dias * 1.5;
+}
+// arquivo: app.js
+import calcularMulta from './multas.js';
+console.log(calcularMulta(4));
+</pre>
+          <p class="questao-pergunta">Ao executar o arquivo principal, qual será o resultado exibido no console?</p>
+        </div>
+        <ol class="alternativas">
+          <li><button data-letra="A"><b>A</b><span>Erro: função não definida</span></button></li>
+          <li><button data-letra="B"><b>B</b><span>4</span></button></li>
+          <li><button data-letra="C"><b>C</b><span>6</span></button></li>
+          <li><button data-letra="D"><b>D</b><span>1.5</span></button></li>
+          <li><button data-letra="E"><b>E</b><span>undefined</span></button></li>
+        </ol>
+        <div class="questao-explica" hidden>
+          <p><b>Resposta: C.</b> A função é a exportação padrão de <code>multas.js</code> e foi importada do jeito certo: sem chaves. A chamada <code>calcularMulta(4)</code> devolve 4 × 1,5 = 6.</p>
+          <div class="questao-rodape"><a href="#default">revise a seção 23</a><button class="btn btn--sec" data-refazer>tentar de novo</button></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<footer class="rodape">
+  <div class="rodape-interna">
+    <div>
+      <h2>Boa prova!</h2>
+      <p>Leia o código com calma, preveja o resultado e só depois confira as alternativas.</p>
+      <div class="rodape-meta">2º período · PM 4 — Projeto Mensal</div>
+      <p class="rodape-creditos">Revisão construída a partir das aulas <i>Web APIs e HTTP</i> e <i>Tratamento de erros com try...catch</i> (PM 3) e <i>Fluxo assíncrono</i> e <i>AJAX e Intl</i> (PM 4). A API de filmes é simulada nesta página.</p>
+    </div>
+    <img src="img/logo.png" alt="Descomplica + UniAmérica">
+  </div>
+</footer>
+
+<button class="voltar-topo" aria-label="Voltar ao topo">&#8593;</button>
+
+<script src="js/aula.js"></script>
+</body>
+</html>

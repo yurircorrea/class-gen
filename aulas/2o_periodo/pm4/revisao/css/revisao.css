@@ -1,0 +1,176 @@
+/* =========================================================
+   Aula: Revisão para a prova (2º período · PM 4)
+   revisao.css - blocos próprios da revisão: selo de origem,
+   caminho cliente-servidor, códigos de status, HTTPS,
+   página travada, estados da Promise, anatomia da IIFE,
+   módulos e perguntas simuladas
+   ========================================================= */
+
+/* ---------- selo de origem: de qual aula veio o assunto ---------- */
+.origem{
+  display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px;letter-spacing:.3px;
+  color:var(--verde-escuro);background:#fff;border:1.5px dashed var(--verde-escuro);border-radius:999px;padding:5px 13px;
+}
+.secao-topo .origem{margin-left:auto}
+
+/* linha de console de sucesso (demonstrações da página) */
+.cl--ok{color:var(--verde);background:rgba(0,232,143,.08);box-shadow:inset 4px 0 0 var(--verde)}
+.espera{color:var(--texto);font-style:italic}
+.erro{color:var(--erro-tx);font-weight:700}
+
+.chamada--perigo{border-color:#D9483B;color:#8C2F1F}
+.chamada--perigo:hover{background:var(--erro-bg);border-color:#8C2F1F}
+
+.cartoes--4 > .cartao{flex:1 1 300px}
+
+/* ---------- 01 · caminho cliente-servidor ---------- */
+.caminho-demo{margin-bottom:28px}
+.caminho-demo > .chamadas{margin-bottom:18px}
+.caminho-demo .par{margin-bottom:18px}
+.caminho-demo .codigo{min-height:190px}
+.tela-cliente{display:flex;align-items:center;gap:18px;flex-wrap:wrap;border:2px dashed #98A2A9;border-radius:var(--raio);background:#fff;padding:18px 22px;font-size:21px}
+.tela-cliente-rotulo{font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;background:var(--tinta);color:var(--verde);padding:4px 10px;border-radius:999px}
+.caminho--fixo{margin-bottom:28px}
+
+/* ---------- 05 · códigos de status ---------- */
+.chamadas--st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.chamadas--st .chamada{text-align:center}
+.lab-palco--status{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.st-grande{font-family:var(--titulo);font-size:110px;font-weight:700;line-height:1;border-radius:18px;padding:10px 26px}
+.st--3{background:#DDEBFF;color:#1F4E8C}
+.st-info{flex:1 1 320px;min-width:0}
+.st-info h4{font-family:var(--titulo);font-size:34px;margin:0 0 6px}
+.st-info p{margin:0 0 6px;font-size:18px}
+.st-quem{font-family:var(--mono);font-size:15px;color:var(--texto)}
+.faixas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:28px}
+.faixa{border-radius:var(--raio);padding:16px 18px;border:1px solid var(--borda);background:#fff;display:flex;flex-direction:column;gap:2px}
+.faixa b{font-family:var(--titulo);font-size:44px;line-height:1}
+.faixa span{font-weight:700;font-size:18px}
+.faixa small{font-family:var(--mono);font-size:13px;color:var(--texto);margin-top:6px}
+.faixa--1 b{color:var(--texto)}
+.faixa--2{background:rgba(0,232,143,.12);border-color:rgba(0,232,143,.6)}.faixa--2 b{color:#0A5A36}
+.faixa--3{background:#EEF5FF;border-color:#B9D3F5}.faixa--3 b{color:#1F4E8C}
+.faixa--4{background:#FFF6E6;border-color:#F2D29B}.faixa--4 b{color:#8A4B00}
+.faixa--5{background:var(--erro-bg);border-color:var(--erro-bd)}.faixa--5 b{color:var(--erro-tx)}
+@media (max-width:1100px){.faixas{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- 06 · HTTPS ---------- */
+.https{background:#fff;border:1px solid var(--borda);border-radius:var(--raio);padding:22px 24px;margin-bottom:28px}
+.https > .chamadas{margin-bottom:18px}
+.https-grade{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:14px}
+.https-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.https-col h4{margin:0;font-family:var(--mono);font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--texto);font-weight:700}
+.https-col textarea{
+  font-family:var(--mono);font-size:15px;line-height:1.55;min-height:230px;resize:vertical;padding:14px 16px;
+  border:1px solid var(--borda);border-radius:12px;background:#FAFBFA;color:var(--tinta);
+}
+.https-rede{margin:0;min-height:230px;border-radius:12px;padding:14px 16px;font-size:15px;background:var(--code-bg);color:var(--code-fg)}
+.https-rede.cifrado{color:#FFB3A8;letter-spacing:.5px}
+.https-seguro .https-rede{box-shadow:0 0 0 3px var(--verde)}
+.https-servidor{
+  margin:0;min-height:230px;border-radius:12px;padding:14px 16px;font-family:var(--mono);font-size:15px;line-height:1.55;
+  white-space:pre-wrap;overflow-wrap:anywhere;border:2px dashed #98A2A9;background:#fff;color:var(--tinta);
+}
+.https-rejeitado{border-color:#D9483B;background:var(--erro-bg);color:var(--erro-tx);font-weight:700}
+@media (max-width:1100px){.https-grade{grid-template-columns:1fr}}
+
+/* ---------- 07 · página travada ---------- */
+.bloqueio{background:#fff;border:1px solid var(--borda);border-radius:var(--raio);padding:22px 24px;margin-bottom:28px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 24px}
+.bloqueio-pista{grid-column:1 / -1;height:46px;border-radius:999px;background:#F2F4F3;position:relative;overflow:hidden;outline:2px dashed var(--verde);outline-offset:-2px}
+.bolinha{position:absolute;left:8px;top:7px;width:32px;height:32px;border-radius:50%;background:var(--verde);border:3px solid var(--verde-escuro)}
+.bloqueio-painel{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 18px;align-items:center;align-content:start}
+.bloqueio-painel .btn{width:100%}
+.bloqueio-relogio{grid-row:span 3}
+.bloqueio-relogio{display:flex;flex-direction:column;margin-right:10px;min-width:130px}
+.bloqueio-relogio small{font-family:var(--mono);font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--texto)}
+.bloqueio-relogio b{font-family:var(--titulo);font-size:46px;line-height:1}
+.bloqueio-log{min-height:150px;margin:0}
+@media (max-width:1100px){.bloqueio{grid-template-columns:1fr}}
+
+/* ---------- 08 · estados da Promise ---------- */
+.estados{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:center}
+.estados-fim{display:flex;flex-direction:column;gap:12px}
+.estado{border:2px solid var(--borda);border-radius:12px;padding:12px 16px;background:#fff;transition:box-shadow .2s,background .2s;position:relative}
+.estado b{display:block;font-family:var(--titulo);font-size:28px;line-height:1.1}
+.estado span{font-family:var(--mono);font-size:13px;color:var(--texto)}
+.estado[data-e="pendente"]::after{
+  content:"";position:absolute;right:-13px;top:50%;margin-top:-8px;
+  border-left:10px solid var(--borda);border-top:8px solid transparent;border-bottom:8px solid transparent;
+}
+.estado.atual{border-color:var(--verde-escuro);box-shadow:0 0 0 4px rgba(0,232,143,.3)}
+.estado--ok.atual{background:rgba(0,232,143,.14)}
+.estado--erro.atual{background:var(--erro-bg);border-color:#D9483B;box-shadow:0 0 0 4px rgba(217,72,59,.2)}
+.promessa-atual{margin:0;font-size:18px}
+.promessa .console{min-height:120px}
+
+/* ---------- 20 · anatomia da IIFE ---------- */
+.anatomia{border:1px solid var(--borda);border-radius:12px;padding:16px 18px;background:#FAFBFA}
+.anatomia-linha code{font-family:var(--mono);font-size:24px;font-weight:700}
+.anatomia-linha .an-1{color:#1F4E8C;background:#DDEBFF;border-radius:5px;padding:0 3px}
+.anatomia-linha .an-2{color:#0A5A36;background:rgba(0,232,143,.3);border-radius:5px;padding:0 3px}
+.anatomia-linha .an-f{color:var(--texto)}
+.anatomia-legenda{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:16px}
+.anatomia-legenda i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:8px;vertical-align:-2px}
+.anatomia-legenda i.an-1{background:#DDEBFF;border:2px solid #1F4E8C}
+.anatomia-legenda i.an-f{background:#fff;border:2px solid var(--texto)}
+.anatomia-legenda i.an-2{background:rgba(0,232,143,.3);border:2px solid #0A5A36}
+
+/* ---------- 22/23 · módulos: os dois arquivos lado a lado ---------- */
+.par--arquivos > .painel-codigo{margin:0}
+
+/* ---------- 18 · laboratório de datas ---------- */
+.resultado-grande--data{font-size:48px}
+
+/* ---------- perguntas simuladas ---------- */
+.simulado .secao-lead{max-width:1200px}
+.placar-barra{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:0 0 28px}
+.placar{font-family:var(--mono);font-size:18px;color:var(--verde-escuro);background:#fff;border:2px solid var(--verde-escuro);border-radius:999px;padding:8px 18px}
+.placar b{font-size:22px}
+.questoes{display:flex;flex-direction:column;gap:28px}
+.questao{background:var(--superficie);border-radius:var(--raio);padding:28px 32px;border:1px solid rgba(0,0,0,.12)}
+.questao-topo{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.questao-num{font-family:var(--titulo);font-size:44px;font-weight:700;line-height:1;color:var(--verde-escuro)}
+.questao-fonte{font-family:var(--mono);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;background:var(--verde-escuro);color:var(--verde);padding:5px 12px;border-radius:999px}
+.questao--enade .questao-fonte{background:var(--tinta);color:#FFD866}
+.questao-enunciado p{font-size:19px;line-height:1.55;margin:0 0 12px;color:var(--tinta)}
+.questao-enunciado .codigo{margin:0 0 14px;border-radius:12px;padding:18px 22px;background:var(--code-bg)}
+.questao-pergunta{font-weight:700}
+.assercao{border-left:4px solid var(--verde);padding-left:14px}
+.porque{font-weight:700;letter-spacing:2px;text-align:center;color:var(--verde-escuro)}
+.alternativas{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.alternativas button{
+  width:100%;display:flex;align-items:flex-start;gap:16px;text-align:left;cursor:pointer;
+  font-family:var(--corpo);font-size:18px;line-height:1.45;color:var(--tinta);
+  background:#F6F8F7;border:2px solid transparent;border-radius:12px;padding:13px 18px;transition:border-color .15s,background .15s;
+}
+.alternativas button:hover:not(:disabled){border-color:var(--verde-escuro);background:#fff}
+.alternativas button b{
+  flex:0 0 32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:16px;
+  background:#fff;border:2px solid #98A2A9;
+}
+.alternativas button:disabled{cursor:default}
+.alternativas button:disabled:not(.certa):not(.errada){opacity:.55}
+.alternativas button.certa{background:rgba(0,232,143,.18);border-color:#0E7A4B}
+.alternativas button.certa b{background:var(--verde);border-color:var(--verde-escuro)}
+.alternativas button.errada{background:var(--erro-bg);border-color:#D9483B}
+.alternativas button.errada b{background:#FFB3A8;border-color:#8C2F1F}
+.questao-explica{margin-top:18px;border-radius:12px;padding:16px 20px;background:#F2F4F3;border-left:6px solid var(--verde-escuro)}
+.questao.errou .questao-explica{border-left-color:#D9483B}
+.questao-explica p{margin:0 0 12px;font-size:18px;line-height:1.55}
+.questao-explica code{font-family:var(--mono);font-size:16px;background:rgba(0,232,143,.2);padding:1px 6px;border-radius:5px}
+.questao-rodape{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.questao-rodape a{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--verde-escuro)}
+
+@media (max-width:700px){
+  .secao-titulo{overflow-wrap:anywhere}
+  .questao{padding:20px 18px}
+  .secao-topo .origem{margin-left:0}
+  .estados{grid-template-columns:1fr}
+  .estado[data-e="pendente"]::after{display:none}
+  .chamadas--st{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .st-grande{font-size:72px}
+}
+
+/* ---------- 17 · HTML curto em cima, JavaScript em duas colunas ---------- */
+.pilha-codigo{display:flex;flex-direction:column;gap:20px}
+.pilha-codigo > .painel-codigo{margin:0}
